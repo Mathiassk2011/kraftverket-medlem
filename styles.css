@@ -451,6 +451,50 @@ h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .35rem; }
   font-weight: 700;
 }
 
+/* Row of 3 logos */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.brand-row .brand-main {
+  height: 140px;
+  filter: drop-shadow(0 0 32px rgba(229,104,26,.35));
+}
+.brand-row .brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  min-width: 110px;
+  opacity: .75;
+  transition: opacity .2s;
+}
+.brand-row .brand-logo:hover { opacity: 1; text-decoration: none; }
+.brand-row .brand-logo img {
+  height: 70px;
+  width: auto;
+  filter: none;
+  margin: 0;
+}
+.logo-fallback {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text);
+  padding: .65rem 1.1rem;
+  border: 2px solid var(--text-muted);
+  border-radius: 8px;
+}
+@media (max-width: 600px) {
+  .brand-row { gap: 1.5rem; }
+  .brand-row .brand-main { height: 100px; }
+  .brand-row .brand-logo img { height: 50px; }
+  .logo-fallback { font-size: 1.1rem; padding: .45rem .8rem; }
+}
+
 /* ── Footer ── */
 footer.site-footer {
   border-top: 1px solid var(--border);
