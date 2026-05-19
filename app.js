@@ -33,6 +33,9 @@ function renderHeader(activeKey) {
   if (!u) return "";
   const links = [
     { key: "dashboard", label: "Hjem",     href: "dashboard.html" },
+    { key: "hyrox",     label: "HYROX",    href: "hyrox.html"     },
+    { key: "crossfit",  label: "CrossFit", href: "crossfit.html"  },
+    { key: "styrke",    label: "Styrke",   href: "styrke.html"    },
     { key: "mifflin",   label: "Kosthold", href: "mifflin.html"   },
     { key: "kalender",  label: "Kalender", href: "kalender.html"  },
     { key: "chat",      label: "Chat",     href: "chat.html"      }

@@ -438,3 +438,296 @@ footer.site-footer {
 .mt-1 { margin-top: 1rem; }
 .mt-2 { margin-top: 2rem; }
 .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); }
+
+/* ══════════════════════════════════════════════
+   TRAINING PAGES (Hyrox / CrossFit / Styrke)
+══════════════════════════════════════════════ */
+
+/* Hero with image bg */
+.training-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.training-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(.45);
+  transform: scale(1.04);
+  transition: transform 8s ease;
+}
+.training-hero:hover .training-hero-bg { transform: scale(1); }
+.training-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(13,13,13,.92) 0%,
+    rgba(13,13,13,.55) 60%,
+    rgba(13,13,13,.75) 100%
+  );
+  z-index: 1;
+}
+.training-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem 4rem;
+  width: 100%;
+}
+.training-hero-content .badge { margin-bottom: 1.25rem; font-size: .75rem; }
+.training-hero-content h1 {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+}
+.training-hero-content .lead {
+  font-size: 1.15rem;
+  max-width: 560px;
+  color: rgba(242,242,242,.8);
+  line-height: 1.7;
+  margin-bottom: 2.25rem;
+}
+.hero-btn-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-stats {
+  display: flex; gap: 2.5rem; flex-wrap: wrap;
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(229,104,26,.3);
+}
+.hero-stat .num {
+  font-size: 2.6rem; font-weight: 900; color: var(--orange); line-height: 1;
+}
+.hero-stat .lbl {
+  font-size: .7rem; text-transform: uppercase;
+  letter-spacing: 1.2px; color: rgba(242,242,242,.55);
+  margin-top: .3rem;
+}
+
+/* Sections */
+.t-section { padding: 5rem 0; }
+.t-section-dark { background: var(--surface); }
+.t-section-alt  { background: #111; }
+.section-title  { text-align: center; margin-bottom: 3rem; }
+.section-title .badge { margin-bottom: .75rem; }
+.section-title h2 {
+  font-size: 2.1rem; font-weight: 900; letter-spacing: -.5px; margin-bottom: .5rem;
+}
+.section-title p {
+  color: var(--text-muted); max-width: 520px; margin: 0 auto; font-size: 1rem; line-height: 1.65;
+}
+
+/* Feature cards */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.5rem;
+}
+.feature-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transition: transform .25s;
+}
+.feature-card:hover::before { transform: scaleX(1); }
+.feature-card:hover { border-color: var(--orange); transform: translateY(-3px); }
+.feature-card .f-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.feature-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: .5rem; }
+.feature-card p  { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
+
+/* Pillar layout */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.pillar-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all .2s;
+}
+.pillar-card:hover { border-color: var(--orange); transform: translateY(-3px); }
+.pillar-img { height: 200px; overflow: hidden; background: var(--surface2); }
+.pillar-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.pillar-card:hover .pillar-img img { transform: scale(1.05); }
+.pillar-body { padding: 1.5rem; }
+.pillar-body .pillar-label {
+  font-size: .7rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--orange); margin-bottom: .5rem;
+}
+.pillar-body h3 { font-size: 1.15rem; font-weight: 900; margin-bottom: .6rem; }
+.pillar-body p  { font-size: .88rem; color: var(--text-muted); line-height: 1.65; margin-bottom: .85rem; }
+.pillar-body ul { list-style: none; padding: 0; }
+.pillar-body ul li {
+  padding: .25rem 0; font-size: .85rem; color: var(--text-muted);
+  display: flex; gap: .5rem;
+}
+.pillar-body ul li::before { content: "→"; color: var(--orange); flex-shrink: 0; }
+
+/* HYROX stations */
+.station-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 1rem;
+}
+.station-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1rem 1.2rem;
+  text-align: center;
+  position: relative;
+  transition: all .2s;
+}
+.station-card:hover { border-color: var(--orange); }
+.station-num {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: #fff;
+  width: 28px; height: 28px; border-radius: 50%;
+  font-size: .8rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.station-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+.station-name { font-weight: 800; font-size: .95rem; }
+.station-detail { font-size: .78rem; color: var(--text-muted); margin-top: .2rem; }
+
+/* Race format illustration */
+.race-flow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+  justify-content: center; padding: 2rem 0;
+}
+.race-step {
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+}
+.race-step .rs-icon { font-size: 1.5rem; }
+.race-step .rs-label { font-size: .7rem; font-weight: 700; color: var(--text-muted); }
+.race-arrow { color: var(--orange); font-size: 1.2rem; padding-bottom: 1rem; }
+
+/* Split section */
+.split-section {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+.split-img { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/3; }
+.split-img img { width: 100%; height: 100%; object-fit: cover; }
+.split-text h2 {
+  font-size: 2rem; font-weight: 900; letter-spacing: -.5px;
+  margin-bottom: 1rem;
+}
+.split-text p { color: var(--text-muted); line-height: 1.75; margin-bottom: 1rem; }
+.check-list { list-style: none; padding: 0; }
+.check-list li {
+  display: flex; gap: .75rem; padding: .4rem 0;
+  font-size: .92rem; align-items: baseline;
+}
+.check-list li::before { content: "✓"; color: var(--orange); font-weight: 900; flex-shrink: 0; }
+
+/* Equipment grid */
+.eq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+}
+.eq-card {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+  transition: border-color .15s;
+}
+.eq-card:hover { border-color: var(--orange); }
+.eq-icon { font-size: 1.8rem; flex-shrink: 0; }
+.eq-name { font-weight: 700; font-size: .95rem; }
+.eq-sub  { font-size: .78rem; color: var(--text-muted); }
+
+/* Video embed */
+.video-embed-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.video-embed-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+/* CTA band */
+.cta-band {
+  background: linear-gradient(135deg, rgba(229,104,26,.15) 0%, rgba(229,104,26,.04) 100%);
+  border: 1px solid rgba(229,104,26,.25);
+  border-radius: var(--radius);
+  padding: 4rem 2rem;
+  text-align: center;
+  margin: 3rem 0;
+}
+.cta-band h2 { font-size: 2rem; font-weight: 900; margin-bottom: .75rem; }
+.cta-band p  { color: var(--text-muted); max-width: 460px; margin: 0 auto 2rem; font-size: 1rem; line-height: 1.65; }
+.cta-band .btn-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* Timeline */
+.timeline { position: relative; max-width: 640px; margin: 0 auto; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 20px; top: 4px; bottom: 4px; width: 2px;
+  background: linear-gradient(to bottom, var(--orange), transparent);
+}
+.timeline-item { display: flex; gap: 1.25rem; margin-bottom: 2rem; }
+.timeline-dot {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--surface2); border: 2px solid var(--orange);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: .88rem; color: var(--orange);
+  flex-shrink: 0; margin-top: .05rem;
+}
+.timeline-content h4 { font-size: 1rem; font-weight: 800; margin-bottom: .25rem; }
+.timeline-content p  { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
+
+/* Numbers band */
+.numbers-band {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.number-item {
+  padding: 2rem; text-align: center;
+  border-right: 1px solid var(--border);
+}
+.number-item:last-child { border-right: none; }
+.number-item .big { font-size: 2.8rem; font-weight: 900; color: var(--orange); line-height: 1; }
+.number-item .small { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: .4rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pillar-grid { grid-template-columns: 1fr; }
+  .split-section { grid-template-columns: 1fr; gap: 2rem; }
+  .numbers-band { grid-template-columns: 1fr 1fr; }
+  .numbers-band .number-item:nth-child(2n) { border-right: none; }
+  .numbers-band .number-item:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .t-section { padding: 3rem 0; }
+  .hero-stats { gap: 1.5rem; }
+}
