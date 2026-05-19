@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logg inn – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <img class="brand" src="https://3475kraftverket.no/wp-content/uploads/2021/04/3d-png-1.png" alt="Kraftverket" />
+      <h1>Medlemsportal</h1>
+      <p class="sub">Logg inn med medlemskontoen din</p>
+
+      <div id="error" class="error-msg" style="display:none;"></div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">Brukernavn</label>
+          <input id="username" type="text" autocomplete="username" required autofocus />
+        </div>
+        <div class="field">
+          <label for="password">Passord</label>
+          <input id="password" type="password" autocomplete="current-password" required />
+        </div>
+        <div class="field" style="display:flex; flex-direction:row; align-items:center; gap:.5rem;">
+          <input id="remember" type="checkbox" style="width:auto;" />
+          <label for="remember" style="margin:0; text-transform:none; letter-spacing:0; font-size:.85rem; color:var(--text);">Husk meg</label>
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">Logg inn</button>
+      </form>
+
+      <div class="login-hint">
+        <strong>Demo-tilgang:</strong><br />
+        Brukernavn: <code>mathias</code> &nbsp; Passord: <code>kraftverk</code><br />
+        Eller: <code>ole</code> / <code>demo</code>
+      </div>
+    </div>
+  </div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Hvis allerede innlogget, hopp til dashboard.
+    if (getUser()) window.location.href = "dashboard.html";
+
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const u = document.getElementById("username").value.trim().toLowerCase();
+      const p = document.getElementById("password").value;
+      const remember = document.getElementById("remember").checked;
+      const err = document.getElementById("error");
+
+      const member = window.MEMBERS[u];
+      if (!member || member.password !== p) {
+        err.textContent = "Feil brukernavn eller passord. Kontakt eieren hvis du trenger tilgang.";
+        err.style.display = "block";
+        return;
+      }
+      const { password, ...userInfo } = member;
+      setUser({ username: u, ...userInfo }, remember);
+      window.location.href = "dashboard.html";
+    });
+  </script>
+</body>
+</html>

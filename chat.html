@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <div class="badge">Medlemschat</div>
+      <h1>Snakk med <span class="accent">de andre</span></h1>
+      <p class="lead">Spør om treningspartner, del tips, eller bli enige om en gruppetime.</p>
+    </div>
+
+    <div class="chat-wrap">
+      <div class="chat-messages" id="messages"></div>
+      <form class="chat-input" id="chatForm">
+        <input id="chatInput" type="text" placeholder="Skriv en melding..." autocomplete="off" required />
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+    <p class="muted text-center" style="margin-top:1rem; font-size:.82rem;">
+      Merk: meldinger lagres lokalt i din nettleser. Ekte felles chat krever en backend.
+    </p>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (u) {
+      document.getElementById("header-slot").innerHTML = renderHeader("chat");
+      document.getElementById("footer-slot").innerHTML = renderFooter();
+    }
+
+    const CHAT_KEY = "kraftverket_chat";
+    function loadChat() {
+      try { return JSON.parse(localStorage.getItem(CHAT_KEY)) || seed(); }
+      catch { return seed(); }
+    }
+    function saveChat(c) { localStorage.setItem(CHAT_KEY, JSON.stringify(c)); }
+
+    function seed() {
+      const now = Date.now();
+      const seed = [
+        { username: "ole",    text: "Noen som vil løpe en runde rundt vannet kl. 17:00 idag?",   ts: now - 1000*60*60*4 },
+        { username: "kari",   text: "Jeg blir med! Møter deg ved inngangen.",                    ts: now - 1000*60*60*3 },
+        { username: "erik",   text: "Nye PR på markløft idag: 180 kg 🔥",                       ts: now - 1000*60*60*2 },
+        { username: "ingrid", text: "Heftig, Erik! Husk å logge det i appen.",                  ts: now - 1000*60*60   },
+        { username: "lars",   text: "Noen tips til måltid før morgenstyrketrening 06:30?",     ts: now - 1000*60*30   }
+      ];
+      saveChat(seed);
+      return seed;
+    }
+
+    function fmtTime(ts) {
+      const d = new Date(ts);
+      const today = new Date();
+      const sameDay = d.toDateString() === today.toDateString();
+      const t = d.toLocaleTimeString("no-NO", { hour: "2-digit", minute: "2-digit" });
+      return sameDay ? t : d.toLocaleDateString("no-NO", { day:"numeric", month:"short" }) + " " + t;
+    }
+
+    function render() {
+      const chat = loadChat();
+      const box = document.getElementById("messages");
+      box.innerHTML = chat.map(m => {
+        const member = window.MEMBERS[m.username];
+        if (!member) return "";
+        const own = m.username === u.username;
+        return `
+          <div class="chat-msg ${own ? "own" : ""}">
+            <img class="avatar" src="${member.photo}" alt="${member.name}" />
+            <div>
+              <div class="meta">
+                <span class="name">${member.name}</span>
+                <span class="age">${member.age} år</span>
+                <span class="time">${fmtTime(m.ts)}</span>
+              </div>
+              <div class="bubble">${escapeHtml(m.text)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const txt = input.value.trim();
+      if (!txt) return;
+      const chat = loadChat();
+      chat.push({ username: u.username, text: txt, ts: Date.now() });
+      saveChat(chat);
+      input.value = "";
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

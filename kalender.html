@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalender – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <div class="badge">Ukeplan & Logg</div>
+      <h1>Kalender</h1>
+      <p class="lead">Se ukens gruppetimer eller registrer dine egne treninger.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="classes">Gruppetimer</button>
+      <button class="tab" data-tab="log">Min treningslogg</button>
+    </div>
+
+    <!-- Group classes -->
+    <div class="tab-panel active" id="panel-classes">
+      <div class="card">
+        <div id="schedule"></div>
+      </div>
+    </div>
+
+    <!-- Training log -->
+    <div class="tab-panel" id="panel-log">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="num" id="statWeek">0</div><div class="lbl">Økter denne uka</div></div>
+        <div class="stat-box"><div class="num" id="statMonth">0</div><div class="lbl">Økter denne mnd</div></div>
+        <div class="stat-box"><div class="num" id="statTotal">0</div><div class="lbl">Totalt registrert</div></div>
+        <div class="stat-box"><div class="num" id="statMin">0</div><div class="lbl">Minutter denne uka</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Registrer trening</h2>
+        <form id="logForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="logDate">Dato</label>
+              <input id="logDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="logType">Type</label>
+              <select id="logType">
+                <option>Styrke</option>
+                <option>Kondisjon</option>
+                <option>Gruppetime</option>
+                <option>Mobilitet</option>
+                <option>Annet</option>
+              </select>
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="logDuration">Varighet (min)</label>
+              <input id="logDuration" type="number" min="5" max="240" value="60" required />
+            </div>
+            <div class="field">
+              <label for="logNote">Notat (valgfritt)</label>
+              <input id="logNote" type="text" placeholder="F.eks. Push-økt, 5x5 benkpress" />
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Lagre økt</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Tidligere økter</h2>
+        <ul class="log-list" id="logList"></ul>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (u) {
+      document.getElementById("header-slot").innerHTML = renderHeader("kalender");
+      document.getElementById("footer-slot").innerHTML = renderFooter();
+    }
+
+    // ── Tab switching
+    document.querySelectorAll(".tabs .tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ── Group class schedule
+    const SCHEDULE = [
+      { day: "Mandag",  items: [
+        { time: "07:00", name: "Morgenstyrke" },
+        { time: "17:30", name: "Spinning" },
+        { time: "19:00", name: "CrossFit" }
+      ]},
+      { day: "Tirsdag", items: [
+        { time: "09:00", name: "Yoga & mobilitet" },
+        { time: "18:00", name: "HIIT" }
+      ]},
+      { day: "Onsdag",  items: [
+        { time: "06:30", name: "Styrkesirkel" },
+        { time: "17:00", name: "Spinning" },
+        { time: "19:30", name: "Boxing basics" }
+      ]},
+      { day: "Torsdag", items: [
+        { time: "09:00", name: "Senior fitness" },
+        { time: "18:00", name: "CrossFit" }
+      ]},
+      { day: "Fredag",  items: [
+        { time: "07:00", name: "Morgenstyrke" },
+        { time: "17:00", name: "Spinning" }
+      ]},
+      { day: "Lørdag",  items: [
+        { time: "10:00", name: "Helgekondis" },
+        { time: "11:30", name: "Yoga flow" }
+      ]},
+      { day: "Søndag",  items: [
+        { time: "11:00", name: "Restitusjon & strekk" }
+      ]}
+    ];
+    document.getElementById("schedule").innerHTML = SCHEDULE.map(d => `
+      <div class="day-row">
+        <div class="day-label">${d.day}</div>
+        <div>
+          ${d.items.map(i => `
+            <div class="class-item">
+              <span class="name">${i.name}</span>
+              <span class="time">${i.time}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `).join("");
+
+    // ── Training log (localStorage per bruker)
+    const LOG_KEY = "kraftverket_log_" + u.username;
+    function loadLog()  { try { return JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch { return []; } }
+    function saveLog(l) { localStorage.setItem(LOG_KEY, JSON.stringify(l)); }
+
+    document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+
+    document.getElementById("logForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const log = loadLog();
+      log.push({
+        date: document.getElementById("logDate").value,
+        type: document.getElementById("logType").value,
+        duration: +document.getElementById("logDuration").value,
+        note: document.getElementById("logNote").value.trim()
+      });
+      saveLog(log);
+      document.getElementById("logForm").reset();
+      document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+      document.getElementById("logDuration").value = 60;
+      renderLog();
+    });
+
+    function renderLog() {
+      const log = loadLog().sort((a,b) => b.date.localeCompare(a.date));
+      const list = document.getElementById("logList");
+      if (!log.length) {
+        list.innerHTML = `<div class="empty-state">Ingen registrerte økter ennå.</div>`;
+      } else {
+        list.innerHTML = log.map((l, idx) => `
+          <li class="log-item">
+            <div>
+              <div class="what">${l.type}${l.note ? ` – <span class="muted" style="font-weight:400;">${l.note}</span>` : ""}</div>
+              <div class="when">${l.date}</div>
+            </div>
+            <div class="duration">${l.duration} min</div>
+          </li>
+        `).join("");
+      }
+
+      // Stats
+      const today = new Date();
+      const weekStart = new Date(today); weekStart.setDate(today.getDate() - today.getDay() + 1);
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const inWeek  = log.filter(l => new Date(l.date) >= weekStart);
+      const inMonth = log.filter(l => new Date(l.date) >= monthStart);
+      document.getElementById("statWeek").textContent  = inWeek.length;
+      document.getElementById("statMonth").textContent = inMonth.length;
+      document.getElementById("statTotal").textContent = log.length;
+      document.getElementById("statMin").textContent   = inWeek.reduce((s,l) => s + l.duration, 0);
+    }
+    renderLog();
+  </script>
+</body>
+</html>

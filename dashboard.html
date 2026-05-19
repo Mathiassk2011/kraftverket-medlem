@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hjem – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <div class="badge">Medlemsportal</div>
+      <h1>Velkommen <span class="accent" id="greetName"></span></h1>
+      <p class="lead">Velg en seksjon for å komme i gang.</p>
+    </div>
+
+    <div class="tile-grid">
+      <a class="tile" href="mifflin.html">
+        <div class="icon">🍽️</div>
+        <h3>Kosthold & Mifflin-kalk</h3>
+        <p>Regn ut daglige kalori- og makrobehov, og bla i oppskrifter med 30–50 g protein.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a class="tile" href="kalender.html">
+        <div class="icon">📅</div>
+        <h3>Kalender</h3>
+        <p>Se ukens gruppetimer og loggfør egne treninger.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a class="tile" href="chat.html">
+        <div class="icon">💬</div>
+        <h3>Chatrom</h3>
+        <p>Snakk med andre medlemmer – finn treningspartner eller del tips.</p>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (u) {
+      document.getElementById("header-slot").innerHTML = renderHeader("dashboard");
+      document.getElementById("footer-slot").innerHTML = renderFooter();
+      document.getElementById("greetName").textContent = u.name.split(" ")[0];
+    }
+  </script>
+</body>
+</html>

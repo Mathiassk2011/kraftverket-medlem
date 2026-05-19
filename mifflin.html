@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kosthold – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <div class="badge">Mifflin-St Jeor</div>
+      <h1>Kosthold & <span class="accent">makrokalk</span></h1>
+      <p class="lead">Regn ut dagsbehovet ditt for kalorier, proteiner, karbohydrater og fett.</p>
+    </div>
+
+    <div class="card">
+      <h2>Dine opplysninger</h2>
+      <form id="calc">
+        <div class="row-2">
+          <div class="field">
+            <label for="gender">Kjønn</label>
+            <select id="gender">
+              <option value="male">Mann</option>
+              <option value="female">Kvinne</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="age">Alder</label>
+            <input id="age" type="number" min="15" max="90" value="25" required />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="weight">Vekt (kg)</label>
+            <input id="weight" type="number" min="35" max="200" step="0.1" value="75" required />
+          </div>
+          <div class="field">
+            <label for="height">Høyde (cm)</label>
+            <input id="height" type="number" min="130" max="220" value="178" required />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="activity">Aktivitetsnivå</label>
+            <select id="activity">
+              <option value="1.2">Stillesittende</option>
+              <option value="1.375">Lett aktiv (1–3 økter/uke)</option>
+              <option value="1.55" selected>Moderat aktiv (3–5 økter/uke)</option>
+              <option value="1.725">Veldig aktiv (6–7 økter/uke)</option>
+              <option value="1.9">Ekstremt aktiv (atlet)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="goal">Mål</label>
+            <select id="goal">
+              <option value="-500">Gå ned i vekt (-0.5 kg/uke)</option>
+              <option value="0" selected>Vedlikehold</option>
+              <option value="300">Bygge muskler (+0.3 kg/uke)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">Beregn</button>
+      </form>
+
+      <div id="results" style="display:none;">
+        <div class="kcal-display">
+          <div class="num" id="kcal">0</div>
+          <div class="lbl">Kalorier per dag</div>
+        </div>
+        <div class="macro-result">
+          <div class="macro-box protein"><div class="val" id="protein">0g</div><div class="lbl">Protein</div></div>
+          <div class="macro-box carbs"><div class="val" id="carbs">0g</div><div class="lbl">Karbohydrat</div></div>
+          <div class="macro-box fat"><div class="val" id="fat">0g</div><div class="lbl">Fett</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-hero mt-2">
+      <h2 style="font-size:1.7rem;">Oppskrifter <span class="muted" style="font-weight:500; font-size:1rem;">30–50 g protein per porsjon</span></h2>
+    </div>
+
+    <div class="recipe-grid" id="recipeGrid"></div>
+  </main>
+
+  <!-- Recipe modal -->
+  <div class="modal-backdrop" id="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="img-wrap"><img id="mImg" src="" alt="" /></div>
+      <div class="body">
+        <button class="close" onclick="closeModal()">✕</button>
+        <h2 id="mName"></h2>
+        <div class="meta" style="margin:.5rem 0; display:flex; gap:.4rem; flex-wrap:wrap;">
+          <span class="chip orange" id="mProtein"></span>
+          <span class="chip" id="mKcal"></span>
+          <span class="chip" id="mTime"></span>
+        </div>
+        <h4>Ingredienser</h4>
+        <ul id="mIng"></ul>
+        <h4>Fremgangsmåte</h4>
+        <ol id="mSteps"></ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="recipes.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (u) {
+      document.getElementById("header-slot").innerHTML = renderHeader("mifflin");
+      document.getElementById("footer-slot").innerHTML = renderFooter();
+    }
+
+    // Mifflin-St Jeor BMR
+    function calcBMR(gender, w, h, age) {
+      return gender === "male"
+        ? 10*w + 6.25*h - 5*age + 5
+        : 10*w + 6.25*h - 5*age - 161;
+    }
+
+    document.getElementById("calc").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const gender = document.getElementById("gender").value;
+      const age = +document.getElementById("age").value;
+      const w = +document.getElementById("weight").value;
+      const h = +document.getElementById("height").value;
+      const act = +document.getElementById("activity").value;
+      const goal = +document.getElementById("goal").value;
+
+      const bmr = calcBMR(gender, w, h, age);
+      const tdee = Math.round(bmr * act + goal);
+
+      // Makrofordeling: 30% protein, 40% karbo, 30% fett
+      const protein = Math.round(tdee * 0.30 / 4);
+      const carbs   = Math.round(tdee * 0.40 / 4);
+      const fat     = Math.round(tdee * 0.30 / 9);
+
+      document.getElementById("kcal").textContent = tdee;
+      document.getElementById("protein").textContent = protein + " g";
+      document.getElementById("carbs").textContent   = carbs + " g";
+      document.getElementById("fat").textContent     = fat + " g";
+      document.getElementById("results").style.display = "block";
+      document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    // Render oppskrifter
+    const grid = document.getElementById("recipeGrid");
+    grid.innerHTML = window.RECIPES.map(r => `
+      <div class="recipe-card" onclick="openRecipe('${r.id}')">
+        <div class="img-wrap"><img src="${r.image}" alt="${r.name}" loading="lazy" /></div>
+        <div class="body">
+          <h3>${r.name}</h3>
+          <div class="meta">
+            <span class="chip orange">${r.protein} g protein</span>
+            <span class="chip">${r.kcal} kcal</span>
+            <span class="chip">${r.time}</span>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    function openRecipe(id) {
+      const r = window.RECIPES.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById("mImg").src = r.image;
+      document.getElementById("mImg").alt = r.name;
+      document.getElementById("mName").textContent = r.name;
+      document.getElementById("mProtein").textContent = r.protein + " g protein";
+      document.getElementById("mKcal").textContent = r.kcal + " kcal";
+      document.getElementById("mTime").textContent = r.time;
+      document.getElementById("mIng").innerHTML = r.ingredients.map(i => `<li>${i}</li>`).join("");
+      document.getElementById("mSteps").innerHTML = r.steps.map(s => `<li>${s}</li>`).join("");
+      document.getElementById("modal").classList.add("open");
+    }
+    function closeModal() { document.getElementById("modal").classList.remove("open"); }
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+  </script>
+</body>
+</html>
