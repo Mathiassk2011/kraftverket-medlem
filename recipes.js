@@ -1,35 +1,51 @@
 // Matretter med 30-50 g protein per porsjon. 110 oppskrifter.
 const IMG = {
-  kylling:    "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800",
-  storfe:     "https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=800",
-  laks:       "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800",
-  hvitfisk:   "https://images.unsplash.com/photo-1535140728325-a4d3707eee94?w=800",
-  egg:        "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800",
-  pasta:      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
-  salat:      "https://images.unsplash.com/photo-1604908554049-01b1ec5c7d8a?w=800",
-  taco:       "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800",
-  wrap:       "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800",
-  hytteost:   "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800",
-  bowl:       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
-  pannekake:  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800",
-  smoothie:   "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800",
-  burger:     "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800",
-  pizza:      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
-  suppe:      "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
-  ris:        "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800",
-  curry:      "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800",
-  vegetar:    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
-  havre:      "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=800",
-  yoghurt:    "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800",
-  reker:      "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800",
-  noodle:     "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800",
-  steak:      "https://images.unsplash.com/photo-1558030006-450675393462?w=800",
-  sushi:      "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800",
-  falafel:    "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=800",
-  tofu:       "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?w=800",
-  omelett:    "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=800",
-  protein:    "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=800",
-  kjottdeig:  "https://images.unsplash.com/photo-1432139509613-5c4255815697?w=800"
+  kylling:          "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800",
+  kylling_grill:    "https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?w=800",
+  kylling_stir:     "https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800",
+  kylling_teriyaki: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800",
+  kylling_bakt:     "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
+  storfe:           "https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=800",
+  laks:             "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800",
+  hvitfisk:         "https://images.unsplash.com/photo-1535140728325-a4d3707eee94?w=800",
+  egg:              "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800",
+  pasta:            "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+  pasta_bolognese:  "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800",
+  pasta_carbonara:  "https://images.unsplash.com/photo-1612347289043-f9f4c7b89d84?w=800",
+  pasta_seafood:    "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=800",
+  salat:            "https://images.unsplash.com/photo-1604908554049-01b1ec5c7d8a?w=800",
+  salat_greek:      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+  salat_caesar:     "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=800",
+  salat_fargerik:   "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800",
+  taco:             "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800",
+  wrap:             "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800",
+  hytteost:         "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800",
+  bowl:             "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
+  bowl_bento:       "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800",
+  pannekake:        "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800",
+  pannekake_frokost:"https://images.unsplash.com/photo-1484723091739-30990106967c?w=800",
+  smoothie:         "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800",
+  burger:           "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800",
+  burger2:          "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800",
+  pizza:            "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
+  suppe:            "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
+  pho:              "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800",
+  ris:              "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800",
+  curry:            "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800",
+  vegetar:          "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+  havre:            "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=800",
+  yoghurt:          "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800",
+  reker:            "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800",
+  noodle:           "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800",
+  pad_thai:         "https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=800",
+  steak:            "https://images.unsplash.com/photo-1558030006-450675393462?w=800",
+  sushi:            "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800",
+  falafel:          "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?w=800",
+  tofu:             "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?w=800",
+  omelett:          "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=800",
+  avokado_toast:    "https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=800",
+  protein:          "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=800",
+  kjottdeig:        "https://images.unsplash.com/photo-1432139509613-5c4255815697?w=800"
 };
 
 window.RECIPES = [
@@ -77,19 +93,19 @@ window.RECIPES = [
   // ── 100 NYE OPPSKRIFTER ──
 
   // KYLLING (1-18)
-  { id: "kylling-teriyaki", name: "Kylling teriyaki med ris", image: IMG.kylling, protein: 43, kcal: 590, time: "20 min",
+  { id: "kylling-teriyaki", name: "Kylling teriyaki med ris", image: IMG.kylling_teriyaki, protein: 43, kcal: 590, time: "20 min",
     ingredients: ["200 g kyllingfilet","100 g ris","3 ss teriyakisaus","1 ts sesamfrø","Vårløk","Brokkoli"],
     steps: ["Kok risen.","Skjær kylling i biter, stek i panne 6 min.","Hell over teriyakisaus, kok inn 2 min.","Damp brokkoli ved siden av.","Topp med sesam og vårløk."] },
 
-  { id: "kylling-parmesan", name: "Kylling parmesan", image: IMG.kylling, protein: 47, kcal: 640, time: "30 min",
+  { id: "kylling-parmesan", name: "Kylling parmesan", image: IMG.kylling_bakt, protein: 47, kcal: 640, time: "30 min",
     ingredients: ["220 g kyllingfilet","30 g parmesan","2 ss tomatpuré","50 g mozzarella","Italienske urter","Salat"],
     steps: ["Bank kyllingen flat, krydre.","Stek 3 min pr. side.","Smør på tomatpuré, dryss parmesan og mozzarella.","Gratiner i ovnen 8 min på 200 °C.","Server med salat."] },
 
-  { id: "kylling-fajitas", name: "Kylling fajitas med paprika", image: IMG.kylling, protein: 41, kcal: 560, time: "20 min",
+  { id: "kylling-fajitas", name: "Kylling fajitas med paprika", image: IMG.taco, protein: 41, kcal: 560, time: "20 min",
     ingredients: ["200 g kyllingfilet","2 paprika","1 rødløk","Tacokrydder","2 lavkarbo-wraps","Gresk yoghurt"],
     steps: ["Skjær kylling og grønnsaker i strimler.","Stek kylling med krydder 5 min.","Tilsett paprika og løk, stek 5 min til.","Varm wrap, fyll med blandingen.","Topp med gresk yoghurt."] },
 
-  { id: "kylling-caesar", name: "Kylling caesarsalat", image: IMG.salat, protein: 42, kcal: 530, time: "15 min",
+  { id: "kylling-caesar", name: "Kylling caesarsalat", image: IMG.salat_caesar, protein: 42, kcal: 530, time: "15 min",
     ingredients: ["180 g kyllingfilet","Romanosalat","2 ss caesardressing (light)","20 g parmesan","Croutons","Sitron"],
     steps: ["Krydre og stek kyllingen 6 min.","La kyllingen hvile, skjær i strimler.","Bland salat og dressing i en bolle.","Topp med kylling, parmesan og croutons.","Press litt sitron over."] },
 
@@ -97,15 +113,15 @@ window.RECIPES = [
     ingredients: ["200 g kyllingfilet","2 dl tomatpassata","1 dl matfløte 9%","Tikka masala-krydder","80 g ris","Koriander"],
     steps: ["Kok ris.","Skjær kylling i biter, krydre godt.","Stek kyllingen 5 min.","Tilsett tomatpassata og fløte, kok 10 min.","Server med ris og koriander."] },
 
-  { id: "kylling-shawarma", name: "Kylling shawarma med tzatziki", image: IMG.kylling, protein: 45, kcal: 610, time: "25 min",
+  { id: "kylling-shawarma", name: "Kylling shawarma med tzatziki", image: IMG.wrap, protein: 45, kcal: 610, time: "25 min",
     ingredients: ["200 g kyllinglår","Shawarma-krydder","1 dl tzatziki","Tomat, salat, rødløk","1 pita fullkorn","Sitron"],
     steps: ["Marinér kylling i krydder 10 min.","Stek kylling i panne 8 min.","Varm pitaen.","Fyll pita med kylling, salat og grønnsaker.","Topp med tzatziki."] },
 
-  { id: "kylling-grill", name: "Grillet kylling med rotgrønnsaker", image: IMG.kylling, protein: 46, kcal: 560, time: "35 min",
+  { id: "kylling-grill", name: "Grillet kylling med rotgrønnsaker", image: IMG.kylling_grill, protein: 46, kcal: 560, time: "35 min",
     ingredients: ["220 g kyllingfilet","200 g gulrot","200 g pastinakk","2 ss olivenolje","Rosmarin","Hvitløk"],
     steps: ["Forvarm ovn til 200 °C.","Skjær grønnsakene i staver, bland med olje og urter.","Stek i ovnen 25 min.","Grill kyllingen 5 min pr. side.","Anrett og server."] },
 
-  { id: "kylling-brokkoli", name: "Kylling og brokkoli stir-fry", image: IMG.kylling, protein: 44, kcal: 530, time: "20 min",
+  { id: "kylling-brokkoli", name: "Kylling og brokkoli stir-fry", image: IMG.kylling_stir, protein: 44, kcal: 530, time: "20 min",
     ingredients: ["200 g kyllingfilet","250 g brokkoli","2 ss østerssaus","1 ss soyasaus","Hvitløk, ingefær","100 g ris"],
     steps: ["Kok risen.","Skjær kylling i biter, stek 4 min.","Tilsett brokkoli, hvitløk og ingefær.","Hell på sauser, stek 4 min til.","Server over ris."] },
 
@@ -117,7 +133,7 @@ window.RECIPES = [
     ingredients: ["200 g kyllingfilet","Proteinburgerbrød","Cheddarost","Salat, tomat, agurk","Light dressing"],
     steps: ["Krydre og stek kyllingfileten 4 min pr. side.","Rist burgerbrødet.","Smør dressing på brødet.","Legg på kylling, ost, salat og tomat.","Klem sammen og server."] },
 
-  { id: "kylling-sotpotet", name: "Kylling med søtpotet", image: IMG.kylling, protein: 42, kcal: 570, time: "30 min",
+  { id: "kylling-sotpotet", name: "Kylling med søtpotet", image: IMG.kylling_grill, protein: 42, kcal: 570, time: "30 min",
     ingredients: ["200 g kyllingfilet","250 g søtpotet","Brokkoli","Olivenolje","Salt, pepper, paprikapulver"],
     steps: ["Skjær søtpotet i terninger, stek i ovn 20 min på 200 °C.","Krydre og stek kylling 6 min.","Damp brokkoli i 4 min.","Anrett kylling, søtpotet og brokkoli.","Krydre på toppen."] },
 
@@ -129,23 +145,23 @@ window.RECIPES = [
     ingredients: ["200 g kyllinglår","1 boks kikerter","1 dl tomatpassata","Spisskum","Hvitløk","Spinat"],
     steps: ["Brun kyllinglårene i panne.","Tilsett krydder, kikerter og tomat.","Småkok 25 min.","Rør inn spinat siste 3 min.","Server varm."] },
 
-  { id: "kylling-katsu", name: "Kylling katsu med ris", image: IMG.kylling, protein: 46, kcal: 680, time: "30 min",
+  { id: "kylling-katsu", name: "Kylling katsu med ris", image: IMG.kylling_bakt, protein: 46, kcal: 680, time: "30 min",
     ingredients: ["200 g kyllingfilet","Panko","1 egg","100 g ris","Katsu-saus","Spisskålsalat"],
     steps: ["Bank kyllingen flat.","Vend i egg og panko.","Stek i panne 4 min pr. side.","Skjær i strimler og legg over ris.","Hell over katsu-saus."] },
 
-  { id: "kylling-bakad", name: "Bakt kylling med fetaost", image: IMG.kylling, protein: 47, kcal: 590, time: "30 min",
+  { id: "kylling-bakad", name: "Bakt kylling med fetaost", image: IMG.kylling_bakt, protein: 47, kcal: 590, time: "30 min",
     ingredients: ["220 g kyllingfilet","60 g fetaost","Cherrytomater","Oliven","Oregano","Olivenolje"],
     steps: ["Legg kylling i ildfast form.","Topp med fetaost, tomater og oliven.","Drypp over olje og krydder.","Stek i ovn 25 min på 200 °C.","Server med salat."] },
 
-  { id: "kylling-rosmarin", name: "Rosmarin-kylling med poteter", image: IMG.kylling, protein: 45, kcal: 600, time: "35 min",
+  { id: "kylling-rosmarin", name: "Rosmarin-kylling med poteter", image: IMG.kylling_grill, protein: 45, kcal: 600, time: "35 min",
     ingredients: ["220 g kyllingfilet","300 g småpoteter","Fersk rosmarin","Hvitløk","Smør, olivenolje","Sitron"],
     steps: ["Stek potetene i ovn 25 min.","Stek kylling med rosmarin og hvitløk 5 min pr. side.","Tilsett smør og sitronsaft.","Anrett poteter og kylling.","Drypp smørsaus over."] },
 
-  { id: "kylling-honning-sennep", name: "Honning-sennep kylling", image: IMG.kylling, protein: 43, kcal: 580, time: "25 min",
+  { id: "kylling-honning-sennep", name: "Honning-sennep kylling", image: IMG.kylling_teriyaki, protein: 43, kcal: 580, time: "25 min",
     ingredients: ["200 g kyllingfilet","1 ss honning","1 ss dijonsennep","100 g ris","Asparges","Olivenolje"],
     steps: ["Kok ris.","Bland honning og sennep til marinade.","Pensle kyllingen, stek 5 min pr. side.","Damp asparges i 4 min.","Server kyllingen over ris med asparges."] },
 
-  { id: "kylling-pesto", name: "Pestokylling med couscous", image: IMG.kylling, protein: 44, kcal: 610, time: "20 min",
+  { id: "kylling-pesto", name: "Pestokylling med couscous", image: IMG.kylling_stir, protein: 44, kcal: 610, time: "20 min",
     ingredients: ["200 g kyllingfilet","2 ss pesto","80 g couscous","Cherrytomater","Mozzarella mini","Ruccola"],
     steps: ["Lag couscous med kokende vann.","Stek kyllingen 6 min.","Vend kyllingen i pesto.","Bland med couscous, tomater og mozzarella.","Topp med ruccola."] },
 
@@ -170,7 +186,7 @@ window.RECIPES = [
     ingredients: ["150 g biff","80 g ris","Spinat, gulrot, sopp","1 egg","Gochujang","Sesamolje, soya"],
     steps: ["Kok ris.","Stek biff i strimler 3 min.","Stek grønnsaker hver for seg.","Stek et speilegg.","Anrett alt på risen og topp med gochujang."] },
 
-  { id: "bolognese", name: "Bolognese med pasta", image: IMG.pasta, protein: 41, kcal: 660, time: "35 min",
+  { id: "bolognese", name: "Bolognese med pasta", image: IMG.pasta_bolognese, protein: 41, kcal: 660, time: "35 min",
     ingredients: ["200 g kjøttdeig","Løk, gulrot, hvitløk","2 dl tomatpassata","100 g spaghetti","Parmesan","Olivenolje, oregano"],
     steps: ["Finhakk grønnsakene og fres i olje.","Brun kjøttdeigen i pannen.","Tilsett passata og krydder, småkok 20 min.","Kok pastaen al dente.","Topp med parmesan og server."] },
 
@@ -194,7 +210,7 @@ window.RECIPES = [
     ingredients: ["180 g biff","100 g eggnudler","Pak choi","Soya, sriracha","Sesamfrø","Lime"],
     steps: ["Kok nudler.","Stek biffen rask 3 min.","Damp pak choi 2 min.","Bland nudler med soya og sriracha.","Topp med biff, sesam og lime."] },
 
-  { id: "carpaccio-salat", name: "Carpaccio-salat med ruccola", image: IMG.salat, protein: 35, kcal: 460, time: "10 min",
+  { id: "carpaccio-salat", name: "Carpaccio-salat med ruccola", image: IMG.salat_fargerik, protein: 35, kcal: 460, time: "10 min",
     ingredients: ["120 g carpaccio (rå biff)","Ruccola","30 g parmesan","Pinjekjerner","Olivenolje, sitron","Pepper"],
     steps: ["Legg carpaccio på tallerken.","Topp med ruccola.","Riv over parmesan.","Strø på pinjekjerner.","Drypp over olje, sitron og pepper."] },
 
@@ -264,7 +280,7 @@ window.RECIPES = [
     ingredients: ["3 egg","Spinat","30 g fetaost","Cherrytomater","Olivenolje","Salt, pepper"],
     steps: ["Pisk eggene med salt.","Stek spinat og tomater først 2 min.","Hell over eggene.","Strø over fetaost.","Brett omeletten dobbel og server."] },
 
-  { id: "hytteost-pancake", name: "Hytteostpancakes", image: IMG.pannekake, protein: 35, kcal: 480, time: "15 min",
+  { id: "hytteost-pancake", name: "Hytteostpancakes", image: IMG.pannekake_frokost, protein: 35, kcal: 480, time: "15 min",
     ingredients: ["150 g cottage cheese","2 egg","40 g havregryn","Banan","Kanel","Bær"],
     steps: ["Bland alt i en blender.","Stek små pancakes på lav varme 2 min pr. side.","Anrett i en stabel.","Topp med bær.","Server varm."] },
 
@@ -309,7 +325,7 @@ window.RECIPES = [
     ingredients: ["200 g røde linser","1 dl tomatpassata","Spinat","Løk, hvitløk","Spisskum","Salt"],
     steps: ["Fres løk og hvitløk.","Tilsett linser og krydder.","Hell på tomat og vann, kok 20 min.","Rør inn spinat.","Smak til og server."] },
 
-  { id: "kikertesalat", name: "Kikertesalat med fetaost", image: IMG.salat, protein: 30, kcal: 510, time: "10 min",
+  { id: "kikertesalat", name: "Kikertesalat med fetaost", image: IMG.salat_greek, protein: 30, kcal: 510, time: "10 min",
     ingredients: ["1 boks kikerter","60 g fetaost","Cherrytomater, agurk","Rødløk","Olivenolje, sitron","Persille"],
     steps: ["Skyll og avrenn kikertene.","Bland med tomater, agurk og rødløk.","Smuldre fetaost over.","Drypp over olje og sitron.","Topp med persille."] },
 
@@ -329,7 +345,7 @@ window.RECIPES = [
     ingredients: ["200 g kokte linser","1 egg","30 g havre","Løk","Spisskum","Gresk yoghurt"],
     steps: ["Mos linsene grovt.","Bland med egg, havre og krydder.","Form burgere.","Stek 4 min pr. side.","Server med yoghurt på toppen."] },
 
-  { id: "edamame-salat", name: "Edamamesalat med mynte", image: IMG.salat, protein: 32, kcal: 460, time: "10 min",
+  { id: "edamame-salat", name: "Edamamesalat med mynte", image: IMG.salat_fargerik, protein: 32, kcal: 460, time: "10 min",
     ingredients: ["200 g edamame","60 g fetaost","Mynte, mint","Sitron, olivenolje","Granateple","Salt"],
     steps: ["Kok edamame i 5 min.","Bland med fetaost og mynte.","Drypp over olje og sitron.","Topp med granateple.","Server som tilbehør eller hovedrett."] },
 
@@ -337,7 +353,7 @@ window.RECIPES = [
     ingredients: ["1 boks kidneybønner","1 boks svarte bønner","2 dl tomatpassata","Mais","Tacokrydder","Kvarg"],
     steps: ["Stek løk og hvitløk.","Tilsett bønner, tomat og krydder.","Småkok 20 min.","Topp med kvarg.","Server varm."] },
 
-  { id: "halloumi-salat", name: "Halloumi-salat", image: IMG.salat, protein: 34, kcal: 540, time: "15 min",
+  { id: "halloumi-salat", name: "Halloumi-salat", image: IMG.salat_fargerik, protein: 34, kcal: 540, time: "15 min",
     ingredients: ["180 g halloumi","Vannmelon","Mynte","Olivenolje","Sitron","Pepper"],
     steps: ["Skjær halloumi i skiver.","Stek 2 min pr. side.","Bland med vannmelon og mynte.","Drypp over olje og sitron.","Server umiddelbart."] },
 
@@ -358,7 +374,7 @@ window.RECIPES = [
     ingredients: ["3 egg","80 g spekeskinke","2 engelske muffins","Hollandaise (light)","Spinat","Pepper"],
     steps: ["Lag posjerte egg 3 min.","Rist muffinsene.","Legg på spinat og skinke.","Topp med egg og hollandaise.","Pepre på toppen."] },
 
-  { id: "avokado-toast", name: "Avokado-toast med egg", image: IMG.egg, protein: 30, kcal: 520, time: "10 min",
+  { id: "avokado-toast", name: "Avokado-toast med egg", image: IMG.avokado_toast, protein: 30, kcal: 520, time: "10 min",
     ingredients: ["2 grovbrød","1 avokado","2 egg","40 g fetaost","Chiliflak","Sitron"],
     steps: ["Rist brødskivene.","Mos avokado med sitron.","Stek 2 speilegg.","Smør avokado på brødet, legg egg over.","Smuldre fetaost og dryss chili."] },
 
@@ -374,7 +390,7 @@ window.RECIPES = [
     ingredients: ["250 g skyr","40 g müsli","Bær","Kanel","Honning","Mandler"],
     steps: ["Ha skyr i en bolle.","Topp med müsli og bær.","Strø over mandler og kanel.","Drypp over honning."] },
 
-  { id: "protein-vaffel", name: "Proteinvafler med bær", image: IMG.pannekake, protein: 35, kcal: 520, time: "15 min",
+  { id: "protein-vaffel", name: "Proteinvafler med bær", image: IMG.pannekake_frokost, protein: 35, kcal: 520, time: "15 min",
     ingredients: ["100 g havremel","30 g proteinpulver","2 egg","2 dl skummet melk","Bær","Kvarg"],
     steps: ["Bland alt til en røre.","Stek i vaffeljern 3 min.","Anrett med kvarg.","Topp med bær.","Server umiddelbart."] },
 
@@ -383,7 +399,7 @@ window.RECIPES = [
     steps: ["Ha alt i en blender.","Kjør glatt.","Hell i et høyt glass.","Server umiddelbart."] },
 
   // SALATER (76-83)
-  { id: "greek-salad-kylling", name: "Greek salad med kylling", image: IMG.salat, protein: 44, kcal: 570, time: "15 min",
+  { id: "greek-salad-kylling", name: "Greek salad med kylling", image: IMG.salat_greek, protein: 44, kcal: 570, time: "15 min",
     ingredients: ["180 g kyllingfilet","Tomat, agurk, rødløk","80 g fetaost","Oliven","Olivenolje, oregano","Sitron"],
     steps: ["Stek kylling og skjær i biter.","Bland grønnsakene.","Topp med fetaost og oliven.","Legg på kylling.","Drypp over olje, sitron og oregano."] },
 
@@ -391,11 +407,11 @@ window.RECIPES = [
     ingredients: ["150 g kylling","2 egg","60 g bacon","Avokado","Blåmuggost","Cherrytomater"],
     steps: ["Kok eggene 8 min.","Stek kylling og bacon.","Anrett salat i striper på tallerken.","Topp med blåmuggost.","Server med vinaigrette."] },
 
-  { id: "caesar-kalkun", name: "Caesar salad med kalkun", image: IMG.salat, protein: 42, kcal: 550, time: "15 min",
+  { id: "caesar-kalkun", name: "Caesar salad med kalkun", image: IMG.salat_caesar, protein: 42, kcal: 550, time: "15 min",
     ingredients: ["180 g kalkunfilet","Romanosalat","Caesardressing (light)","Parmesan","Croutons","Sitron"],
     steps: ["Stek kalkunen 5 min.","Skjær i strimler.","Bland salat med dressing.","Topp med kalkun, parmesan og croutons.","Press litt sitron over."] },
 
-  { id: "spinat-oksesalat", name: "Spinatsalat med oksekjøtt", image: IMG.salat, protein: 43, kcal: 540, time: "15 min",
+  { id: "spinat-oksesalat", name: "Spinatsalat med oksekjøtt", image: IMG.salat_fargerik, protein: 43, kcal: 540, time: "15 min",
     ingredients: ["180 g okse-strimler","Babyspinat","Fetaost","Granateple","Valnøtter","Balsamico"],
     steps: ["Stek oksestrimler 3 min.","Anrett spinat.","Topp med fetaost og granateple.","Legg på oksen og valnøttene.","Drypp over balsamico."] },
 
@@ -403,7 +419,7 @@ window.RECIPES = [
     ingredients: ["1 boks tunfisk","2 egg","200 g potet","Sukkererter","Oliven","Sitron"],
     steps: ["Kok poteter og egg.","Damp sukkererter.","Anrett alt i striper på fat.","Topp med tunfisk og oliven.","Drypp over sitron og olje."] },
 
-  { id: "asian-chicken-salat", name: "Asian chicken salad", image: IMG.salat, protein: 44, kcal: 540, time: "15 min",
+  { id: "asian-chicken-salat", name: "Asian chicken salad", image: IMG.salat_fargerik, protein: 44, kcal: 540, time: "15 min",
     ingredients: ["180 g kylling","Spisskål","Gulrot","Sesamdressing","Cashewnøtter","Vårløk"],
     steps: ["Stek kylling og skjær i strimler.","Strimle spisskål og gulrot.","Bland med dressing.","Topp med kylling og cashew.","Pynt med vårløk."] },
 
@@ -411,20 +427,20 @@ window.RECIPES = [
     ingredients: ["1 boks tunfisk","2 egg","Salatblader","Cherrytomater","Light majones","Sitron"],
     steps: ["Kok eggene hardt.","Mos eggene med majones.","Anrett salat.","Topp med tunfisk og eggesalat.","Drypp over sitron."] },
 
-  { id: "bonne-kornsalat", name: "Bønne- og kornsalat", image: IMG.salat, protein: 30, kcal: 530, time: "20 min",
+  { id: "bonne-kornsalat", name: "Bønne- og kornsalat", image: IMG.salat_greek, protein: 30, kcal: 530, time: "20 min",
     ingredients: ["1 boks kikerter","80 g bygg","Fetaost","Granateple","Mynte","Sitron, olivenolje"],
     steps: ["Kok byggryn i 25 min.","Bland byggen med kikerter.","Topp med fetaost og granateple.","Drypp over olje og sitron.","Pynt med mynte."] },
 
   // INTERNASJONAL (84-99)
-  { id: "pad-thai", name: "Pad thai med kylling", image: IMG.noodle, protein: 42, kcal: 640, time: "25 min",
+  { id: "pad-thai", name: "Pad thai med kylling", image: IMG.pad_thai, protein: 42, kcal: 640, time: "25 min",
     ingredients: ["180 g kylling","100 g risnudler","2 egg","Vårløk","Peanøtter","Pad thai-saus"],
     steps: ["Kok risnudlene.","Stek kylling og hell på saus.","Tilsett pisket egg, rør inn.","Bland med nudlene.","Topp med vårløk og peanøtter."] },
 
-  { id: "pho-biff", name: "Pho med biff", image: IMG.noodle, protein: 40, kcal: 560, time: "30 min",
+  { id: "pho-biff", name: "Pho med biff", image: IMG.pho, protein: 40, kcal: 560, time: "30 min",
     ingredients: ["150 g biff i tynne skiver","100 g risnudler","1 L oksebuljong","Stjerneanis, ingefær","Mynte, koriander","Lime"],
     steps: ["Kok buljong med krydder 15 min.","Kok risnudlene.","Legg biff i bunnen av bolle.","Hell over kokende buljong.","Topp med urter og lime."] },
 
-  { id: "kylling-bento", name: "Kyllingteriyaki bento", image: IMG.bowl, protein: 44, kcal: 600, time: "25 min",
+  { id: "kylling-bento", name: "Kyllingteriyaki bento", image: IMG.bowl_bento, protein: 44, kcal: 600, time: "25 min",
     ingredients: ["200 g kylling","Teriyakisaus","80 g ris","Edamame","Gulrot, agurk","Sesamfrø"],
     steps: ["Kok ris.","Stek kylling og hell over teriyaki.","Forbered grønnsakene i biter.","Anrett alt i en bento-boks.","Topp med sesamfrø."] },
 
@@ -436,7 +452,7 @@ window.RECIPES = [
     ingredients: ["200 g lammekjøtt","1 boks kikerter","Tomatpassata","Aprikoser","Ras el hanout","Couscous 60 g"],
     steps: ["Brun lammekjøttet.","Tilsett krydder, kikerter, tomat og aprikoser.","Småkok 40 min.","Lag couscous.","Server gryten over couscous."] },
 
-  { id: "carbonara", name: "Spaghetti carbonara", image: IMG.pasta, protein: 40, kcal: 680, time: "20 min",
+  { id: "carbonara", name: "Spaghetti carbonara", image: IMG.pasta_carbonara, protein: 40, kcal: 680, time: "20 min",
     ingredients: ["100 g spaghetti","80 g bacon","2 egg","40 g parmesan","Pepper","Persille"],
     steps: ["Kok spaghetti.","Stek bacon sprøtt.","Pisk egg med parmesan.","Bland varm pasta med bacon og eggblanding.","Pepre godt og server."] },
 
@@ -460,7 +476,7 @@ window.RECIPES = [
     ingredients: ["180 g pulled pork (ferdig)","2 wraps","Coleslaw","BBQ-saus","Pickles","Salat"],
     steps: ["Varm pulled pork.","Bland med BBQ-saus.","Varm wraps.","Fyll wrap med kjøtt, coleslaw og pickles.","Rull stramt og server."] },
 
-  { id: "sweet-sour", name: "Sweet & sour kylling", image: IMG.kylling, protein: 43, kcal: 660, time: "25 min",
+  { id: "sweet-sour", name: "Sweet & sour kylling", image: IMG.kylling_stir, protein: 43, kcal: 660, time: "25 min",
     ingredients: ["200 g kylling","Paprika, ananas","Sweet & sour-saus","80 g ris","Sesamfrø","Vårløk"],
     steps: ["Kok ris.","Stek kylling i biter.","Tilsett paprika og ananas.","Hell over saus, kok inn 3 min.","Server over ris med sesam."] },
 
@@ -472,7 +488,7 @@ window.RECIPES = [
     ingredients: ["200 g kjøttdeig","Lasagneplater","Tomatpassata","Bechamel light","Parmesan","Oregano"],
     steps: ["Brun kjøttdeig med tomatpassata.","Lag bechamel light.","Lagvis i form: plater, kjøtt, bechamel.","Topp med parmesan.","Stek i ovn 30 min på 200 °C."] },
 
-  { id: "souvlaki", name: "Souvlaki med tzatziki", image: IMG.kylling, protein: 44, kcal: 600, time: "30 min",
+  { id: "souvlaki", name: "Souvlaki med tzatziki", image: IMG.kylling_grill, protein: 44, kcal: 600, time: "30 min",
     ingredients: ["200 g kylling i terninger","Oregano, sitron","Tzatziki","1 pita","Tomat, agurk, rødløk","Olivenolje"],
     steps: ["Marinér kylling i krydder og sitron.","Tre på spyd.","Grill 10 min, snu underveis.","Varm pita.","Server med tzatziki og grønnsaker."] },
 
@@ -513,15 +529,15 @@ window.RECIPES = [
     ingredients: ["250 g skyr","30 g proteinpulver","Bær","Granola","Honning","Mandler"],
     steps: ["Bland skyr og proteinpulver.","Lagvis i et glass: skyr, granola, bær.","Gjenta lagene.","Topp med mandler og honning."] },
 
-  { id: "reke-pasta", name: "Reke- og hvitløkspasta", image: IMG.pasta, protein: 40, kcal: 620, time: "20 min",
+  { id: "reke-pasta", name: "Reke- og hvitløkspasta", image: IMG.pasta_seafood, protein: 40, kcal: 620, time: "20 min",
     ingredients: ["200 g reker","100 g linguine","Hvitløk","Sitron","Chili","Persille"],
     steps: ["Kok pasta.","Fres hvitløk og chili i olje.","Tilsett reker, stek 3 min.","Bland med pasta.","Topp med persille og sitron."] },
 
-  { id: "kyllingbiff-cesar", name: "Kyllingbiff cæsar", image: IMG.kylling, protein: 45, kcal: 590, time: "20 min",
+  { id: "kyllingbiff-cesar", name: "Kyllingbiff cæsar", image: IMG.salat_caesar, protein: 45, kcal: 590, time: "20 min",
     ingredients: ["220 g kyllingfilet","Romanosalat","Cæsardressing","Parmesan","Croutons","Bacon"],
     steps: ["Krydre og stek kyllingen 6 min.","Stek bacon sprøtt.","Bland salat og dressing.","Skjær kyllingen i skiver.","Topp med kylling, bacon, parmesan og croutons."] },
 
-  { id: "egg-avokado-salsa", name: "Egg med avokado og salsa", image: IMG.egg, protein: 31, kcal: 470, time: "10 min",
+  { id: "egg-avokado-salsa", name: "Egg med avokado og salsa", image: IMG.avokado_toast, protein: 31, kcal: 470, time: "10 min",
     ingredients: ["3 egg","1 avokado","Salsa","2 grovbrød","Chiliflak","Sitron"],
     steps: ["Stek 3 speilegg.","Mos avokado med sitron.","Smør avokado på brødet.","Legg eggene oppå.","Topp med salsa og chili."] }
 ];
