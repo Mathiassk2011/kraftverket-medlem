@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container-narrow">
+
+    <!-- Profile hero -->
+    <div class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <img class="profile-avatar" id="avatarPreview" src="" alt="Profilbilde" />
+        <label class="avatar-edit-btn" for="avatarInput" title="Endre bilde">✏️</label>
+        <input type="file" id="avatarInput" accept="image/*" />
+      </div>
+      <div class="profile-hero-text">
+        <h2 id="heroName"></h2>
+        <span class="role-badge" id="heroBadge"></span>
+        <p style="color:var(--text-muted); font-size:.88rem; margin-top:.5rem;" id="heroUsername"></p>
+      </div>
+    </div>
+
+    <form id="profileForm">
+
+      <!-- Personlig info -->
+      <div class="profile-section">
+        <h3>Personlig informasjon</h3>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldName">Fullt navn</label>
+            <input id="fieldName" type="text" placeholder="Ola Nordmann" required />
+          </div>
+          <div class="field">
+            <label for="fieldUsername">Brukernavn</label>
+            <input id="fieldUsername" type="text" placeholder="olanordmann" />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldEmail">E-post</label>
+            <input id="fieldEmail" type="email" placeholder="ola@eksempel.no" />
+          </div>
+          <div class="field">
+            <label for="fieldAge">Alder</label>
+            <input id="fieldAge" type="number" min="10" max="100" placeholder="25" />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldPhone">Telefon</label>
+            <input id="fieldPhone" type="tel" placeholder="+47 000 00 000" />
+          </div>
+          <div class="field">
+            <label for="fieldCity">By</label>
+            <input id="fieldCity" type="text" placeholder="Sætre" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="fieldBio">Om deg</label>
+          <textarea id="fieldBio" rows="3" placeholder="Fortell litt om deg selv, treningsmål eller favorittøkter..."></textarea>
+        </div>
+      </div>
+
+      <!-- Trening -->
+      <div class="profile-section">
+        <h3>Trening</h3>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldActivity">Primær treningsform</label>
+            <select id="fieldActivity">
+              <option value="">Velg treningsform</option>
+              <option value="hyrox">HYROX</option>
+              <option value="crossfit">CrossFit</option>
+              <option value="styrke">Styrketrening</option>
+              <option value="kondisjon">Kondisjon / løping</option>
+              <option value="flere">Kombinasjon av flere</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fieldGoal">Treningsmål</label>
+            <select id="fieldGoal">
+              <option value="">Velg mål</option>
+              <option value="konkurranser">Konkurranser / events</option>
+              <option value="muskel">Bygge muskler</option>
+              <option value="fett">Gå ned i vekt</option>
+              <option value="helse">Bedre helse</option>
+              <option value="kondisjon">Forbedre kondisjon</option>
+              <option value="styrke">Øke styrke</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldLevel">Erfaringsnivå</label>
+            <select id="fieldLevel">
+              <option value="">Velg nivå</option>
+              <option value="nybegynner">Nybegynner (under 1 år)</option>
+              <option value="middels">Middels (1–3 år)</option>
+              <option value="erfaren">Erfaren (3–5 år)</option>
+              <option value="elite">Elite (5+ år)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fieldFrequency">Treningsfrekvens</label>
+            <select id="fieldFrequency">
+              <option value="">Velg frekvens</option>
+              <option value="1-2">1–2 ganger i uka</option>
+              <option value="3-4">3–4 ganger i uka</option>
+              <option value="5-6">5–6 ganger i uka</option>
+              <option value="daglig">Daglig</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passord -->
+      <div class="profile-section">
+        <h3>Endre passord</h3>
+        <div class="row-2">
+          <div class="field">
+            <label for="fieldPwNew">Nytt passord</label>
+            <input id="fieldPwNew" type="password" placeholder="Nytt passord" autocomplete="new-password" />
+          </div>
+          <div class="field">
+            <label for="fieldPwConfirm">Bekreft passord</label>
+            <input id="fieldPwConfirm" type="password" placeholder="Gjenta nytt passord" autocomplete="new-password" />
+          </div>
+        </div>
+        <div id="pwError" class="error-msg" style="display:none;"></div>
+      </div>
+
+      <!-- Save bar -->
+      <div class="save-bar">
+        <button class="btn btn-primary" type="submit">Lagre endringer</button>
+        <a href="dashboard.html" class="btn btn-ghost">Avbryt</a>
+        <span class="save-toast" id="saveToast">✓ Lagret!</span>
+      </div>
+
+    </form>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (!u) { window.location.href = "index.html"; }
+
+    document.getElementById("header-slot").innerHTML = renderHeader("profil");
+    document.getElementById("footer-slot").innerHTML = renderFooter();
+
+    const PROFILE_KEY = "kraftverket_profile_" + u.username;
+
+    // Last lagret tilleggsprofil fra localStorage
+    function loadExtra() {
+      try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}"); } catch { return {}; }
+    }
+
+    // Fyll inn skjema
+    function populateForm() {
+      const ex = loadExtra();
+
+      // Bruk evt. lagret foto, ellers original
+      const photo = ex.photo || u.photo;
+      document.getElementById("avatarPreview").src = photo;
+      document.getElementById("heroName").textContent = ex.name || u.name;
+      document.getElementById("heroUsername").textContent = "@" + u.username;
+      document.getElementById("heroBadge").textContent = u.role === "owner" ? "Eier" : "Medlem";
+
+      document.getElementById("fieldName").value      = ex.name || u.name;
+      document.getElementById("fieldUsername").value  = u.username;
+      document.getElementById("fieldEmail").value     = ex.email || "";
+      document.getElementById("fieldAge").value       = ex.age  !== undefined ? ex.age : (u.age || "");
+      document.getElementById("fieldPhone").value     = ex.phone || "";
+      document.getElementById("fieldCity").value      = ex.city  || "";
+      document.getElementById("fieldBio").value       = ex.bio   || "";
+      document.getElementById("fieldActivity").value  = ex.activity  || "";
+      document.getElementById("fieldGoal").value      = ex.goal      || "";
+      document.getElementById("fieldLevel").value     = ex.level     || "";
+      document.getElementById("fieldFrequency").value = ex.frequency || "";
+    }
+
+    populateForm();
+
+    // Avatar – endre via fil
+    document.getElementById("avatarInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById("avatarPreview").src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Lagre
+    document.getElementById("profileForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const pwNew     = document.getElementById("fieldPwNew").value;
+      const pwConfirm = document.getElementById("fieldPwConfirm").value;
+      const pwError   = document.getElementById("pwError");
+
+      if (pwNew && pwNew !== pwConfirm) {
+        pwError.textContent = "Passordene stemmer ikke overens.";
+        pwError.style.display = "block";
+        return;
+      }
+      pwError.style.display = "none";
+
+      const avatarSrc = document.getElementById("avatarPreview").src;
+      const extra = {
+        name:      document.getElementById("fieldName").value.trim(),
+        email:     document.getElementById("fieldEmail").value.trim(),
+        age:       parseInt(document.getElementById("fieldAge").value) || u.age,
+        phone:     document.getElementById("fieldPhone").value.trim(),
+        city:      document.getElementById("fieldCity").value.trim(),
+        bio:       document.getElementById("fieldBio").value.trim(),
+        activity:  document.getElementById("fieldActivity").value,
+        goal:      document.getElementById("fieldGoal").value,
+        level:     document.getElementById("fieldLevel").value,
+        frequency: document.getElementById("fieldFrequency").value,
+        photo:     avatarSrc,
+      };
+
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(extra));
+
+      // Oppdater session-objektet slik at header viser nytt navn/foto
+      const updated = { ...u, name: extra.name, photo: extra.photo };
+      const inLocal = !!localStorage.getItem("kraftverket_session");
+      if (inLocal) {
+        localStorage.setItem("kraftverket_session", JSON.stringify(updated));
+      } else {
+        sessionStorage.setItem("kraftverket_session", JSON.stringify(updated));
+      }
+
+      // Oppdater hero
+      document.getElementById("heroName").textContent = extra.name;
+      document.getElementById("avatarPreview").src = extra.photo;
+
+      // Vis toast
+      const toast = document.getElementById("saveToast");
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+
+      // Nullstill passord-feltene
+      document.getElementById("fieldPwNew").value     = "";
+      document.getElementById("fieldPwConfirm").value = "";
+    });
+  </script>
+</body>
+</html>

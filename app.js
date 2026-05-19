@@ -54,10 +54,10 @@ function renderHeader(activeKey) {
         ${links.map(l => `<a class="tab-btn ${l.key === activeKey ? "active" : ""}" href="${l.href}">${l.label}</a>`).join("")}
       </nav>
       <div class="spacer"></div>
-      <div class="user-pill">
+      <a class="user-pill" href="profil.html" title="Rediger profil">
         <img src="${u.photo}" alt="${u.name}" />
         <span>${u.name}</span>
-      </div>
+      </a>
       <button class="logout-btn" onclick="logout()">Logg ut</button>
     </header>
   `;
