@@ -5,27 +5,189 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat – 3475 Kraftverket</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .dm-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1rem;
+      height: calc(100vh - 68px - 6rem);
+      min-height: 520px;
+    }
+    @media (max-width: 720px) {
+      .dm-layout { grid-template-columns: 1fr; height: auto; }
+      .dm-sidebar { max-height: 280px; }
+    }
+    .dm-sidebar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-y: auto;
+      padding: .5rem;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-actions {
+      display: flex; gap: .35rem; padding: .5rem;
+      border-bottom: 1px solid var(--border); margin-bottom: .5rem;
+    }
+    .sidebar-actions button {
+      flex: 1; padding: .55rem .35rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius-sm);
+      font-size: .78rem; font-weight: 700; cursor: pointer;
+      transition: all .15s;
+    }
+    .sidebar-actions button:hover { border-color: var(--orange); color: var(--orange); }
+    .sidebar-section {
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .5px;
+      color: var(--text-muted); padding: .75rem .75rem .5rem;
+    }
+    .contact {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background .15s;
+    }
+    .contact:hover { background: var(--surface2); }
+    .contact.active { background: var(--orange-glow); border: 1px solid var(--orange); }
+    .contact img.avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--orange);
+    }
+    .group-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--orange); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+      border: 2px solid var(--orange);
+      flex-shrink: 0;
+    }
+    .contact .info { flex: 1; min-width: 0; }
+    .contact .name { font-weight: 700; font-size: .92rem; }
+    .contact .preview { color: var(--text-muted); font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dm-main {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: grid; grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+    }
+    .dm-header {
+      padding: .9rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .75rem;
+      background: #111;
+    }
+    .dm-header img, .dm-header .group-avatar {
+      width: 40px; height: 40px;
+    }
+    .dm-header .name { font-weight: 800; }
+    .dm-header .sub { font-size: .78rem; color: var(--text-muted); }
+    .empty-chat {
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: .92rem; padding: 3rem 1rem;
+      text-align: center;
+    }
+    .dm-messages {
+      overflow-y: auto; padding: 1rem;
+      display: flex; flex-direction: column; gap: .85rem;
+    }
+
+    /* Modal */
+    .pick-list {
+      max-height: 280px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: .35rem;
+    }
+    .pick-row {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .5rem; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background .15s;
+    }
+    .pick-row:hover { background: var(--surface2); }
+    .pick-row img {
+      width: 36px; height: 36px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--orange);
+    }
+    .pick-row .pname { font-weight: 700; font-size: .92rem; flex: 1; }
+    .pick-row input[type="checkbox"] {
+      width: 18px; height: 18px; accent-color: var(--orange);
+    }
+  </style>
 </head>
 <body>
   <div id="header-slot"></div>
 
   <main class="container">
     <div class="section-hero">
-      <h1>Snakk med <span class="accent">de andre</span></h1>
-      <p class="lead">Felles chatrom — spør om treningspartner, del tips eller bli enige om økter.</p>
+      <h1>Meldinger & <span class="accent">grupper</span></h1>
+      <p class="lead">Send private meldinger til medlemmer eller lag grupper.</p>
     </div>
 
-    <div class="chat-wrap">
-      <div class="chat-messages" id="messages"></div>
-      <form class="chat-input" id="chatForm">
-        <input id="chatInput" type="text" placeholder="Skriv en melding..." autocomplete="off" required />
-        <button class="btn btn-primary" type="submit">Send</button>
-      </form>
+    <div class="dm-layout">
+      <aside class="dm-sidebar">
+        <div class="sidebar-actions">
+          <button onclick="openNewDM()">+ Ny samtale</button>
+          <button onclick="openNewGroup()">+ Ny gruppe</button>
+        </div>
+
+        <div class="sidebar-section">Samtaler</div>
+        <div id="convList"></div>
+      </aside>
+
+      <section class="dm-main">
+        <div class="dm-header" id="chatHeader" style="display:none;">
+          <div id="chatHeaderIcon"></div>
+          <div>
+            <div class="name" id="chatName"></div>
+            <div class="sub" id="chatSub"></div>
+          </div>
+        </div>
+
+        <div class="dm-messages" id="dmMessages">
+          <div class="empty-chat" id="emptyChat">Velg en samtale eller start en ny fra menyen til venstre.</div>
+        </div>
+
+        <form class="chat-input" id="dmForm" style="display:none;">
+          <input id="dmInput" type="text" placeholder="Skriv en melding..." autocomplete="off" required />
+          <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+      </section>
     </div>
+
     <p class="muted text-center" style="margin-top:1rem; font-size:.82rem;">
-      Felles chat for alle medlemmer. Private meldinger fra eieren finner du i kalenderen.
+      Lagres lokalt — krever backend for ekte deling mellom enheter.
     </p>
   </main>
+
+  <!-- Modal: ny samtale -->
+  <div class="modal-backdrop" id="newDmModal" onclick="if(event.target===this)closeModals()">
+    <div class="modal">
+      <div class="body">
+        <button class="close" onclick="closeModals()">✕</button>
+        <h2>Ny privat samtale</h2>
+        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Velg et medlem å starte samtale med.</p>
+        <div class="pick-list" id="dmPickList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: ny gruppe -->
+  <div class="modal-backdrop" id="newGroupModal" onclick="if(event.target===this)closeModals()">
+    <div class="modal">
+      <div class="body">
+        <button class="close" onclick="closeModals()">✕</button>
+        <h2>Ny gruppe</h2>
+        <div class="field">
+          <label for="groupName">Gruppenavn</label>
+          <input id="groupName" type="text" placeholder="F.eks. Morgentreningen" />
+        </div>
+        <div class="field">
+          <label>Velg medlemmer</label>
+          <div class="pick-list" id="groupPickList"></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="createGroup()">Opprett gruppe</button>
+      </div>
+    </div>
+  </div>
 
   <div id="footer-slot"></div>
 
@@ -38,26 +200,17 @@
       document.getElementById("footer-slot").innerHTML = renderFooter();
     }
 
-    const CHAT_KEY = "kraftverket_chat";
-    function loadChat() {
-      try { return JSON.parse(localStorage.getItem(CHAT_KEY)) || seed(); }
-      catch { return seed(); }
-    }
-    function saveChat(c) { localStorage.setItem(CHAT_KEY, JSON.stringify(c)); }
+    const CONV_KEY = "kraftverket_conversations";
+    const MSG_KEY  = "kraftverket_msgs";
 
-    function seed() {
-      const now = Date.now();
-      const seed = [
-        { username: "ole",    text: "Noen som vil løpe en runde rundt vannet kl. 17:00 idag?",   ts: now - 1000*60*60*4 },
-        { username: "kari",   text: "Jeg blir med! Møter deg ved inngangen.",                    ts: now - 1000*60*60*3 },
-        { username: "erik",   text: "Nye PR på markløft idag: 180 kg 🔥",                       ts: now - 1000*60*60*2 },
-        { username: "ingrid", text: "Heftig, Erik! Husk å logge det i appen.",                  ts: now - 1000*60*60   },
-        { username: "lars",   text: "Noen tips til måltid før morgenstyrketrening 06:30?",     ts: now - 1000*60*30   }
-      ];
-      saveChat(seed);
-      return seed;
-    }
+    function loadConvs() { try { return JSON.parse(localStorage.getItem(CONV_KEY)) || []; } catch { return []; } }
+    function saveConvs(c) { localStorage.setItem(CONV_KEY, JSON.stringify(c)); }
+    function loadMsgs()  { try { return JSON.parse(localStorage.getItem(MSG_KEY)) || []; } catch { return []; } }
+    function saveMsgs(m) { localStorage.setItem(MSG_KEY, JSON.stringify(m)); }
 
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
     function fmtTime(ts) {
       const d = new Date(ts);
       const today = new Date();
@@ -66,20 +219,114 @@
       return sameDay ? t : d.toLocaleDateString("no-NO", { day:"numeric", month:"short" }) + " " + t;
     }
 
-    function render() {
-      const chat = loadChat();
-      const box = document.getElementById("messages");
-      box.innerHTML = chat.map(m => {
-        const member = window.MEMBERS[m.username];
-        if (!member) return "";
-        const own = m.username === u.username;
+    function makeId() { return "c" + Date.now() + Math.random().toString(36).slice(2,7); }
+
+    // Hent konversasjoner brukeren er med i
+    function myConversations() {
+      return loadConvs().filter(c => c.members.includes(u.username));
+    }
+
+    // Finn eller opprett DM-samtale mellom to brukere
+    function getOrCreateDM(otherUser) {
+      const all = loadConvs();
+      const existing = all.find(c => c.type === "dm" && c.members.length === 2 &&
+        c.members.includes(u.username) && c.members.includes(otherUser));
+      if (existing) return existing.id;
+      const newConv = { id: makeId(), type: "dm", members: [u.username, otherUser], created: Date.now() };
+      all.push(newConv);
+      saveConvs(all);
+      return newConv.id;
+    }
+
+    function convMessages(convId) {
+      return loadMsgs().filter(m => m.convId === convId).sort((a,b) => a.ts - b.ts);
+    }
+
+    function convDisplay(conv) {
+      if (conv.type === "group") {
+        return { name: conv.name, sub: conv.members.length + " medlemmer", iconHTML: `<div class="group-avatar">${conv.name.charAt(0).toUpperCase()}</div>` };
+      }
+      const other = conv.members.find(m => m !== u.username);
+      const data = window.MEMBERS[other];
+      return {
+        name: data ? data.name + (data.role === "owner" ? " 👑" : "") : other,
+        sub: data ? data.age + " år" : "",
+        iconHTML: data ? `<img class="avatar" src="${data.photo}" alt="${data.name}" />` : ""
+      };
+    }
+
+    let activeConvId = null;
+
+    function renderConvList() {
+      const convs = myConversations();
+      const allMsgs = loadMsgs();
+      convs.sort((a,b) => {
+        const aMsg = allMsgs.filter(m => m.convId === a.id).pop();
+        const bMsg = allMsgs.filter(m => m.convId === b.id).pop();
+        return (bMsg ? bMsg.ts : b.created) - (aMsg ? aMsg.ts : a.created);
+      });
+
+      const list = document.getElementById("convList");
+      if (!convs.length) {
+        list.innerHTML = `<div class="empty-state" style="padding:1.5rem .75rem; font-size:.82rem;">Ingen samtaler ennå.<br>Klikk «Ny samtale» eller «Ny gruppe» for å starte.</div>`;
+        return;
+      }
+      list.innerHTML = convs.map(c => {
+        const disp = convDisplay(c);
+        const msgs = convMessages(c.id);
+        const last = msgs[msgs.length - 1];
+        let preview = "Ingen meldinger ennå";
+        if (last) {
+          const sender = window.MEMBERS[last.from];
+          const prefix = last.from === u.username ? "Du" : (sender ? sender.name.split(" ")[0] : last.from);
+          preview = prefix + ": " + last.text;
+        }
+        return `
+          <div class="contact ${c.id === activeConvId ? "active" : ""}" onclick="openConv('${c.id}')">
+            ${disp.iconHTML}
+            <div class="info">
+              <div class="name">${disp.name}</div>
+              <div class="preview">${escapeHtml(preview)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.openConv = (convId) => {
+      activeConvId = convId;
+      renderConvList();
+      const conv = loadConvs().find(c => c.id === convId);
+      if (!conv) return;
+      const disp = convDisplay(conv);
+      document.getElementById("chatHeader").style.display = "flex";
+      document.getElementById("chatHeaderIcon").innerHTML = disp.iconHTML;
+      document.getElementById("chatName").textContent = disp.name;
+      document.getElementById("chatSub").textContent  = disp.sub;
+      document.getElementById("dmForm").style.display = "flex";
+      document.getElementById("emptyChat").style.display = "none";
+      renderMessages();
+    };
+
+    function renderMessages() {
+      if (!activeConvId) return;
+      const msgs = convMessages(activeConvId);
+      const box = document.getElementById("dmMessages");
+      if (!msgs.length) {
+        box.innerHTML = `<div class="empty-chat">Ingen meldinger ennå. Send den første!</div>`;
+        return;
+      }
+      box.innerHTML = msgs.map(m => {
+        const sender = window.MEMBERS[m.from];
+        if (!sender) return "";
+        const own = m.from === u.username;
         return `
           <div class="chat-msg ${own ? "own" : ""}">
-            <img class="avatar" src="${member.photo}" alt="${member.name}" />
+            <img class="avatar" src="${sender.photo}" alt="${sender.name}" />
             <div>
               <div class="meta">
-                <span class="name">${member.name}</span>
-                <span class="age">${member.age} år</span>
+                <span class="name">${sender.name}</span>
+                <span class="age">${sender.age} år</span>
                 <span class="time">${fmtTime(m.ts)}</span>
               </div>
               <div class="bubble">${escapeHtml(m.text)}</div>
@@ -90,23 +337,81 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    function escapeHtml(s) {
-      return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    }
-
-    document.getElementById("chatForm").addEventListener("submit", (e) => {
+    document.getElementById("dmForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const input = document.getElementById("chatInput");
+      if (!activeConvId) return;
+      const input = document.getElementById("dmInput");
       const txt = input.value.trim();
       if (!txt) return;
-      const chat = loadChat();
-      chat.push({ username: u.username, text: txt, ts: Date.now() });
-      saveChat(chat);
+      const all = loadMsgs();
+      all.push({ convId: activeConvId, from: u.username, text: txt, ts: Date.now() });
+      saveMsgs(all);
       input.value = "";
-      render();
+      renderMessages();
+      renderConvList();
     });
 
-    render();
+    // Modals
+    window.openNewDM = () => {
+      const pick = document.getElementById("dmPickList");
+      pick.innerHTML = Object.entries(window.MEMBERS)
+        .filter(([uname]) => uname !== u.username)
+        .map(([uname, m]) => `
+          <div class="pick-row" onclick="startDM('${uname}')">
+            <img src="${m.photo}" alt="${m.name}" />
+            <span class="pname">${m.name}${m.role === "owner" ? " 👑" : ""}</span>
+          </div>
+        `).join("");
+      document.getElementById("newDmModal").classList.add("open");
+    };
+
+    window.startDM = (otherUser) => {
+      const convId = getOrCreateDM(otherUser);
+      closeModals();
+      openConv(convId);
+    };
+
+    window.openNewGroup = () => {
+      const pick = document.getElementById("groupPickList");
+      pick.innerHTML = Object.entries(window.MEMBERS)
+        .filter(([uname]) => uname !== u.username)
+        .map(([uname, m]) => `
+          <label class="pick-row">
+            <input type="checkbox" value="${uname}" />
+            <img src="${m.photo}" alt="${m.name}" />
+            <span class="pname">${m.name}${m.role === "owner" ? " 👑" : ""}</span>
+          </label>
+        `).join("");
+      document.getElementById("groupName").value = "";
+      document.getElementById("newGroupModal").classList.add("open");
+    };
+
+    window.createGroup = () => {
+      const name = document.getElementById("groupName").value.trim();
+      const picked = Array.from(document.querySelectorAll("#groupPickList input:checked")).map(i => i.value);
+      if (!name) { alert("Gi gruppen et navn."); return; }
+      if (picked.length < 1) { alert("Velg minst ett medlem."); return; }
+      const all = loadConvs();
+      const newGroup = {
+        id: makeId(), type: "group", name,
+        members: [u.username, ...picked],
+        created: Date.now(),
+        createdBy: u.username
+      };
+      all.push(newGroup);
+      saveConvs(all);
+      closeModals();
+      openConv(newGroup.id);
+    };
+
+    window.closeModals = () => {
+      document.getElementById("newDmModal").classList.remove("open");
+      document.getElementById("newGroupModal").classList.remove("open");
+    };
+
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModals(); });
+
+    renderConvList();
   </script>
 </body>
 </html>

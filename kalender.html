@@ -5,73 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kalender – 3475 Kraftverket</title>
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    .dm-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 1rem;
-      min-height: 480px;
-    }
-    @media (max-width: 720px) {
-      .dm-layout { grid-template-columns: 1fr; }
-      .dm-sidebar { max-height: 220px; }
-    }
-    .dm-sidebar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow-y: auto;
-      padding: .5rem;
-    }
-    .dm-sidebar h3 {
-      font-size: .72rem; text-transform: uppercase; letter-spacing: .5px;
-      color: var(--text-muted); padding: .75rem .75rem .5rem;
-    }
-    .contact {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .65rem .75rem; border-radius: var(--radius-sm);
-      cursor: pointer; transition: background .15s;
-    }
-    .contact:hover { background: var(--surface2); }
-    .contact.active { background: var(--orange-glow); border: 1px solid var(--orange); }
-    .contact img {
-      width: 36px; height: 36px; border-radius: 50%;
-      object-fit: cover; border: 2px solid var(--orange);
-    }
-    .contact .info { flex: 1; min-width: 0; }
-    .contact .name { font-weight: 700; font-size: .92rem; }
-    .contact .preview { color: var(--text-muted); font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .dm-main {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      display: grid; grid-template-rows: auto 1fr auto;
-      overflow: hidden;
-      min-height: 480px;
-    }
-    .dm-header {
-      padding: .9rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: .75rem;
-      background: #111;
-    }
-    .dm-header img {
-      width: 38px; height: 38px; border-radius: 50%;
-      object-fit: cover; border: 2px solid var(--orange);
-    }
-    .dm-header .name { font-weight: 800; }
-    .dm-header .sub { font-size: .78rem; color: var(--text-muted); }
-    .empty-chat {
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-muted); font-size: .92rem; padding: 3rem 1rem;
-      text-align: center;
-    }
-    .dm-messages {
-      overflow-y: auto; padding: 1rem;
-      display: flex; flex-direction: column; gap: .85rem;
-      max-height: 60vh;
-    }
-  </style>
 </head>
 <body>
   <div id="header-slot"></div>
@@ -85,7 +18,6 @@
 
     <div class="tabs" id="tabsBar">
       <button class="tab active" data-tab="log">Min treningslogg</button>
-      <button class="tab" data-tab="messages">Meldinger</button>
       <button class="tab owner-only" data-tab="assign" style="display:none;">Tildel økter</button>
     </div>
 
@@ -139,36 +71,6 @@
       <div class="card">
         <h2>Tidligere økter</h2>
         <ul class="log-list" id="logList"></ul>
-      </div>
-    </div>
-
-    <!-- Private messages -->
-    <div class="tab-panel" id="panel-messages">
-      <p class="muted" style="margin-bottom:1rem; font-size:.9rem;" id="dmIntro"></p>
-      <div class="dm-layout">
-        <aside class="dm-sidebar">
-          <h3 id="sidebarTitle">Samtaler</h3>
-          <div id="contacts"></div>
-        </aside>
-
-        <section class="dm-main">
-          <div class="dm-header" id="chatHeader" style="display:none;">
-            <img id="chatAvatar" src="" alt="" />
-            <div>
-              <div class="name" id="chatName"></div>
-              <div class="sub" id="chatSub"></div>
-            </div>
-          </div>
-
-          <div class="dm-messages" id="dmMessages">
-            <div class="empty-chat" id="emptyChat">Velg en samtale fra venstre.</div>
-          </div>
-
-          <form class="chat-input" id="dmForm" style="display:none;">
-            <input id="dmInput" type="text" placeholder="Skriv en melding..." autocomplete="off" required />
-            <button class="btn btn-primary" type="submit">Send</button>
-          </form>
-        </section>
       </div>
     </div>
 
@@ -384,131 +286,6 @@
       renderAllAssignments();
     }
 
-    // ── Private messages (Meldinger-tab)
-    const DM_KEY = "kraftverket_dm";
-    function loadDM()  { try { return JSON.parse(localStorage.getItem(DM_KEY)) || []; } catch { return []; } }
-    function saveDM(m) { localStorage.setItem(DM_KEY, JSON.stringify(m)); }
-
-    function findOwner() {
-      return Object.entries(window.MEMBERS).find(([_, m]) => m.role === "owner")?.[0] || null;
-    }
-
-    function escapeHtml(s) {
-      return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    }
-    function fmtTime(ts) {
-      const d = new Date(ts);
-      const today = new Date();
-      const sameDay = d.toDateString() === today.toDateString();
-      const t = d.toLocaleTimeString("no-NO", { hour: "2-digit", minute: "2-digit" });
-      return sameDay ? t : d.toLocaleDateString("no-NO", { day:"numeric", month:"short" }) + " " + t;
-    }
-
-    function conversation(a, b) {
-      return loadDM().filter(m =>
-        (m.from === a && m.to === b) ||
-        (m.from === b && m.to === a)
-      ).sort((x,y) => x.ts - y.ts);
-    }
-
-    document.getElementById("dmIntro").textContent = IS_OWNER
-      ? "Send private meldinger til medlemmer — hva de skal gjøre, ta med, og hvilken dag."
-      : "Privat samtale mellom deg og administrator.";
-    document.getElementById("sidebarTitle").textContent = IS_OWNER ? "Medlemmer" : "Samtaler";
-
-    let activePeer = null;
-    function renderContacts() {
-      const owner = findOwner();
-      const container = document.getElementById("contacts");
-      let peers = [];
-      if (IS_OWNER) {
-        peers = Object.entries(window.MEMBERS)
-          .filter(([uname, m]) => m.role !== "owner")
-          .map(([uname]) => uname);
-      } else if (owner) {
-        peers = [owner];
-      }
-      container.innerHTML = peers.map(peer => {
-        const m = window.MEMBERS[peer];
-        const conv = conversation(u.username, peer);
-        const last = conv[conv.length - 1];
-        const preview = last ? (last.from === u.username ? "Du: " : "") + last.text : "Ingen meldinger ennå";
-        return `
-          <div class="contact ${peer === activePeer ? "active" : ""}" onclick="openDM('${peer}')">
-            <img src="${m.photo}" alt="${m.name}" />
-            <div class="info">
-              <div class="name">${m.name}${m.role === "owner" ? " 👑" : ""}</div>
-              <div class="preview">${escapeHtml(preview)}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    window.openDM = (peer) => {
-      activePeer = peer;
-      renderContacts();
-      const peerData = window.MEMBERS[peer];
-      document.getElementById("chatHeader").style.display = "flex";
-      document.getElementById("chatAvatar").src = peerData.photo;
-      document.getElementById("chatAvatar").alt = peerData.name;
-      document.getElementById("chatName").textContent = peerData.name + (peerData.role === "owner" ? " (eier)" : "");
-      document.getElementById("chatSub").textContent = peerData.age + " år";
-      document.getElementById("dmForm").style.display = "flex";
-      document.getElementById("emptyChat").style.display = "none";
-      renderDMMessages();
-    };
-
-    function renderDMMessages() {
-      if (!activePeer) return;
-      const conv = conversation(u.username, activePeer);
-      const box = document.getElementById("dmMessages");
-      if (!conv.length) {
-        box.innerHTML = `<div class="empty-chat">Ingen meldinger ennå. Send den første!</div>`;
-        return;
-      }
-      box.innerHTML = conv.map(m => {
-        const sender = window.MEMBERS[m.from];
-        if (!sender) return "";
-        const own = m.from === u.username;
-        return `
-          <div class="chat-msg ${own ? "own" : ""}">
-            <img class="avatar" src="${sender.photo}" alt="${sender.name}" />
-            <div>
-              <div class="meta">
-                <span class="name">${sender.name}</span>
-                <span class="age">${sender.age} år</span>
-                <span class="time">${fmtTime(m.ts)}</span>
-              </div>
-              <div class="bubble">${escapeHtml(m.text)}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-      box.scrollTop = box.scrollHeight;
-    }
-
-    document.getElementById("dmForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!activePeer) return;
-      const input = document.getElementById("dmInput");
-      const txt = input.value.trim();
-      if (!txt) return;
-      const all = loadDM();
-      all.push({ from: u.username, to: activePeer, text: txt, ts: Date.now() });
-      saveDM(all);
-      input.value = "";
-      renderDMMessages();
-      renderContacts();
-    });
-
-    // Auto-åpne samtale for medlem
-    if (!IS_OWNER) {
-      const owner = findOwner();
-      if (owner) openDM(owner);
-    } else {
-      renderContacts();
-    }
   </script>
 </body>
 </html>
