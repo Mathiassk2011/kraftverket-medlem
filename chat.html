@@ -129,6 +129,9 @@
           <button onclick="openNewGroup()">+ Ny gruppe</button>
         </div>
 
+        <div class="sidebar-section">Felles</div>
+        <div id="publicConv"></div>
+
         <div class="sidebar-section">Samtaler</div>
         <div id="convList"></div>
       </aside>
@@ -242,7 +245,16 @@
       return loadMsgs().filter(m => m.convId === convId).sort((a,b) => a.ts - b.ts);
     }
 
+    const PUBLIC_CONV = { id: "public", type: "public", name: "Felles chat" };
+
     function convDisplay(conv) {
+      if (conv.type === "public") {
+        return {
+          name: "Felles chat",
+          sub: "Alle medlemmer",
+          iconHTML: `<div class="group-avatar" style="background:var(--surface3); color:var(--orange);">📢</div>`
+        };
+      }
       if (conv.type === "group") {
         return { name: conv.name, sub: conv.members.length + " medlemmer", iconHTML: `<div class="group-avatar">${conv.name.charAt(0).toUpperCase()}</div>` };
       }
@@ -256,6 +268,27 @@
     }
 
     let activeConvId = null;
+
+    function renderPublicConv() {
+      const msgs = convMessages("public");
+      const last = msgs[msgs.length - 1];
+      let preview = "Felles for alle medlemmer";
+      if (last) {
+        const sender = window.MEMBERS[last.from];
+        const prefix = last.from === u.username ? "Du" : (sender ? sender.name.split(" ")[0] : last.from);
+        preview = prefix + ": " + last.text;
+      }
+      const disp = convDisplay(PUBLIC_CONV);
+      document.getElementById("publicConv").innerHTML = `
+        <div class="contact ${activeConvId === 'public' ? 'active' : ''}" onclick="openConv('public')">
+          ${disp.iconHTML}
+          <div class="info">
+            <div class="name">${disp.name}</div>
+            <div class="preview">${escapeHtml(preview)}</div>
+          </div>
+        </div>
+      `;
+    }
 
     function renderConvList() {
       const convs = myConversations();
@@ -295,8 +328,9 @@
 
     window.openConv = (convId) => {
       activeConvId = convId;
+      renderPublicConv();
       renderConvList();
-      const conv = loadConvs().find(c => c.id === convId);
+      const conv = convId === "public" ? PUBLIC_CONV : loadConvs().find(c => c.id === convId);
       if (!conv) return;
       const disp = convDisplay(conv);
       document.getElementById("chatHeader").style.display = "flex";
@@ -348,6 +382,7 @@
       saveMsgs(all);
       input.value = "";
       renderMessages();
+      renderPublicConv();
       renderConvList();
     });
 
@@ -411,6 +446,7 @@
 
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModals(); });
 
+    renderPublicConv();
     renderConvList();
   </script>
 </body>
