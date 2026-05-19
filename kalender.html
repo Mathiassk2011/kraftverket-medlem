@@ -16,9 +16,10 @@
       <p class="lead">Se ukens gruppetimer eller registrer dine egne treninger.</p>
     </div>
 
-    <div class="tabs">
+    <div class="tabs" id="tabsBar">
       <button class="tab active" data-tab="classes">Gruppetimer</button>
       <button class="tab" data-tab="log">Min treningslogg</button>
+      <button class="tab owner-only" data-tab="assign" style="display:none;">Tildel økter</button>
     </div>
 
     <!-- Group classes -->
@@ -30,6 +31,11 @@
 
     <!-- Training log -->
     <div class="tab-panel" id="panel-log">
+      <div class="card" id="assignedToMe" style="margin-bottom:1.5rem; display:none;">
+        <h2>📋 Treninger fra eieren</h2>
+        <ul class="log-list" id="assignedList"></ul>
+      </div>
+
       <div class="stat-grid">
         <div class="stat-box"><div class="num" id="statWeek">0</div><div class="lbl">Økter denne uka</div></div>
         <div class="stat-box"><div class="num" id="statMonth">0</div><div class="lbl">Økter denne mnd</div></div>
@@ -75,6 +81,52 @@
         <ul class="log-list" id="logList"></ul>
       </div>
     </div>
+
+    <!-- Owner: assign workouts -->
+    <div class="tab-panel" id="panel-assign">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Tildel økt til medlem</h2>
+        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Som eier kan du sende treningsoppdrag til medlemmer. De ser dette under «Min treningslogg».</p>
+        <form id="assignForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="aMember">Medlem</label>
+              <select id="aMember" required></select>
+            </div>
+            <div class="field">
+              <label for="aDate">Dato</label>
+              <input id="aDate" type="date" required />
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="aType">Type økt</label>
+              <select id="aType">
+                <option>Styrke</option>
+                <option>Kondisjon</option>
+                <option>Mobilitet</option>
+                <option>Teknikk</option>
+                <option>Restitusjon</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="aTitle">Tittel</label>
+              <input id="aTitle" type="text" placeholder="F.eks. Push-økt" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="aDesc">Beskrivelse / program</label>
+            <textarea id="aDesc" rows="4" placeholder="F.eks. Benk 5x5 80kg, skulderpress 4x8, dips 3x10..."></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Send tildeling</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Tildelte økter</h2>
+        <ul class="log-list" id="allAssignmentsList"></ul>
+      </div>
+    </div>
   </main>
 
   <div id="footer-slot"></div>
@@ -86,6 +138,11 @@
     if (u) {
       document.getElementById("header-slot").innerHTML = renderHeader("kalender");
       document.getElementById("footer-slot").innerHTML = renderFooter();
+    }
+
+    const IS_OWNER = u && u.role === "owner";
+    if (IS_OWNER) {
+      document.querySelectorAll(".owner-only").forEach(el => el.style.display = "");
     }
 
     // ── Tab switching
@@ -196,6 +253,92 @@
       document.getElementById("statMin").textContent   = inWeek.reduce((s,l) => s + l.duration, 0);
     }
     renderLog();
+
+    // ── Assignments (eier → medlem)
+    const ASSIGN_KEY = "kraftverket_assignments";
+    function loadAssignments()  { try { return JSON.parse(localStorage.getItem(ASSIGN_KEY)) || []; } catch { return []; } }
+    function saveAssignments(a) { localStorage.setItem(ASSIGN_KEY, JSON.stringify(a)); }
+
+    // Vis tildelinger til den innloggede brukeren under "Min treningslogg"
+    function renderAssignedToMe() {
+      const all = loadAssignments();
+      const mine = all.filter(a => a.member === u.username).sort((a,b) => b.date.localeCompare(a.date));
+      const box  = document.getElementById("assignedToMe");
+      const list = document.getElementById("assignedList");
+      if (!mine.length) { box.style.display = "none"; return; }
+      box.style.display = "";
+      list.innerHTML = mine.map(a => `
+        <li class="log-item">
+          <div>
+            <div class="what">${a.title} <span class="chip orange" style="margin-left:.4rem;">${a.type}</span></div>
+            <div class="when">${a.date}${a.desc ? ` · <span class="muted" style="font-weight:400;">${a.desc.replace(/</g,"&lt;")}</span>` : ""}</div>
+          </div>
+        </li>
+      `).join("");
+    }
+    renderAssignedToMe();
+
+    // Eier-funksjonalitet
+    if (IS_OWNER) {
+      // Fyll medlem-dropdown (alle unntatt eieren)
+      const sel = document.getElementById("aMember");
+      Object.entries(window.MEMBERS).forEach(([uname, m]) => {
+        if (m.role === "owner") return;
+        const o = document.createElement("option");
+        o.value = uname; o.textContent = m.name;
+        sel.appendChild(o);
+      });
+      document.getElementById("aDate").value = new Date().toISOString().slice(0,10);
+
+      document.getElementById("assignForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const all = loadAssignments();
+        all.push({
+          member: document.getElementById("aMember").value,
+          date:   document.getElementById("aDate").value,
+          type:   document.getElementById("aType").value,
+          title:  document.getElementById("aTitle").value.trim(),
+          desc:   document.getElementById("aDesc").value.trim(),
+          from:   u.username,
+          ts:     Date.now()
+        });
+        saveAssignments(all);
+        e.target.reset();
+        document.getElementById("aDate").value = new Date().toISOString().slice(0,10);
+        renderAllAssignments();
+        renderAssignedToMe();
+      });
+
+      window.removeAssignment = (ts) => {
+        if (!confirm("Slette denne tildelingen?")) return;
+        saveAssignments(loadAssignments().filter(a => a.ts !== ts));
+        renderAllAssignments();
+        renderAssignedToMe();
+      };
+
+      function renderAllAssignments() {
+        const all = loadAssignments().sort((a,b) => b.date.localeCompare(a.date));
+        const list = document.getElementById("allAssignmentsList");
+        if (!all.length) {
+          list.innerHTML = `<div class="empty-state">Ingen tildelinger ennå.</div>`;
+          return;
+        }
+        list.innerHTML = all.map(a => {
+          const m = window.MEMBERS[a.member];
+          const memberName = m ? m.name : a.member;
+          return `
+            <li class="log-item">
+              <div>
+                <div class="what">${a.title} <span class="chip" style="margin-left:.4rem;">→ ${memberName}</span></div>
+                <div class="when">${a.date} · ${a.type}${a.desc ? ` · <span class="muted" style="font-weight:400;">${a.desc.replace(/</g,"&lt;")}</span>` : ""}</div>
+              </div>
+              <button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="removeAssignment(${a.ts})">Slett</button>
+            </li>
+          `;
+        }).join("");
+      }
+      renderAllAssignments();
+    }
   </script>
 </body>
 </html>
