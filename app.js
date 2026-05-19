@@ -61,5 +61,5 @@ function renderHeader(activeKey) {
 }
 
 function renderFooter() {
-  return `<footer class="site-footer">3475 Kraftverket Medlemsportal · Vikersund</footer>`;
+  return `<footer class="site-footer">3475 Kraftverket Medlemsportal · Åsveien 3, 3475 Sætre</footer>`;
 }
