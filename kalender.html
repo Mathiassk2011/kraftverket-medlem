@@ -17,20 +17,12 @@
     </div>
 
     <div class="tabs" id="tabsBar">
-      <button class="tab active" data-tab="classes">Gruppetimer</button>
-      <button class="tab" data-tab="log">Min treningslogg</button>
+      <button class="tab active" data-tab="log">Min treningslogg</button>
       <button class="tab owner-only" data-tab="assign" style="display:none;">Tildel økter</button>
     </div>
 
-    <!-- Group classes -->
-    <div class="tab-panel active" id="panel-classes">
-      <div class="card">
-        <div id="schedule"></div>
-      </div>
-    </div>
-
     <!-- Training log -->
-    <div class="tab-panel" id="panel-log">
+    <div class="tab-panel active" id="panel-log">
       <div class="card" id="assignedToMe" style="margin-bottom:1.5rem; display:none;">
         <h2>📋 Treninger fra eieren</h2>
         <ul class="log-list" id="assignedList"></ul>
@@ -154,52 +146,6 @@
         document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
       });
     });
-
-    // ── Group class schedule
-    const SCHEDULE = [
-      { day: "Mandag",  items: [
-        { time: "07:00", name: "Morgenstyrke" },
-        { time: "17:30", name: "Spinning" },
-        { time: "19:00", name: "CrossFit" }
-      ]},
-      { day: "Tirsdag", items: [
-        { time: "09:00", name: "Yoga & mobilitet" },
-        { time: "18:00", name: "HIIT" }
-      ]},
-      { day: "Onsdag",  items: [
-        { time: "06:30", name: "Styrkesirkel" },
-        { time: "17:00", name: "Spinning" },
-        { time: "19:30", name: "Boxing basics" }
-      ]},
-      { day: "Torsdag", items: [
-        { time: "09:00", name: "Senior fitness" },
-        { time: "18:00", name: "CrossFit" }
-      ]},
-      { day: "Fredag",  items: [
-        { time: "07:00", name: "Morgenstyrke" },
-        { time: "17:00", name: "Spinning" }
-      ]},
-      { day: "Lørdag",  items: [
-        { time: "10:00", name: "Helgekondis" },
-        { time: "11:30", name: "Yoga flow" }
-      ]},
-      { day: "Søndag",  items: [
-        { time: "11:00", name: "Restitusjon & strekk" }
-      ]}
-    ];
-    document.getElementById("schedule").innerHTML = SCHEDULE.map(d => `
-      <div class="day-row">
-        <div class="day-label">${d.day}</div>
-        <div>
-          ${d.items.map(i => `
-            <div class="class-item">
-              <span class="name">${i.name}</span>
-              <span class="time">${i.time}</span>
-            </div>
-          `).join("")}
-        </div>
-      </div>
-    `).join("");
 
     // ── Training log (localStorage per bruker)
     const LOG_KEY = "kraftverket_log_" + u.username;
