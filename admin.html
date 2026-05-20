@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <div class="badge">Admin-panel</div>
+      <h1>Admin <span class="accent">verktøy</span></h1>
+      <p class="lead">Administrer medlemmer og publiser treningsprogram.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="members">Medlemmer</button>
+      <button class="tab" data-tab="publish">Publiser program</button>
+    </div>
+
+    <!-- Medlemmer -->
+    <div class="tab-panel active" id="panel-members">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Alle medlemmer</h2>
+        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">
+          Promotér til admin eller fjern. For å registrere nye medlemmer: send invitasjon fra Supabase-dashboard → Authentication → Users → «Invite user».
+        </p>
+        <div id="memberList"><div class="empty-state">Laster...</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Oppdater min profil</h2>
+        <form id="profileForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="pName">Navn</label>
+              <input id="pName" type="text" required />
+            </div>
+            <div class="field">
+              <label for="pAge">Alder</label>
+              <input id="pAge" type="number" min="13" max="100" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="pPhoto">Bilde-URL</label>
+            <input id="pPhoto" type="url" placeholder="https://..." />
+          </div>
+          <button class="btn btn-primary" type="submit">Lagre</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Publiser -->
+    <div class="tab-panel" id="panel-publish">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Nytt program eller ukeplan</h2>
+        <form id="programForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="prCat">Type</label>
+              <select id="prCat">
+                <option value="program">Treningsprogram</option>
+                <option value="ukeplan">Ukeplan</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="prTitle">Tittel</label>
+              <input id="prTitle" type="text" required placeholder="F.eks. Push/Pull/Legs uke 21" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="prBody">Beskrivelse / program</label>
+            <textarea id="prBody" rows="8" required placeholder="Dag 1 - Push:
+- Benk 5x5
+- Skulderpress 4x8
+- Dips 3x10
+
+Dag 2 - Pull:
+..."></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Publiser</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Publiserte program</h2>
+        <div id="programList"><div class="empty-state">Laster...</div></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script>
+    let me = null;
+
+    function esc(s){return (s ?? "").toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+    // Tabs
+    document.querySelectorAll(".tabs .tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    async function loadMembers() {
+      const { data, error } = await sb.from("profiles").select("*").order("name");
+      if (error) { console.error(error); return; }
+      const list = document.getElementById("memberList");
+      list.innerHTML = data.map(p => `
+        <div class="log-item" style="margin-bottom:.5rem;">
+          <div style="display:flex; gap:.75rem; align-items:center;">
+            <img src="${p.photo || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(p.name)}"
+                 style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--orange);" alt="" />
+            <div>
+              <div class="what">${esc(p.name)}${p.role === "admin" ? ' <span class="chip orange">Admin</span>' : ''}</div>
+              <div class="when">${p.age ? p.age + " år" : ""}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:.4rem;">
+            ${p.role === "admin"
+              ? `<button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','member')" ${p.id===me.id?'disabled title="Du kan ikke degradere deg selv"':''}>Fjern admin</button>`
+              : `<button class="btn btn-primary" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','admin')">Gjør til admin</button>`}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.setRole = async (userId, role) => {
+      const { error } = await sb.from("profiles").update({ role }).eq("id", userId);
+      if (error) { alert("Feil: " + error.message); return; }
+      loadMembers();
+    };
+
+    async function loadPrograms() {
+      const { data, error } = await sb.from("programs").select("*, profiles(name)").order("created_at",{ascending:false});
+      if (error) { console.error(error); return; }
+      const list = document.getElementById("programList");
+      if (!data?.length) { list.innerHTML = `<div class="empty-state">Ingen publisert ennå.</div>`; return; }
+      list.innerHTML = data.map(p => `
+        <div class="card" style="background:var(--surface2); margin-bottom:.85rem;">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
+            <span class="chip orange">${esc(p.category)}</span>
+            <h3 style="margin:0;">${esc(p.title)}</h3>
+            <button class="btn btn-ghost" style="margin-left:auto; padding:.3rem .7rem; font-size:.75rem;" onclick="deleteProgram('${p.id}')">Slett</button>
+          </div>
+          <p style="white-space:pre-wrap; color:var(--text-muted); font-size:.95rem;">${esc(p.body)}</p>
+          <small class="muted">${p.profiles?.name || "Admin"} · ${new Date(p.created_at).toLocaleDateString("no-NO")}</small>
+        </div>
+      `).join("");
+    }
+
+    window.deleteProgram = async (id) => {
+      if (!confirm("Slette dette programmet?")) return;
+      const { error } = await sb.from("programs").delete().eq("id", id);
+      if (error) { alert("Feil: " + error.message); return; }
+      loadPrograms();
+    };
+
+    document.getElementById("programForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const { error } = await sb.from("programs").insert({
+        category: document.getElementById("prCat").value,
+        title:    document.getElementById("prTitle").value.trim(),
+        body:     document.getElementById("prBody").value.trim(),
+        created_by: me.id
+      });
+      if (error) { alert("Feil: " + error.message); return; }
+      e.target.reset();
+      loadPrograms();
+    });
+
+    document.getElementById("profileForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const { error } = await sb.from("profiles").update({
+        name: document.getElementById("pName").value.trim(),
+        age:  +document.getElementById("pAge").value || null,
+        photo: document.getElementById("pPhoto").value.trim() || null
+      }).eq("id", me.id);
+      if (error) { alert("Feil: " + error.message); return; }
+      alert("Profil oppdatert!");
+      loadMembers();
+    });
+
+    (async () => {
+      me = await setupPage("admin");
+      if (!me) return;
+      if (me.role !== "admin") {
+        document.querySelector("main").innerHTML = `
+          <div class="section-hero">
+            <h1>Ingen tilgang</h1>
+            <p class="lead">Du må være administrator for å se denne siden.</p>
+            <a class="btn btn-primary" href="dashboard.html">Tilbake til hjem</a>
+          </div>
+        `;
+        return;
+      }
+      document.getElementById("pName").value  = me.name || "";
+      document.getElementById("pAge").value   = me.age || "";
+      document.getElementById("pPhoto").value = me.photo || "";
+      loadMembers();
+      loadPrograms();
+    })();
+  </script>
+</body>
+</html>

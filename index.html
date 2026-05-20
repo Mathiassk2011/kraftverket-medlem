@@ -11,56 +11,110 @@
     <div class="login-card">
       <img class="brand" src="https://3475kraftverket.no/wp-content/uploads/2021/04/3d-png-1.png" alt="Kraftverket" />
       <h1>Medlemsportal</h1>
-      <p class="sub">Logg inn med medlemskontoen din</p>
+      <p class="sub" id="modeSub">Logg inn med medlemskontoen din</p>
 
       <div id="error" class="error-msg" style="display:none;"></div>
+      <div id="success" class="error-msg" style="display:none; background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.4); color:#22c55e;"></div>
 
-      <form id="loginForm">
+      <form id="authForm">
+        <div class="field" id="nameField" style="display:none;">
+          <label for="name">Fullt navn</label>
+          <input id="name" type="text" autocomplete="name" />
+        </div>
         <div class="field">
-          <label for="username">Brukernavn</label>
-          <input id="username" type="text" autocomplete="username" required autofocus />
+          <label for="email">E-post</label>
+          <input id="email" type="email" autocomplete="email" required autofocus />
         </div>
         <div class="field">
           <label for="password">Passord</label>
-          <input id="password" type="password" autocomplete="current-password" required />
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" />
         </div>
-        <div class="field" style="display:flex; flex-direction:row; align-items:center; gap:.5rem;">
-          <input id="remember" type="checkbox" style="width:auto;" />
-          <label for="remember" style="margin:0; text-transform:none; letter-spacing:0; font-size:.85rem; color:var(--text);">Husk meg</label>
-        </div>
-        <button class="btn btn-primary btn-full" type="submit">Logg inn</button>
+        <button class="btn btn-primary btn-full" type="submit" id="submitBtn">Logg inn</button>
       </form>
 
-      <div class="login-hint">
-        <strong>Demo-tilgang:</strong><br />
-        Brukernavn: <code>mathias</code> &nbsp; Passord: <code>kraftverk</code><br />
-        Eller: <code>ole</code> / <code>demo</code>
-      </div>
+      <p style="margin-top:1.25rem; font-size:.88rem; color:var(--text-muted);">
+        <span id="toggleHint">Har du ikke konto?</span>
+        <a href="#" id="toggleMode" style="color:var(--orange); font-weight:700;">Registrer deg</a>
+      </p>
     </div>
   </div>
 
-  <script src="members.js"></script>
-  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
   <script>
-    // Hvis allerede innlogget, hopp til dashboard.
-    if (getUser()) window.location.href = "dashboard.html";
+    // Allerede innlogget? Hopp til dashboard.
+    (async () => {
+      const user = await getCurrentUser();
+      if (user) window.location.href = "dashboard.html";
+    })();
 
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
+    const form = document.getElementById("authForm");
+    const errEl = document.getElementById("error");
+    const okEl = document.getElementById("success");
+    const submitBtn = document.getElementById("submitBtn");
+    const toggleLink = document.getElementById("toggleMode");
+    const toggleHint = document.getElementById("toggleHint");
+    const nameField = document.getElementById("nameField");
+    const modeSub = document.getElementById("modeSub");
+
+    let mode = "login";
+
+    function showError(msg) { errEl.textContent = msg; errEl.style.display = "block"; okEl.style.display = "none"; }
+    function showOk(msg)    { okEl.textContent  = msg; okEl.style.display  = "block"; errEl.style.display = "none"; }
+    function clearMsg()     { errEl.style.display = "none"; okEl.style.display = "none"; }
+
+    toggleLink.addEventListener("click", (e) => {
       e.preventDefault();
-      const u = document.getElementById("username").value.trim().toLowerCase();
-      const p = document.getElementById("password").value;
-      const remember = document.getElementById("remember").checked;
-      const err = document.getElementById("error");
-
-      const member = window.MEMBERS[u];
-      if (!member || member.password !== p) {
-        err.textContent = "Feil brukernavn eller passord. Kontakt eieren hvis du trenger tilgang.";
-        err.style.display = "block";
-        return;
+      clearMsg();
+      if (mode === "login") {
+        mode = "signup";
+        submitBtn.textContent = "Opprett konto";
+        toggleHint.textContent = "Har du konto?";
+        toggleLink.textContent = "Logg inn";
+        nameField.style.display = "";
+        modeSub.textContent = "Registrer ny medlemskonto";
+        document.getElementById("name").required = true;
+      } else {
+        mode = "login";
+        submitBtn.textContent = "Logg inn";
+        toggleHint.textContent = "Har du ikke konto?";
+        toggleLink.textContent = "Registrer deg";
+        nameField.style.display = "none";
+        modeSub.textContent = "Logg inn med medlemskontoen din";
+        document.getElementById("name").required = false;
       }
-      const { password, ...userInfo } = member;
-      setUser({ username: u, ...userInfo }, remember);
-      window.location.href = "dashboard.html";
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearMsg();
+      submitBtn.disabled = true;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        if (mode === "login") {
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          window.location.href = "dashboard.html";
+        } else {
+          const name = document.getElementById("name").value.trim();
+          const { error } = await sb.auth.signUp({
+            email,
+            password,
+            options: { data: { name } }
+          });
+          if (error) throw error;
+          showOk("Konto opprettet! Sjekk e-posten din for bekreftelseslenke, eller logg inn direkte.");
+          mode = "login"; submitBtn.textContent = "Logg inn"; nameField.style.display = "none";
+          toggleHint.textContent = "Har du ikke konto?"; toggleLink.textContent = "Registrer deg";
+          modeSub.textContent = "Logg inn med medlemskontoen din";
+        }
+      } catch (err) {
+        showError(err.message || "Noe gikk galt. Prøv igjen.");
+      } finally {
+        submitBtn.disabled = false;
+      }
     });
   </script>
 </body>

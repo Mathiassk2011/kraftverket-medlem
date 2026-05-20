@@ -11,23 +11,17 @@
 
   <main class="container">
     <div class="section-hero">
-      <div class="badge">Ukeplan & Logg</div>
-      <h1>Kalender</h1>
-      <p class="lead">Se ukens gruppetimer eller registrer dine egne treninger.</p>
+      <h1>Min <span class="accent">kalender</span></h1>
+      <p class="lead">Notater og treninger — bare du ser dette.</p>
     </div>
 
-    <div class="tabs" id="tabsBar">
-      <button class="tab active" data-tab="log">Min treningslogg</button>
-      <button class="tab owner-only" data-tab="assign" style="display:none;">Tildel økter</button>
+    <div class="tabs">
+      <button class="tab active" data-tab="log">Min logg</button>
+      <button class="tab" data-tab="programs">Program & ukeplaner</button>
     </div>
 
-    <!-- Training log -->
+    <!-- Personlig logg -->
     <div class="tab-panel active" id="panel-log">
-      <div class="card" id="assignedToMe" style="margin-bottom:1.5rem; display:none;">
-        <h2>📋 Treninger fra eieren</h2>
-        <ul class="log-list" id="assignedList"></ul>
-      </div>
-
       <div class="stat-grid">
         <div class="stat-box"><div class="num" id="statWeek">0</div><div class="lbl">Økter denne uka</div></div>
         <div class="stat-box"><div class="num" id="statMonth">0</div><div class="lbl">Økter denne mnd</div></div>
@@ -36,7 +30,7 @@
       </div>
 
       <div class="card" style="margin-bottom:1.5rem;">
-        <h2>Registrer trening</h2>
+        <h2>Ny oppføring</h2>
         <form id="logForm">
           <div class="row-2">
             <div class="field">
@@ -48,7 +42,8 @@
               <select id="logType">
                 <option>Styrke</option>
                 <option>Kondisjon</option>
-                <option>Gruppetime</option>
+                <option>HYROX</option>
+                <option>CrossFit</option>
                 <option>Mobilitet</option>
                 <option>Annet</option>
               </select>
@@ -60,84 +55,47 @@
               <input id="logDuration" type="number" min="5" max="240" value="60" required />
             </div>
             <div class="field">
-              <label for="logNote">Notat (valgfritt)</label>
-              <input id="logNote" type="text" placeholder="F.eks. Push-økt, 5x5 benkpress" />
-            </div>
-          </div>
-          <button class="btn btn-primary" type="submit">Lagre økt</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h2>Tidligere økter</h2>
-        <ul class="log-list" id="logList"></ul>
-      </div>
-    </div>
-
-    <!-- Owner: assign workouts -->
-    <div class="tab-panel" id="panel-assign">
-      <div class="card" style="margin-bottom:1.5rem;">
-        <h2>Tildel økt til medlem</h2>
-        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Som eier kan du sende treningsoppdrag til medlemmer. De ser dette under «Min treningslogg».</p>
-        <form id="assignForm">
-          <div class="row-2">
-            <div class="field">
-              <label for="aMember">Medlem</label>
-              <select id="aMember" required></select>
-            </div>
-            <div class="field">
-              <label for="aDate">Dato</label>
-              <input id="aDate" type="date" required />
-            </div>
-          </div>
-          <div class="row-2">
-            <div class="field">
-              <label for="aType">Type økt</label>
-              <select id="aType">
-                <option>Styrke</option>
-                <option>Kondisjon</option>
-                <option>Mobilitet</option>
-                <option>Teknikk</option>
-                <option>Restitusjon</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="aTitle">Tittel</label>
-              <input id="aTitle" type="text" placeholder="F.eks. Push-økt" required />
+              <label for="logTitle">Tittel</label>
+              <input id="logTitle" type="text" placeholder="F.eks. Push-økt" />
             </div>
           </div>
           <div class="field">
-            <label for="aDesc">Beskrivelse / program</label>
-            <textarea id="aDesc" rows="4" placeholder="F.eks. Benk 5x5 80kg, skulderpress 4x8, dips 3x10..."></textarea>
+            <label for="logNote">Notat</label>
+            <textarea id="logNote" rows="3" placeholder="F.eks. Benk 5x5 80kg, skulderpress 4x8..."></textarea>
           </div>
-          <button class="btn btn-primary" type="submit">Send tildeling</button>
+          <button class="btn btn-primary" type="submit">Lagre</button>
         </form>
       </div>
 
       <div class="card">
-        <h2>Tildelte økter</h2>
-        <ul class="log-list" id="allAssignmentsList"></ul>
+        <h2>Tidligere oppføringer</h2>
+        <ul class="log-list" id="logList">
+          <div class="empty-state">Laster...</div>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Program & ukeplaner -->
+    <div class="tab-panel" id="panel-programs">
+      <div class="card">
+        <h2>Treningsprogram & ukeplaner</h2>
+        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Publisert av administratorer. Synlig for alle medlemmer.</p>
+        <div id="programsList">
+          <div class="empty-state">Laster...</div>
+        </div>
       </div>
     </div>
   </main>
 
   <div id="footer-slot"></div>
 
-  <script src="members.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
   <script src="app.js"></script>
   <script>
-    const u = requireLogin();
-    if (u) {
-      document.getElementById("header-slot").innerHTML = renderHeader("kalender");
-      document.getElementById("footer-slot").innerHTML = renderFooter();
-    }
+    let me = null;
 
-    const IS_OWNER = u && u.role === "owner";
-    if (IS_OWNER) {
-      document.querySelectorAll(".owner-only").forEach(el => el.style.display = "");
-    }
-
-    // ── Tab switching
+    // Tab switching
     document.querySelectorAll(".tabs .tab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
@@ -147,46 +105,32 @@
       });
     });
 
-    // ── Training log (localStorage per bruker)
-    const LOG_KEY = "kraftverket_log_" + u.username;
-    function loadLog()  { try { return JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch { return []; } }
-    function saveLog(l) { localStorage.setItem(LOG_KEY, JSON.stringify(l)); }
+    function esc(s) { return (s ?? "").toString().replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-    document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+    async function loadLog() {
+      const { data, error } = await sb
+        .from("calendar_entries")
+        .select("*")
+        .order("date", { ascending: false });
+      if (error) { console.error(error); return; }
+      renderLog(data || []);
+    }
 
-    document.getElementById("logForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const log = loadLog();
-      log.push({
-        date: document.getElementById("logDate").value,
-        type: document.getElementById("logType").value,
-        duration: +document.getElementById("logDuration").value,
-        note: document.getElementById("logNote").value.trim()
-      });
-      saveLog(log);
-      document.getElementById("logForm").reset();
-      document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
-      document.getElementById("logDuration").value = 60;
-      renderLog();
-    });
-
-    function renderLog() {
-      const log = loadLog().sort((a,b) => b.date.localeCompare(a.date));
+    function renderLog(log) {
       const list = document.getElementById("logList");
       if (!log.length) {
-        list.innerHTML = `<div class="empty-state">Ingen registrerte økter ennå.</div>`;
+        list.innerHTML = `<div class="empty-state">Ingen oppføringer ennå.</div>`;
       } else {
-        list.innerHTML = log.map((l, idx) => `
+        list.innerHTML = log.map(l => `
           <li class="log-item">
             <div>
-              <div class="what">${l.type}${l.note ? ` – <span class="muted" style="font-weight:400;">${l.note}</span>` : ""}</div>
-              <div class="when">${l.date}</div>
+              <div class="what">${esc(l.title || l.type)} <span class="chip orange" style="margin-left:.4rem;">${esc(l.type)}</span></div>
+              <div class="when">${l.date}${l.note ? ` · <span class="muted" style="font-weight:400;">${esc(l.note)}</span>` : ""}</div>
             </div>
             <div class="duration">${l.duration} min</div>
           </li>
         `).join("");
       }
-
       // Stats
       const today = new Date();
       const weekStart = new Date(today); weekStart.setDate(today.getDate() - today.getDay() + 1);
@@ -196,96 +140,57 @@
       document.getElementById("statWeek").textContent  = inWeek.length;
       document.getElementById("statMonth").textContent = inMonth.length;
       document.getElementById("statTotal").textContent = log.length;
-      document.getElementById("statMin").textContent   = inWeek.reduce((s,l) => s + l.duration, 0);
+      document.getElementById("statMin").textContent   = inWeek.reduce((s,l) => s + (l.duration || 0), 0);
     }
-    renderLog();
 
-    // ── Assignments (eier → medlem)
-    const ASSIGN_KEY = "kraftverket_assignments";
-    function loadAssignments()  { try { return JSON.parse(localStorage.getItem(ASSIGN_KEY)) || []; } catch { return []; } }
-    function saveAssignments(a) { localStorage.setItem(ASSIGN_KEY, JSON.stringify(a)); }
+    document.getElementById("logForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const entry = {
+        user_id: me.id,
+        date:     document.getElementById("logDate").value,
+        type:     document.getElementById("logType").value,
+        title:    document.getElementById("logTitle").value.trim() || null,
+        note:     document.getElementById("logNote").value.trim() || null,
+        duration: +document.getElementById("logDuration").value
+      };
+      const { error } = await sb.from("calendar_entries").insert(entry);
+      if (error) { alert("Feil: " + error.message); return; }
+      e.target.reset();
+      document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+      document.getElementById("logDuration").value = 60;
+      loadLog();
+    });
 
-    // Vis tildelinger til den innloggede brukeren under "Min treningslogg"
-    function renderAssignedToMe() {
-      const all = loadAssignments();
-      const mine = all.filter(a => a.member === u.username).sort((a,b) => b.date.localeCompare(a.date));
-      const box  = document.getElementById("assignedToMe");
-      const list = document.getElementById("assignedList");
-      if (!mine.length) { box.style.display = "none"; return; }
-      box.style.display = "";
-      list.innerHTML = mine.map(a => `
-        <li class="log-item">
-          <div>
-            <div class="what">${a.title} <span class="chip orange" style="margin-left:.4rem;">${a.type}</span></div>
-            <div class="when">${a.date}${a.desc ? ` · <span class="muted" style="font-weight:400;">${a.desc.replace(/</g,"&lt;")}</span>` : ""}</div>
+    async function loadPrograms() {
+      const { data, error } = await sb
+        .from("programs")
+        .select("*, profiles(name)")
+        .order("created_at", { ascending: false });
+      if (error) { console.error(error); return; }
+      const list = document.getElementById("programsList");
+      if (!data || !data.length) {
+        list.innerHTML = `<div class="empty-state">Ingen program publisert ennå.</div>`;
+        return;
+      }
+      list.innerHTML = data.map(p => `
+        <div class="card" style="background:var(--surface2); margin-bottom:.85rem;">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
+            <span class="chip orange">${esc(p.category || "program")}</span>
+            <h3 style="margin:0;">${esc(p.title)}</h3>
           </div>
-        </li>
+          <p style="white-space:pre-wrap; color:var(--text-muted); font-size:.95rem; margin-bottom:.5rem;">${esc(p.body)}</p>
+          <small class="muted">${p.profiles?.name || "Admin"} · ${new Date(p.created_at).toLocaleDateString("no-NO")}</small>
+        </div>
       `).join("");
     }
-    renderAssignedToMe();
 
-    // Eier-funksjonalitet
-    if (IS_OWNER) {
-      // Fyll medlem-dropdown (alle unntatt eieren)
-      const sel = document.getElementById("aMember");
-      Object.entries(window.MEMBERS).forEach(([uname, m]) => {
-        if (m.role === "owner") return;
-        const o = document.createElement("option");
-        o.value = uname; o.textContent = m.name;
-        sel.appendChild(o);
-      });
-      document.getElementById("aDate").value = new Date().toISOString().slice(0,10);
-
-      document.getElementById("assignForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const all = loadAssignments();
-        all.push({
-          member: document.getElementById("aMember").value,
-          date:   document.getElementById("aDate").value,
-          type:   document.getElementById("aType").value,
-          title:  document.getElementById("aTitle").value.trim(),
-          desc:   document.getElementById("aDesc").value.trim(),
-          from:   u.username,
-          ts:     Date.now()
-        });
-        saveAssignments(all);
-        e.target.reset();
-        document.getElementById("aDate").value = new Date().toISOString().slice(0,10);
-        renderAllAssignments();
-        renderAssignedToMe();
-      });
-
-      window.removeAssignment = (ts) => {
-        if (!confirm("Slette denne tildelingen?")) return;
-        saveAssignments(loadAssignments().filter(a => a.ts !== ts));
-        renderAllAssignments();
-        renderAssignedToMe();
-      };
-
-      function renderAllAssignments() {
-        const all = loadAssignments().sort((a,b) => b.date.localeCompare(a.date));
-        const list = document.getElementById("allAssignmentsList");
-        if (!all.length) {
-          list.innerHTML = `<div class="empty-state">Ingen tildelinger ennå.</div>`;
-          return;
-        }
-        list.innerHTML = all.map(a => {
-          const m = window.MEMBERS[a.member];
-          const memberName = m ? m.name : a.member;
-          return `
-            <li class="log-item">
-              <div>
-                <div class="what">${a.title} <span class="chip" style="margin-left:.4rem;">→ ${memberName}</span></div>
-                <div class="when">${a.date} · ${a.type}${a.desc ? ` · <span class="muted" style="font-weight:400;">${a.desc.replace(/</g,"&lt;")}</span>` : ""}</div>
-              </div>
-              <button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="removeAssignment(${a.ts})">Slett</button>
-            </li>
-          `;
-        }).join("");
-      }
-      renderAllAssignments();
-    }
-
+    (async () => {
+      me = await setupPage("kalender");
+      if (!me) return;
+      document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+      loadLog();
+      loadPrograms();
+    })();
   </script>
 </body>
 </html>

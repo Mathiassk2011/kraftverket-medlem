@@ -1,44 +1,23 @@
-// Felles auth-helpers for alle sider.
-const AUTH_KEY = "kraftverket_session";
+// Felles helpers for alle sider (etter at supabase-client.js er lastet).
 
-function getUser() {
-  const raw = sessionStorage.getItem(AUTH_KEY) || localStorage.getItem(AUTH_KEY);
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
-}
+// Bygg topplinje (header). Bruker innlogget profil.
+async function renderHeader(activeKey) {
+  const profile = await getCurrentProfile();
+  if (!profile) return "";
+  const isAdmin = profile.role === "admin";
 
-function setUser(user, remember) {
-  const store = remember ? localStorage : sessionStorage;
-  store.setItem(AUTH_KEY, JSON.stringify(user));
-}
-
-function logout() {
-  sessionStorage.removeItem(AUTH_KEY);
-  localStorage.removeItem(AUTH_KEY);
-  window.location.href = "index.html";
-}
-
-function requireLogin() {
-  const u = getUser();
-  if (!u) {
-    window.location.href = "index.html";
-    return null;
-  }
-  return u;
-}
-
-// Bygg topplinje (header) for innloggede sider.
-function renderHeader(activeKey) {
-  const u = getUser();
-  if (!u) return "";
   const links = [
-    { key: "dashboard", label: "Hjem",     href: "dashboard.html" },
-    { key: "treningsstiler", label: "Trening", href: "treningsstiler.html" },
-    { key: "ukeplan",   label: "Ukeplan",  href: "ukeplan.html"   },
-    { key: "mifflin",   label: "Kosthold", href: "mifflin.html"   },
-    { key: "kalender",  label: "Kalender", href: "kalender.html"  },
-    { key: "chat",      label: "Chat",     href: "chat.html"      }
+    { key: "dashboard",      label: "Hjem",     href: "dashboard.html"      },
+    { key: "treningsstiler", label: "Trening",  href: "treningsstiler.html" },
+    { key: "ukeplan",        label: "Ukeplan",  href: "ukeplan.html"        },
+    { key: "mifflin",        label: "Kosthold", href: "mifflin.html"        },
+    { key: "kalender",       label: "Kalender", href: "kalender.html"       },
+    { key: "chat",           label: "Chat",     href: "chat.html"           }
   ];
+  if (isAdmin) links.push({ key: "admin", label: "Admin", href: "admin.html" });
+
+  const photo = profile.photo || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.name)}`;
+
   return `
     <header class="site-header">
       <a class="logo" href="dashboard.html">
@@ -54,10 +33,10 @@ function renderHeader(activeKey) {
       </nav>
       <div class="spacer"></div>
       <a class="user-pill" href="profil.html" title="Rediger profil">
-        <img src="${u.photo}" alt="${u.name}" />
-        <span>${u.name}</span>
+        <img src="${photo}" alt="${profile.name}" />
+        <span>${profile.name}${isAdmin ? ' 👑' : ''}</span>
       </a>
-      <button class="logout-btn" onclick="logout()">Logg ut</button>
+      <button class="logout-btn" onclick="signOut()">Logg ut</button>
     </header>
   `;
 }
@@ -65,3 +44,19 @@ function renderHeader(activeKey) {
 function renderFooter() {
   return `<footer class="site-footer">3475 Kraftverket Medlemsportal · Åsveien 3, 3475 Sætre</footer>`;
 }
+
+// Hjelper: sett opp header + footer på en innlogget side
+async function setupPage(activeKey) {
+  const user = await requireAuth();
+  if (!user) return null;
+  const profile = await getCurrentProfile();
+  const headerSlot = document.getElementById("header-slot");
+  const footerSlot = document.getElementById("footer-slot");
+  if (headerSlot) headerSlot.innerHTML = await renderHeader(activeKey);
+  if (footerSlot) footerSlot.innerHTML = renderFooter();
+  return profile;
+}
+
+window.renderHeader = renderHeader;
+window.renderFooter = renderFooter;
+window.setupPage = setupPage;

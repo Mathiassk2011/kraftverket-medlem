@@ -106,15 +106,12 @@
 
   <div id="footer-slot"></div>
 
-  <script src="members.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
   <script src="recipes.js"></script>
   <script src="app.js"></script>
   <script>
-    const u = requireLogin();
-    if (u) {
-      document.getElementById("header-slot").innerHTML = renderHeader("mifflin");
-      document.getElementById("footer-slot").innerHTML = renderFooter();
-    }
+    setupPage("mifflin");
 
     // Mifflin-St Jeor BMR
     function calcBMR(gender, w, h, age) {
