@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treningsstiler – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .styles-hero {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+    }
+    .styles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.75rem;
+      margin-top: 2rem;
+    }
+    .style-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all .22s;
+      display: flex;
+      flex-direction: column;
+    }
+    .style-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.4);
+    }
+    .style-card-img {
+      height: 210px;
+      overflow: hidden;
+      position: relative;
+    }
+    .style-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(.72) saturate(.75);
+      transition: transform .45s ease, filter .45s ease;
+    }
+    .style-card:hover .style-card-img img {
+      transform: scale(1.05);
+      filter: brightness(.82) saturate(.9);
+    }
+    .style-card-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(13,13,13,.45) 0%, rgba(229,104,26,.1) 100%);
+      pointer-events: none;
+    }
+    .style-card-label {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      background: var(--orange);
+      color: #fff;
+      font-size: .65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      padding: .25rem .7rem; border-radius: 100px;
+      z-index: 1;
+    }
+    .style-card-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .style-card-body h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      margin: 0;
+    }
+    .style-section-label {
+      font-size: .68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--orange); margin-bottom: .25rem;
+    }
+    .style-card-body p {
+      font-size: .9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+    .style-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: .25rem 0;
+    }
+    .style-tags {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+      margin-top: auto; padding-top: .5rem;
+    }
+    .style-link {
+      display: inline-flex; align-items: center; gap: .35rem;
+      color: var(--orange); font-size: .82rem; font-weight: 700;
+      text-decoration: none; margin-top: .25rem;
+      transition: gap .15s;
+    }
+    .style-link:hover { gap: .6rem; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="styles-hero">
+      <div class="badge">3475 Kraftverket</div>
+      <h1>Trenings<span class="accent">stiler</span></h1>
+      <p class="lead" style="max-width:580px; margin:0 auto;">
+        Vi tilbyr et bredt spekter av treningsformer for alle nivåer og mål.
+        Finn stilen som passer deg – eller kombiner dem alle.
+      </p>
+    </div>
+
+    <div class="styles-grid">
+
+      <!-- HYROX -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Konkurranse</span>
+          <img src="https://images.unsplash.com/photo-1757147517535-d0d9f4cd5b28?w=700&auto=format&fit=crop" alt="HYROX" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>HYROX</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>HYROX er et globalt fitness-race-format der du løper totalt 8 km og gjennomfører 8 funksjonelle stasjoner – én etter hver kilometer. Formatet er enkelt å forstå, men krevende å mestre. Du konkurrerer mot deg selv og din egen tid.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>Vi tilbyr faste HYROX-klasser der du trener stasjonene og bygger kapasiteten din. Vi arrangerer også egne <strong>HYROX Sim Race</strong>-events der du gjennomfører et fullstendig løp under reelle konkurranseforhold – rett her på huset. Book via Wondr-appen.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">8 stasjoner</span>
+            <span class="chip">8 km løping</span>
+            <span class="chip">Alle nivåer</span>
+            <span class="chip">Sim Race</span>
+          </div>
+          <a href="hyrox.html" class="style-link">Les mer om HYROX →</a>
+        </div>
+      </div>
+
+      <!-- FUNCTIONAL FITNESS / CROSSFIT -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Gruppetime</span>
+          <img src="https://3475kraftverket.no/wp-content/uploads/2024/04/DSC0800-scaled.jpg" alt="Functional Fitness" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>Functional Fitness</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>Funksjonell trening bruker naturlige bevegelser – løfte, dra, presse, hoppe – og kombinerer dem i varierte, høyintensive økter. Treningen er basert på CrossFit-metodikken og treffer alle muskelgrupper og energisystemer.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>Vi kjører daglige gruppetimer i <strong>The Box</strong> og <strong>The Black Box</strong> (270 m²). Hver time er 60 minutter med oppvarming, styrkedel og kondisjonsdel (WOD). Sertifiserte trenere skalerer alle øvelser til ditt nivå.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">CrossFit</span>
+            <span class="chip">WOD</span>
+            <span class="chip">Gruppetime</span>
+            <span class="chip">Skalerbart</span>
+          </div>
+          <a href="crossfit.html" class="style-link">Les mer om CrossFit →</a>
+        </div>
+      </div>
+
+      <!-- STYRKETRENING -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Styrkestudio</span>
+          <img src="https://3475kraftverket.no/wp-content/uploads/2021/07/DSC1436-scaled.jpg" alt="Styrketrening" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>Styrketrening</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>Styrketrening handler om progressiv overbelastning – du løfter gradvis tyngre over tid for å bygge muskler og styrke. Det kan gjøres med frivekter, maskiner eller kroppsvekt, og tilpasses alt fra nybegynner til konkurranseløfter.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>Styrkestudioet er på <strong>600 m²</strong> med plate-loaded og selectorized maskiner, olympiske stenger og dumbbells 2–50 kg. Vi har dedikerte vektløftingsplattformer og en 20-meter kunstgressmatte for funksjonell styrke.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">600 m²</span>
+            <span class="chip">Frivekter</span>
+            <span class="chip">Maskiner</span>
+            <span class="chip">04–24</span>
+          </div>
+          <a href="styrke.html" class="style-link">Les mer om styrkestudioet →</a>
+        </div>
+      </div>
+
+      <!-- HIIT CARDIO -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Høyintensitet</span>
+          <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop" alt="HIIT Cardio" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>HIIT Cardio</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>High Intensity Interval Training veksler korte bolker med maksimal innsats og aktiv hvile. HIIT er ekstremt effektivt for å forbrenne kalorier, forbedre VO₂max og øke stoffskiftet – og gir resultater på kortere tid enn tradisjonell cardio.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>HIIT brukes aktivt i CrossFit-timene og i egne kondisjonsprogrammer. Vi har <strong>SkiErg, romaskin, Assault bike, battle ropes og sled</strong> – perfekte verktøy for intervalltrening. Kunstgressmatta er ideell for eksplosive HIIT-øvelser.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">Høy intensitet</span>
+            <span class="chip">Intervaller</span>
+            <span class="chip">VO₂max</span>
+            <span class="chip">Effektivt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISS CARDIO -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Lavintensitet</span>
+          <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=700&auto=format&fit=crop" alt="LISS Cardio" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>LISS Cardio</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>Low Intensity Steady State er kondisjonstrening i lavt til moderat tempo over lengre tid – typisk 30–60 minutter. LISS bruker fett som primær energikilde, skåner kroppen og er ideelt for aktiv restitusjon og generell helse.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>Kondisjonsseksjonen i studioet er fullspekket med <strong>tredemøller, stasjonære sykler og romaskin</strong>. Bruk dem til rolig morgentrim, aktiv hvile mellom styrkedager eller lengre aerobe turer i ditt eget tempo.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">Lav intensitet</span>
+            <span class="chip">Fettforbrenning</span>
+            <span class="chip">Restitusjon</span>
+            <span class="chip">Alle dager</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LØPING -->
+      <div class="style-card">
+        <div class="style-card-img">
+          <span class="style-card-label">Runner's Corner</span>
+          <img src="https://3475kraftverket.no/wp-content/uploads/2023/12/Runners-corner-1-scaled.jpg" alt="Løping" loading="lazy" />
+        </div>
+        <div class="style-card-body">
+          <h2>Løping</h2>
+          <div>
+            <div class="style-section-label">Hva er det?</div>
+            <p>Løping er en av de mest effektive treningsformene for kondisjon, mental helse og vekt­kontroll. Fra rolige joggetur til tempoøkter og intervaller – løpeprogrammet tilpasses ditt mål, enten det er din første 5 km eller et HYROX-race.</p>
+          </div>
+          <hr class="style-divider" />
+          <div>
+            <div class="style-section-label">Hos oss</div>
+            <p>Vi har dedikert <strong>Runner's Corner</strong> med tredemøller for alle typer løpeøkter. Løping er også en sentral del av HYROX-treningen – vi hjelper deg med å bygge løpsteknikk og utholdenhet slik at du presterer bedre i alt du gjør.</p>
+          </div>
+          <div class="style-tags">
+            <span class="chip orange">Runner's Corner</span>
+            <span class="chip">Intervaller</span>
+            <span class="chip">Teknikk</span>
+            <span class="chip">HYROX-prep</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="members.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = requireLogin();
+    if (u) {
+      document.getElementById("header-slot").innerHTML = renderHeader("treningsstiler");
+      document.getElementById("footer-slot").innerHTML = renderFooter();
+    }
+  </script>
+</body>
+</html>
