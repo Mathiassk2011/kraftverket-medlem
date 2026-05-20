@@ -34,6 +34,7 @@ function renderHeader(activeKey) {
   const links = [
     { key: "dashboard", label: "Hjem",     href: "dashboard.html" },
     { key: "treningsstiler", label: "Trening", href: "treningsstiler.html" },
+    { key: "ukeplan",   label: "Ukeplan",  href: "ukeplan.html"   },
     { key: "mifflin",   label: "Kosthold", href: "mifflin.html"   },
     { key: "kalender",  label: "Kalender", href: "kalender.html"  },
     { key: "chat",      label: "Chat",     href: "chat.html"      }
