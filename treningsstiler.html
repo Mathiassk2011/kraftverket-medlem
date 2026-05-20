@@ -250,16 +250,24 @@
       margin: 1.25rem 0 .5rem;
     }
     .prog-day-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
-      gap: .5rem; margin-bottom: .75rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+      gap: .75rem; margin-bottom: .75rem;
     }
     .prog-day-box {
       background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: .65rem .85rem;
+      border-radius: var(--radius-sm); padding: .85rem 1rem;
     }
     .prog-day-box .d-label { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing:.8px; color: var(--orange); }
-    .prog-day-box .d-name { font-size: .9rem; font-weight: 800; margin-top: .15rem; }
-    .prog-day-box .d-ex { font-size: .78rem; color: var(--text-muted); margin-top: .2rem; }
+    .prog-day-box .d-name { font-size: .95rem; font-weight: 800; margin-top: .15rem; margin-bottom: .6rem; }
+    .prog-ex-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .3rem; }
+    .prog-ex-list li {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .82rem; padding: .3rem .55rem;
+      border-radius: 4px; background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .prog-ex-list .ex-name { color: var(--text); font-weight: 500; }
+    .prog-ex-list .ex-sets { color: var(--orange); font-weight: 800; font-size: .78rem; white-space: nowrap; margin-left: .5rem; }
     .prog-tip {
       background: var(--orange-glow); border: 1px solid rgba(229,104,26,.3);
       border-radius: var(--radius-sm); padding: .85rem 1rem;
@@ -554,12 +562,19 @@
         tags: ["3 dager/uke","Styrke","Lineær progresjon","Barbell"],
         desc: "Starting Strength er det mest anbefalte programmet for absolutte nybegynnere. Fokuset er utelukkende på de store grunnløftene og lineær vektøkning for hver økt. Enkelt, effektivt og vitenskapelig begrunnet.",
         days: [
-          { label: "Dag A", name: "Økt A", ex: "Knebøy 3×5 · Benkpress 3×5 · Markløft 1×5" },
-          { label: "Dag B", name: "Økt B", ex: "Knebøy 3×5 · Militærpress 3×5 · Markløft 1×5" },
-          { label: "Frekvens", name: "3 dager/uke", ex: "Alternér A og B med hviledag mellom" },
+          { label: "Økt A", name: "Mandag / Onsdag / Fredag (annenhver)", exercises: [
+            { ex: "Knebøy (back squat)", sets: "3×5" },
+            { ex: "Benkpress (flat)", sets: "3×5" },
+            { ex: "Markløft (konvensjonell)", sets: "1×5" },
+          ]},
+          { label: "Økt B", name: "Mandag / Onsdag / Fredag (annenhver)", exercises: [
+            { ex: "Knebøy (back squat)", sets: "3×5" },
+            { ex: "Militærpress (overhead press)", sets: "3×5" },
+            { ex: "Markløft (konvensjonell)", sets: "1×5" },
+          ]},
         ],
-        prog: "Legg 2,5 kg på øvre kropp og 5 kg på underkropp hver økt. Kjør dette til du stopper å progrediere (stall), deretter justeres programmet.",
-        tip: "💡 Perfekt for deg som aldri har trent med vekter. Fokus på teknikk de første ukene er viktigere enn vekten på stangen."
+        prog: "Legg 2,5 kg på øvre kropp (benkpress/militærpress) og 5 kg på underkropp (knebøy/markløft) etter HVER økt. Kjør dette til du stopper å progrediere, deretter justeres programmet.",
+        tip: "💡 Perfekt for deg som aldri har trent med vekter. Alternér Økt A og Økt B: A–B–A én uke, B–A–B neste. Teknikk er viktigere enn vekten de første ukene."
       },
       {
         id: "gzclp",
@@ -567,31 +582,71 @@
         subtitle: "Generalised Intermediate Program",
         level: "beginner", levelLabel: "Nybegynner / Middels",
         tags: ["4 dager/uke","Styrke","Hypertrofi","Lineær progresjon"],
-        desc: "GZCLP er et av de beste programmene for de som raskt har passert Starting Strength-stadiet. Det kombinerer tung styrketrening (T1) med supporting-løft (T2) og isolasjonsøvelser (T3) for en komplett tilnærming.",
+        desc: "GZCLP kombinerer tung styrketrening (T1) med supporting-løft (T2) og isolasjonsøvelser (T3). Mer volum enn Starting Strength og ideelt for de som raskt har passert nybegynnerstadiet.",
         days: [
-          { label: "Dag 1", name: "Knebøy / Benkpress", ex: "T1: Knebøy 5×3+ · T2: Militærpress 3×10" },
-          { label: "Dag 2", name: "Markløft / Militærpress", ex: "T1: Markløft 5×3+ · T2: Knebøy 3×10" },
-          { label: "Dag 3", name: "Benkpress / Knebøy", ex: "T1: Benkpress 5×3+ · T2: Markløft 3×8" },
-          { label: "Dag 4", name: "Militærpress / Markløft", ex: "T1: Militærpress 5×3+ · T2: Benkpress 3×10" },
+          { label: "Dag 1", name: "Knebøy + Militærpress", exercises: [
+            { ex: "Knebøy – T1", sets: "5×3+ (AMRAP siste)" },
+            { ex: "Militærpress – T2", sets: "3×10" },
+            { ex: "Lat pulldown / pull-up – T3", sets: "2×15+" },
+          ]},
+          { label: "Dag 2", name: "Militærpress + Markløft", exercises: [
+            { ex: "Militærpress – T1", sets: "5×3+ (AMRAP siste)" },
+            { ex: "Knebøy – T2", sets: "3×10" },
+            { ex: "Triceps pushdown – T3", sets: "2×15+" },
+          ]},
+          { label: "Dag 3", name: "Benkpress + Knebøy", exercises: [
+            { ex: "Benkpress – T1", sets: "5×3+ (AMRAP siste)" },
+            { ex: "Markløft – T2", sets: "3×8" },
+            { ex: "Biceps curl – T3", sets: "2×15+" },
+          ]},
+          { label: "Dag 4", name: "Markløft + Benkpress", exercises: [
+            { ex: "Markløft – T1", sets: "5×3+ (AMRAP siste)" },
+            { ex: "Benkpress – T2", sets: "3×10" },
+            { ex: "Core (planke / hanging leg raise) – T3", sets: "2×15+" },
+          ]},
         ],
-        prog: "T1: Øk vekten etter fullførte sett. T2: Øk etter 3×10 på alle sett. Siste sett T1 er AMRAP (gjør flest mulig reps).",
-        tip: "💡 GZCLP gir mer volum enn Starting Strength og er ideelt for de som vil bygge mer muskelmasse i tillegg til styrke."
+        prog: "T1: Øk vekten etter fullførte sett (2,5–5 kg). T2: Øk etter 3×10 på alle sett. T3: Øk etter 2×15+. Siste sett T1 er alltid AMRAP.",
+        tip: "💡 GZCLP gir mer volum enn Starting Strength og er ideelt for de som vil bygge muskelmasse i tillegg til styrke. 4 dager gir god frekvens."
       },
       {
         id: "531",
         name: "5/3/1 (Wendler)",
         subtitle: "Jim Wendler",
         level: "intermediate", levelLabel: "Viderekommen",
-        tags: ["3–4 dager/uke","Styrke","Langsiktig progresjon","Barbell"],
-        desc: "5/3/1 er et av tidenes mest populære styrkeprogrammer. Fokus på de fire store løftene med langsom, bærekraftig progresjon. Uke 1: 3×5, uke 2: 3×3, uke 3: 3×5/3/1 – deretter økt 1RM.",
+        tags: ["4 dager/uke","Styrke","Langsiktig progresjon","Barbell"],
+        desc: "5/3/1 er et av tidenes mest populære styrkeprogrammer med langsiktig og bærekraftig progresjon på de fire store løftene. Kombinert med tilbehørsøvelser gir det fullstendig muskeltilvekst.",
         days: [
-          { label: "Uke 1", name: "3 sett × 5 reps", ex: "65% / 75% / 85% av 1RM · AMRAP siste sett" },
-          { label: "Uke 2", name: "3 sett × 3 reps", ex: "70% / 80% / 90% av 1RM · AMRAP siste sett" },
-          { label: "Uke 3", name: "5/3/1", ex: "75% × 5 / 85% × 3 / 95% × 1+ reps" },
-          { label: "Uke 4", name: "Deload-uke", ex: "40–60% av 1RM · hvile og restitusjon" },
+          { label: "Dag 1 – Militærpress", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
+            { ex: "Militærpress – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
+            { ex: "Militærpress – Joker-sett", sets: "AMRAP siste arbeidsett" },
+            { ex: "Hantelpress / push-up – tilbehør", sets: "5×10" },
+            { ex: "Lat pulldown / chin-ups – tilbehør", sets: "5×10" },
+            { ex: "Lateral raises", sets: "3×15–20" },
+          ]},
+          { label: "Dag 2 – Markløft", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
+            { ex: "Markløft – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
+            { ex: "Markløft – Joker-sett", sets: "AMRAP siste arbeidsett" },
+            { ex: "Romanian deadlift – tilbehør", sets: "5×10" },
+            { ex: "Leg press – tilbehør", sets: "5×10" },
+            { ex: "Hanging leg raises", sets: "3×15" },
+          ]},
+          { label: "Dag 3 – Benkpress", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
+            { ex: "Benkpress – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
+            { ex: "Benkpress – Joker-sett", sets: "AMRAP siste arbeidsett" },
+            { ex: "Hantel benkpress / dips – tilbehør", sets: "5×10" },
+            { ex: "Kabel roing / sittende roing – tilbehør", sets: "5×10" },
+            { ex: "Face pulls", sets: "3×15–20" },
+          ]},
+          { label: "Dag 4 – Knebøy", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
+            { ex: "Knebøy – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
+            { ex: "Knebøy – Joker-sett", sets: "AMRAP siste arbeidsett" },
+            { ex: "Knebøy (høy reps) – tilbehør", sets: "5×10" },
+            { ex: "Leg curl – tilbehør", sets: "5×10" },
+            { ex: "Calf raises", sets: "5×20" },
+          ]},
         ],
-        prog: "Øk 1RM-estimat med 2,5 kg (overkropp) eller 5 kg (underkropp) etter hver 4-ukerssyklus. Langsiktig og bærekraftig fremgang.",
-        tip: "💡 5/3/1 fungerer best for de som allerede har 6–12 måneder erfaring. Ikke jag på vekten – tålmodighet er nøkkelen."
+        prog: "Uke 4 er alltid deload (40–60% av 1RM). Etter 4-ukerssyklus: øk Training Max med 2,5 kg (overkropp) eller 5 kg (underkropp). Aldri rush – langsiktig tålmodighet er nøkkelen.",
+        tip: "💡 Basér deg på 90% av faktisk 1RM som Training Max. 5/3/1 fungerer best for de med 6–12 måneder erfaring. Programmet er designet for år, ikke uker."
       },
       {
         id: "ppl",
@@ -599,15 +654,42 @@
         subtitle: "PPL – klassisk splitprogram",
         level: "intermediate", levelLabel: "Middels / Avansert",
         tags: ["6 dager/uke","Hypertrofi","Styrke","Splitprogram"],
-        desc: "PPL er et av de mest brukte treningssplittene for muskelbygging. Tre muskelgrupper trenes hver for seg over tre dager, og hele runden gjentas to ganger i uken for seks treningsdager totalt.",
+        desc: "PPL er et av de mest effektive splittene for muskelbygging. Tre muskelgrupper trenes to ganger i uken for seks treningsdager totalt – høy frekvens og høyt volum gir maksimal muskeltilvekst.",
         days: [
-          { label: "Dag 1 & 4", name: "Push", ex: "Benkpress · Skulderpress · Triceps" },
-          { label: "Dag 2 & 5", name: "Pull", ex: "Markløft · Pull-ups · Roing · Biceps" },
-          { label: "Dag 3 & 6", name: "Legs", ex: "Knebøy · Beinpress · RDL · Lår/legger" },
-          { label: "Dag 7", name: "Hvile", ex: "Aktiv restitusjon eller full hvile" },
+          { label: "Dag 1 & 4 – Push", name: "Bryst, skuldre & triceps", exercises: [
+            { ex: "Flat benkpress", sets: "4×4–6" },
+            { ex: "Incline hantelpress", sets: "4×8–12" },
+            { ex: "Kabel flyes / pec deck", sets: "3×12–15" },
+            { ex: "Skulderpress (hantel)", sets: "3×10–12" },
+            { ex: "Lateral raises (kabel/hantel)", sets: "4×12–15" },
+            { ex: "Triceps pushdown (kabel)", sets: "3×12–15" },
+            { ex: "Overhead triceps extension", sets: "3×10–12" },
+          ]},
+          { label: "Dag 2 & 5 – Pull", name: "Rygg & biceps", exercises: [
+            { ex: "Markløft / kroppshevinger", sets: "4×4–6" },
+            { ex: "Brede nedtrekk (lat pulldown)", sets: "4×8–12" },
+            { ex: "T-bar roing / sittende kabelroing", sets: "4×10–12" },
+            { ex: "Enarms hantelroing", sets: "3×12 (per side)" },
+            { ex: "Face pulls", sets: "3×15–20" },
+            { ex: "Biceps curl (stang)", sets: "3×10–12" },
+            { ex: "Hammer curl (hantel)", sets: "3×12–15" },
+          ]},
+          { label: "Dag 3 & 6 – Legs", name: "Lår, hamstrings & legger", exercises: [
+            { ex: "Knebøy (back squat)", sets: "4×4–6" },
+            { ex: "Leg press", sets: "4×10–12" },
+            { ex: "Leg extension", sets: "3×12–15" },
+            { ex: "Romanian deadlift", sets: "3×8–12" },
+            { ex: "Lying leg curl", sets: "3×12–15" },
+            { ex: "Stående calf raise", sets: "5×15–20" },
+            { ex: "Sittende calf raise", sets: "3×20–25" },
+          ]},
+          { label: "Dag 7", name: "Hvile / aktiv restitusjon", exercises: [
+            { ex: "Rolig gange / lett sykkel", sets: "20–40 min" },
+            { ex: "Foam rolling + tøying", sets: "15–20 min" },
+          ]},
         ],
-        prog: "Progressivt overbelastningstprinsipp: øk vekt eller reps fra gang til gang. Loggfør alle løft og forsøk alltid å slå forrige økt.",
-        tip: "💡 PPL krever høy treningsfrekvens og restitusjonsdisiplin. Sørg for nok søvn og ernæring – 6 dager i uka er krevende."
+        prog: "Legg til vekt eller reps fra gang til gang – loggfør alltid. Dag 1 (tung) og Dag 4 (samme øvelser, litt lettere og mer volum) gir dobbel frekvens per muskelgruppe.",
+        tip: "💡 PPL krever god restitusjon. Prioriter 7–9 timers søvn, nok protein (1,6–2,2 g/kg kroppsvekt) og kalorier tilpasset målet ditt."
       },
       {
         id: "upper-lower",
@@ -615,15 +697,44 @@
         subtitle: "4 dager i uken – balansert og effektivt",
         level: "intermediate", levelLabel: "Middels",
         tags: ["4 dager/uke","Styrke","Hypertrofi","Balansert"],
-        desc: "Upper/Lower er et av de beste programmene for de som vil trene 4 dager i uken. Overkropp og underkropp trenes to ganger i uken, noe som gir høy frekvens og god restitusjon.",
+        desc: "Upper/Lower trener overkropp og underkropp to ganger i uken. Styrkedagene bruker tunge compound-løft, hypertrofidagene fokuserer på volum og isolasjonsøvelser for maksimal muskeltilvekst.",
         days: [
-          { label: "Dag 1", name: "Upper A (styrke)", ex: "Benkpress 4×5 · Roing 4×6 · Militærpress 3×8" },
-          { label: "Dag 2", name: "Lower A (styrke)", ex: "Knebøy 4×5 · RDL 3×8 · Beinpress 3×10" },
-          { label: "Dag 3", name: "Upper B (hypertrofi)", ex: "Incline press · Pull-ups · Lateral raise · Curl" },
-          { label: "Dag 4", name: "Lower B (hypertrofi)", ex: "Front squat · Leg curl · Utfall · Legger" },
+          { label: "Dag 1 – Upper A", name: "Overkropp, styrke", exercises: [
+            { ex: "Benkpress (flat)", sets: "4×4–6" },
+            { ex: "Barbell roing (bøyd foroverbøyd)", sets: "4×4–6" },
+            { ex: "Militærpress (stang)", sets: "3×6–8" },
+            { ex: "Kroppshevinger / lat pulldown", sets: "3×6–8" },
+            { ex: "Face pulls", sets: "3×15" },
+            { ex: "Triceps dips / pushdown", sets: "2×10–12" },
+          ]},
+          { label: "Dag 2 – Lower A", name: "Underkropp, styrke", exercises: [
+            { ex: "Knebøy (back squat)", sets: "4×4–6" },
+            { ex: "Romanian deadlift", sets: "3×6–8" },
+            { ex: "Leg press", sets: "3×10" },
+            { ex: "Leg curl", sets: "3×10–12" },
+            { ex: "Calf raises (stående)", sets: "4×15–20" },
+            { ex: "Planke", sets: "3×45–60 sek" },
+          ]},
+          { label: "Dag 3 – Upper B", name: "Overkropp, hypertrofi", exercises: [
+            { ex: "Incline hantelpress", sets: "4×8–12" },
+            { ex: "Kabel roing / sittende roing", sets: "4×10–12" },
+            { ex: "Skulderpress (hantel)", sets: "3×10–12" },
+            { ex: "Enarms hantelroing", sets: "3×12 (per side)" },
+            { ex: "Lateral raises", sets: "4×12–15" },
+            { ex: "Biceps curl", sets: "3×12–15" },
+            { ex: "Overhead triceps extension", sets: "3×12–15" },
+          ]},
+          { label: "Dag 4 – Lower B", name: "Underkropp, hypertrofi", exercises: [
+            { ex: "Hack squat / front squat", sets: "4×8–12" },
+            { ex: "Leg curl (liggende)", sets: "4×10–15" },
+            { ex: "Utfall med hantler", sets: "3×12 (per ben)" },
+            { ex: "Leg extension", sets: "3×12–15" },
+            { ex: "Hip thrust (glute bridge)", sets: "3×15" },
+            { ex: "Sittende calf raise", sets: "4×20–25" },
+          ]},
         ],
-        prog: "Styrke-dager: tung og eksplosiv. Hypertrofi-dager: moderat vekt, høyere reps (8–15). Øk vekten 2,5 kg når du klarer alle sett og reps.",
-        tip: "💡 Upper/Lower er ideelt for de med en travel hverdag. 4 dager gir god balanse mellom stimulering og restitusjon."
+        prog: "Styrkedager: tung vekt, eksplosive reps, 2–4 min pause. Hypertrofidager: moderat vekt, kontrollerte reps, 60–90 sek pause. Øk vekten 2,5 kg når du klarer alle sett og reps komfortabelt.",
+        tip: "💡 Upper/Lower er ideelt for de med en travel hverdag. 4 dager gir god balanse mellom muskelstimulering og restitusjon – og det er enkelt å planlegge."
       },
       {
         id: "hyrox-plan",
@@ -631,16 +742,41 @@
         subtitle: "Funksjonell fitness for konkurranse",
         level: "all", levelLabel: "Alle nivåer",
         tags: ["5 dager/uke","HYROX","Kondisjon","Styrke"],
-        desc: "En 12-ukers plan designet for å forberede deg til et HYROX-race. Kombinerer løpstrening, stasjonsteknikk og kondisjonsstyrke for å bygge all-round atletisk kapasitet.",
+        desc: "En 12-ukers plan designet for å forberede deg til et HYROX-race. Kombinerer løpstrening, stasjonsteknikk og kondisjonsstyrke for å bygge all-round atletisk kapasitet og bli klar til race-day.",
         days: [
-          { label: "Dag 1", name: "Løping + SkiErg", ex: "4×1 km løp · 4×500m SkiErg" },
-          { label: "Dag 2", name: "Styrke + Sled", ex: "Knebøy · Markløft · Sled Push/Pull" },
-          { label: "Dag 3", name: "LISS Cardio", ex: "40 min rolig løping eller sykkel" },
-          { label: "Dag 4", name: "Stasjonstrening", ex: "Wall ball · Farmer's carry · Sandbag lunges · Roing" },
-          { label: "Dag 5", name: "Sim Race eller langtur", ex: "Fullstendig HYROX-simulering eller 60 min løp" },
+          { label: "Dag 1", name: "Løping + SkiErg", exercises: [
+            { ex: "Oppvarming – rolig jogg", sets: "1 km" },
+            { ex: "Tempoøkt løping", sets: "4×1 km (2 min pause)" },
+            { ex: "SkiErg intervaller", sets: "4×500 m (90 sek pause)" },
+            { ex: "SkiErg sprint-finisher", sets: "2×250 m (maks)" },
+          ]},
+          { label: "Dag 2", name: "Styrke + Sled", exercises: [
+            { ex: "Knebøy (back squat)", sets: "4×6" },
+            { ex: "Markløft (konvensjonell)", sets: "3×5" },
+            { ex: "Sled push", sets: "6×25 m (60 sek pause)" },
+            { ex: "Sled pull (tau)", sets: "6×25 m (60 sek pause)" },
+            { ex: "Farmer's carry", sets: "4×50 m" },
+          ]},
+          { label: "Dag 3", name: "LISS Cardio + mobilitet", exercises: [
+            { ex: "Rolig løping / sykkel", sets: "40–50 min (60–65% maks puls)" },
+            { ex: "Foam rolling (rygg, hofter, legger)", sets: "10–15 min" },
+            { ex: "Hip flexor stretch + hamstring", sets: "3×45 sek per side" },
+          ]},
+          { label: "Dag 4", name: "Stasjonsteknikk", exercises: [
+            { ex: "Wall ball shots (9/6 kg)", sets: "4×20" },
+            { ex: "Sandbag lunges (10/15 kg)", sets: "4×25 m" },
+            { ex: "Romaskin", sets: "4×500 m (2 min pause)" },
+            { ex: "Burpee broad jumps", sets: "4×15" },
+            { ex: "Box jumps / step-ups", sets: "3×15" },
+          ]},
+          { label: "Dag 5", name: "Sim Race eller langtur", exercises: [
+            { ex: "Alternativ A: Fullstendig HYROX-simulering", sets: "8 km løp + 8 stasjoner" },
+            { ex: "Alternativ B: Lang løpetur", sets: "60–75 min rolig/moderat" },
+            { ex: "Cool-down og tøying", sets: "10–15 min" },
+          ]},
         ],
-        prog: "Øk løpsdistanse og stasjonsvolum med 5–10% per uke. Planlegg en lettere uke (deload) hver 4. uke for å la kroppen adaptere.",
-        tip: "💡 Book HYROX-klasser på Kraftverket via Wondr-appen og bruk Sim Race-events til å teste fremdriften din underveis i planen."
+        prog: "Øk løpsdistanse og stasjonsvolum med 5–10% per uke. Hver 4. uke er deload (60–70% volum). Ukene 9–11 er race-specific trening; uke 12 er taper-uke (50% volum) frem til race.",
+        tip: "💡 Book HYROX-klasser på Kraftverket via Wondr-appen og bruk Sim Race-events til å teste fremdriften. Fokusér på stasjonene du er svakest på de første 4 ukene."
       },
     ];
 
@@ -680,7 +816,13 @@
         <div class="prog-day-box">
           <div class="d-label">${d.label}</div>
           <div class="d-name">${d.name}</div>
-          <div class="d-ex">${d.ex}</div>
+          <ul class="prog-ex-list">
+            ${d.exercises.map(e => `
+              <li>
+                <span class="ex-name">${e.ex}</span>
+                <span class="ex-sets">${e.sets}</span>
+              </li>`).join("")}
+          </ul>
         </div>`).join("");
       document.getElementById("progBackdrop").classList.add("open");
       document.body.style.overflow = "hidden";
