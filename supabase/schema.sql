@@ -79,6 +79,20 @@ as $$
   );
 $$;
 
+-- HELPER: er bruker medlem av samtalen? (bypasser RLS for å unngå rekursjon)
+create or replace function public.is_conv_member(_conv uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.conversation_members
+    where conversation_id = _conv and user_id = auth.uid()
+  );
+$$;
+
 -- ─────────────────────────────────────────────────────────────────
 --  AUTO-OPPRETT PROFIL ved ny innlogging
 -- ─────────────────────────────────────────────────────────────────
@@ -159,11 +173,7 @@ drop policy if exists "conv_update_creator"  on public.conversations;
 
 create policy "conv_read_members" on public.conversations
   for select using (
-    type = 'public'
-    or exists (
-      select 1 from public.conversation_members
-      where conversation_id = conversations.id and user_id = auth.uid()
-    )
+    type = 'public' or public.is_conv_member(id)
   );
 
 create policy "conv_create" on public.conversations
@@ -179,10 +189,7 @@ drop policy if exists "cm_delete"    on public.conversation_members;
 
 create policy "cm_read_self" on public.conversation_members
   for select using (
-    user_id = auth.uid()
-    or conversation_id in (
-      select conversation_id from public.conversation_members where user_id = auth.uid()
-    )
+    user_id = auth.uid() or public.is_conv_member(conversation_id)
   );
 
 create policy "cm_insert" on public.conversation_members
@@ -204,9 +211,7 @@ drop policy if exists "msg_insert" on public.messages;
 create policy "msg_read" on public.messages
   for select using (
     conversation_id in (select id from public.conversations where type = 'public')
-    or conversation_id in (
-      select conversation_id from public.conversation_members where user_id = auth.uid()
-    )
+    or public.is_conv_member(conversation_id)
   );
 
 create policy "msg_insert" on public.messages
@@ -214,9 +219,7 @@ create policy "msg_insert" on public.messages
     from_id = auth.uid()
     and (
       conversation_id in (select id from public.conversations where type = 'public')
-      or conversation_id in (
-        select conversation_id from public.conversation_members where user_id = auth.uid()
-      )
+      or public.is_conv_member(conversation_id)
     )
   );
 
