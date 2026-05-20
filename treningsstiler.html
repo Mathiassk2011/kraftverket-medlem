@@ -154,6 +154,117 @@
       color: var(--orange); font-weight: 700; font-size: .88rem;
       text-decoration: none; transition: gap .15s; }
     .ts-cta:hover { gap: .65rem; text-decoration: none; }
+
+    /* ── Dagens forslag ── */
+    .today-card {
+      background: var(--surface);
+      border: 1px solid var(--orange);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 640px) { .today-card { grid-template-columns: 1fr; } }
+    .today-card-left {
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .today-card-right {
+      background: var(--surface2);
+      padding: 2rem;
+      border-left: 1px solid var(--border);
+    }
+    @media (max-width: 640px) {
+      .today-card-right { border-left: none; border-top: 1px solid var(--border); }
+    }
+    .today-day-label {
+      font-size: .68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--orange);
+    }
+    .today-title { font-size: 1.6rem; font-weight: 900; line-height: 1.15; }
+    .today-desc { font-size: .9rem; color: var(--text-muted); line-height: 1.65; }
+    .today-meta { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .today-exercises { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+    .today-exercises li {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 1rem;
+      padding: .6rem .85rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: .88rem;
+    }
+    .today-exercises li strong { font-weight: 700; }
+    .today-exercises .sets {
+      font-size: .78rem; font-weight: 800;
+      color: var(--orange); white-space: nowrap;
+    }
+    .today-ex-label {
+      font-size: .68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-muted); margin-bottom: .75rem;
+    }
+
+    /* ── Treningsprogrammer ── */
+    .prog-section { margin-top: 3.5rem; }
+    .prog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .prog-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex; flex-direction: column; gap: .6rem;
+    }
+    .prog-card:hover { border-color: var(--orange); transform: translateY(-3px); }
+    .prog-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+    .prog-card h3 { font-size: 1.05rem; font-weight: 900; margin: 0; }
+    .prog-level {
+      font-size: .6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; padding: .2rem .55rem; border-radius: 100px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .level-beginner { background: rgba(34,197,94,.15); color:#4ade80; border:1px solid rgba(34,197,94,.3); }
+    .level-intermediate { background: rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+    .level-advanced { background: rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+    .level-all { background: var(--orange-glow); color:var(--orange); border:1px solid rgba(229,104,26,.3); }
+    .prog-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
+    .prog-card-meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .25rem; }
+    .prog-card-open {
+      margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--border);
+      font-size: .8rem; font-weight: 700; color: var(--orange);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* Program modal */
+    .prog-modal-header { padding: 1.75rem 1.75rem 0; }
+    .prog-modal-header h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: .5rem; }
+    .prog-modal-body { padding: 1.25rem 1.75rem 1.75rem; }
+    .prog-section-lbl {
+      font-size: .68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--orange);
+      margin: 1.25rem 0 .5rem;
+    }
+    .prog-day-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+      gap: .5rem; margin-bottom: .75rem;
+    }
+    .prog-day-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .65rem .85rem;
+    }
+    .prog-day-box .d-label { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing:.8px; color: var(--orange); }
+    .prog-day-box .d-name { font-size: .9rem; font-weight: 800; margin-top: .15rem; }
+    .prog-day-box .d-ex { font-size: .78rem; color: var(--text-muted); margin-top: .2rem; }
+    .prog-tip {
+      background: var(--orange-glow); border: 1px solid rgba(229,104,26,.3);
+      border-radius: var(--radius-sm); padding: .85rem 1rem;
+      font-size: .88rem; line-height: 1.65; margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -164,6 +275,28 @@
       <div class="badge">3475 Kraftverket</div>
       <h1>Trenings<span class="accent">stiler</span></h1>
       <p class="lead">Trykk på en treningsstil for å lese mer om hva den er og hva Kraftverket tilbyr.</p>
+    </div>
+
+    <!-- ── Hva kan du trene i dag? ── -->
+    <div class="today-card" id="todayCard">
+      <div class="today-card-left">
+        <div>
+          <div class="today-day-label" id="todayDayLabel"></div>
+          <div class="today-title" id="todayTitle"></div>
+        </div>
+        <p class="today-desc" id="todayDesc"></p>
+        <div class="today-meta" id="todayMeta"></div>
+      </div>
+      <div class="today-card-right">
+        <div class="today-ex-label">Foreslåtte øvelser</div>
+        <ul class="today-exercises" id="todayExercises"></ul>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1.5rem;">
+      <div class="badge">Alle stiler</div>
+      <h2>Trenings<span class="accent">stiler</span></h2>
+      <p>Trykk på en stil for å lese mer om hva den er og hva Kraftverket tilbyr.</p>
     </div>
 
     <div class="styles-grid">
@@ -235,9 +368,42 @@
       </div>
 
     </div>
+
+    <!-- ── Treningsprogrammer ── -->
+    <div class="prog-section">
+      <div class="section-title" style="margin-bottom:1.5rem;">
+        <div class="badge">Progresjon</div>
+        <h2>Trenings<span class="accent">programmer</span></h2>
+        <p>Kjente og velprøvde programmer som gir strukturert progresjon. Trykk for full beskrivelse.</p>
+      </div>
+      <div class="prog-grid" id="progGrid"></div>
+    </div>
+
   </main>
 
-  <!-- Modal -->
+  <!-- Training style modal -->
+  <!-- Program modal -->
+  <div class="ts-backdrop" id="progBackdrop" onclick="if(event.target===this)closeProg()">
+    <div class="ts-modal" id="progModal">
+      <div class="prog-modal-header" style="position:relative;">
+        <button class="ts-close" style="position:absolute;top:1rem;right:1rem;" onclick="closeProg()">✕</button>
+        <div class="ts-tags" id="progTags"></div>
+        <h2 id="progTitle"></h2>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-top:.4rem;" id="progSubtitle"></p>
+      </div>
+      <div class="prog-modal-body">
+        <div class="prog-section-lbl">Om programmet</div>
+        <p id="progDesc" style="font-size:.92rem;color:var(--text-muted);line-height:1.7;"></p>
+        <div class="prog-section-lbl">Ukesstruktur</div>
+        <div class="prog-day-grid" id="progDays"></div>
+        <div class="prog-section-lbl">Progresjon</div>
+        <p id="progProg" style="font-size:.92rem;color:var(--text-muted);line-height:1.7;"></p>
+        <div class="prog-tip" id="progTip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Training style modal -->
   <div class="ts-backdrop" id="tsBackdrop" onclick="if(event.target===this)closeStyle()">
     <div class="ts-modal" id="tsModal">
       <div class="ts-modal-img" style="position:relative;">
@@ -270,6 +436,264 @@
   <script src="app.js"></script>
   <script>
     setupPage("treningsstiler");
+
+    // ── Dagens treningsforslag ──
+    const TODAY_PLAN = [
+      { // Søndag
+        title: "Aktiv hvile", color: "#a78bfa",
+        desc: "La kroppen restituere etter en hard uke. Lett aktivitet øker blodsirkulasjonen og fremskynder restitusjon uten å belaste muskler og ledd.",
+        tags: ["Restitusjon","Lav intensitet","LISS"],
+        exercises: [
+          { name: "Rolig gange / turgåing", sets: "30–60 min" },
+          { name: "Sykling i rolig tempo", sets: "20–40 min" },
+          { name: "Lett tøying og stretching", sets: "15 min" },
+          { name: "Skum-rulling (foam rolling)", sets: "10 min" },
+        ]
+      },
+      { // Mandag
+        title: "Push – Bryst, skuldre & triceps", color: "#e5681a",
+        desc: "Start uken sterkt med en solid push-økt. Fokuser på pressøvelser og bygg overkroppsstyrke i bryst, skuldre og triceps.",
+        tags: ["Styrke","Hypertrofi","Overkropp"],
+        exercises: [
+          { name: "Benkpress (flat)", sets: "4×6–8" },
+          { name: "Incline hantelpress", sets: "3×10–12" },
+          { name: "Skulderpress (militærpress)", sets: "4×8–10" },
+          { name: "Lateral raises", sets: "3×15" },
+          { name: "Triceps pushdown", sets: "3×12–15" },
+        ]
+      },
+      { // Tirsdag
+        title: "Pull – Rygg & biceps", color: "#3b82f6",
+        desc: "Tren ryggen bredt og tykk med trekkøvelser. En sterk rygg er grunnlaget for god holdning og forebygging av skader.",
+        tags: ["Styrke","Hypertrofi","Rygg"],
+        exercises: [
+          { name: "Markløft (konvensjonell)", sets: "4×5" },
+          { name: "Brede nedtrekk / pull-ups", sets: "4×8–10" },
+          { name: "Sittende roing med kabel", sets: "3×10–12" },
+          { name: "Enarms hantelroing", sets: "3×12" },
+          { name: "Biceps curl (stang)", sets: "3×12–15" },
+        ]
+      },
+      { // Onsdag
+        title: "Ben – Knebøy, press & utfall", color: "#22c55e",
+        desc: "Ben-dag er den viktigste dagen! De store muskelgruppene i beina frigir mest testosteron og veksthormoner, noe som gagner hele kroppen.",
+        tags: ["Styrke","Hypertrofi","Underkropp"],
+        exercises: [
+          { name: "Knebøy (back squat)", sets: "4×6–8" },
+          { name: "Beinpress (leg press)", sets: "3×12" },
+          { name: "Romanian deadlift", sets: "3×10" },
+          { name: "Utfall med hantler", sets: "3×12 (per ben)" },
+          { name: "Leggpress (calf raises)", sets: "4×20" },
+        ]
+      },
+      { // Torsdag
+        title: "Push + Core – Skuldre & mage", color: "#e5681a",
+        desc: "Andre push-økt i uka med fokus på skuldre og en solid core-trening. Et sterkt senter forbedrer alle løft og forebygger ryggskader.",
+        tags: ["Styrke","Core","Skuldre"],
+        exercises: [
+          { name: "Overhead press (stang)", sets: "4×6–8" },
+          { name: "Arnold press (hantler)", sets: "3×10–12" },
+          { name: "Kabel lateral raises", sets: "3×15" },
+          { name: "Planke", sets: "3×45–60 sek" },
+          { name: "Hanging leg raises", sets: "3×15" },
+        ]
+      },
+      { // Fredag
+        title: "Pull + HIIT – Rygg, biceps & kondisjon", color: "#ef4444",
+        desc: "Avslutt uken med en intensiv kombinasjon av styrke og kondisjon. HIIT-finisher etter styrkeøkten gir maksimalt utbytte og forbereder deg til helgen.",
+        tags: ["Styrke","HIIT","Kondisjon"],
+        exercises: [
+          { name: "Kroppshevinger (pull-ups)", sets: "4×maks" },
+          { name: "T-bar roing", sets: "3×10" },
+          { name: "Face pulls", sets: "3×15" },
+          { name: "HIIT – romaskin intervaller", sets: "8×20 sek på / 40 sek av" },
+          { name: "Battle ropes", sets: "3×30 sek" },
+        ]
+      },
+      { // Lørdag
+        title: "Helkropp / HYROX-prep", color: "#fbbf24",
+        desc: "Lørdagen er perfekt for en funksjonstrent helkroppsøkt eller HYROX-forberedelse. Tren kondisjon og styrke i ett og bli klar for konkurranse.",
+        tags: ["HYROX","Helkropp","Kondisjon"],
+        exercises: [
+          { name: "Løping / SkiErg", sets: "2×500 m" },
+          { name: "Sled push + pull", sets: "4×25 m" },
+          { name: "Wall ball shots", sets: "3×20" },
+          { name: "Farmer's carry", sets: "3×50 m" },
+          { name: "Sandbag lunges", sets: "2×25 m" },
+        ]
+      },
+    ];
+
+    function buildTodayCard() {
+      const day = new Date().getDay();
+      const plan = TODAY_PLAN[day];
+      const dagNavn = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
+      document.getElementById("todayDayLabel").textContent = `I dag – ${dagNavn[day]}`;
+      document.getElementById("todayTitle").textContent = plan.title;
+      document.getElementById("todayDesc").textContent = plan.desc;
+      document.getElementById("todayCard").style.borderColor = plan.color;
+      document.getElementById("todayMeta").innerHTML =
+        plan.tags.map(t => `<span class="chip">${t}</span>`).join("");
+      document.getElementById("todayExercises").innerHTML =
+        plan.exercises.map(e => `
+          <li>
+            <strong>${e.name}</strong>
+            <span class="sets">${e.sets}</span>
+          </li>`).join("");
+    }
+
+    buildTodayCard();
+
+    // ── Treningsprogrammer ──
+    const PROGRAMS = [
+      {
+        id: "starting-strength",
+        name: "Starting Strength",
+        subtitle: "Mark Rippetoe",
+        level: "beginner", levelLabel: "Nybegynner",
+        tags: ["3 dager/uke","Styrke","Lineær progresjon","Barbell"],
+        desc: "Starting Strength er det mest anbefalte programmet for absolutte nybegynnere. Fokuset er utelukkende på de store grunnløftene og lineær vektøkning for hver økt. Enkelt, effektivt og vitenskapelig begrunnet.",
+        days: [
+          { label: "Dag A", name: "Økt A", ex: "Knebøy 3×5 · Benkpress 3×5 · Markløft 1×5" },
+          { label: "Dag B", name: "Økt B", ex: "Knebøy 3×5 · Militærpress 3×5 · Markløft 1×5" },
+          { label: "Frekvens", name: "3 dager/uke", ex: "Alternér A og B med hviledag mellom" },
+        ],
+        prog: "Legg 2,5 kg på øvre kropp og 5 kg på underkropp hver økt. Kjør dette til du stopper å progrediere (stall), deretter justeres programmet.",
+        tip: "💡 Perfekt for deg som aldri har trent med vekter. Fokus på teknikk de første ukene er viktigere enn vekten på stangen."
+      },
+      {
+        id: "gzclp",
+        name: "GZCLP",
+        subtitle: "Generalised Intermediate Program",
+        level: "beginner", levelLabel: "Nybegynner / Middels",
+        tags: ["4 dager/uke","Styrke","Hypertrofi","Lineær progresjon"],
+        desc: "GZCLP er et av de beste programmene for de som raskt har passert Starting Strength-stadiet. Det kombinerer tung styrketrening (T1) med supporting-løft (T2) og isolasjonsøvelser (T3) for en komplett tilnærming.",
+        days: [
+          { label: "Dag 1", name: "Knebøy / Benkpress", ex: "T1: Knebøy 5×3+ · T2: Militærpress 3×10" },
+          { label: "Dag 2", name: "Markløft / Militærpress", ex: "T1: Markløft 5×3+ · T2: Knebøy 3×10" },
+          { label: "Dag 3", name: "Benkpress / Knebøy", ex: "T1: Benkpress 5×3+ · T2: Markløft 3×8" },
+          { label: "Dag 4", name: "Militærpress / Markløft", ex: "T1: Militærpress 5×3+ · T2: Benkpress 3×10" },
+        ],
+        prog: "T1: Øk vekten etter fullførte sett. T2: Øk etter 3×10 på alle sett. Siste sett T1 er AMRAP (gjør flest mulig reps).",
+        tip: "💡 GZCLP gir mer volum enn Starting Strength og er ideelt for de som vil bygge mer muskelmasse i tillegg til styrke."
+      },
+      {
+        id: "531",
+        name: "5/3/1 (Wendler)",
+        subtitle: "Jim Wendler",
+        level: "intermediate", levelLabel: "Viderekommen",
+        tags: ["3–4 dager/uke","Styrke","Langsiktig progresjon","Barbell"],
+        desc: "5/3/1 er et av tidenes mest populære styrkeprogrammer. Fokus på de fire store løftene med langsom, bærekraftig progresjon. Uke 1: 3×5, uke 2: 3×3, uke 3: 3×5/3/1 – deretter økt 1RM.",
+        days: [
+          { label: "Uke 1", name: "3 sett × 5 reps", ex: "65% / 75% / 85% av 1RM · AMRAP siste sett" },
+          { label: "Uke 2", name: "3 sett × 3 reps", ex: "70% / 80% / 90% av 1RM · AMRAP siste sett" },
+          { label: "Uke 3", name: "5/3/1", ex: "75% × 5 / 85% × 3 / 95% × 1+ reps" },
+          { label: "Uke 4", name: "Deload-uke", ex: "40–60% av 1RM · hvile og restitusjon" },
+        ],
+        prog: "Øk 1RM-estimat med 2,5 kg (overkropp) eller 5 kg (underkropp) etter hver 4-ukerssyklus. Langsiktig og bærekraftig fremgang.",
+        tip: "💡 5/3/1 fungerer best for de som allerede har 6–12 måneder erfaring. Ikke jag på vekten – tålmodighet er nøkkelen."
+      },
+      {
+        id: "ppl",
+        name: "Push / Pull / Legs",
+        subtitle: "PPL – klassisk splitprogram",
+        level: "intermediate", levelLabel: "Middels / Avansert",
+        tags: ["6 dager/uke","Hypertrofi","Styrke","Splitprogram"],
+        desc: "PPL er et av de mest brukte treningssplittene for muskelbygging. Tre muskelgrupper trenes hver for seg over tre dager, og hele runden gjentas to ganger i uken for seks treningsdager totalt.",
+        days: [
+          { label: "Dag 1 & 4", name: "Push", ex: "Benkpress · Skulderpress · Triceps" },
+          { label: "Dag 2 & 5", name: "Pull", ex: "Markløft · Pull-ups · Roing · Biceps" },
+          { label: "Dag 3 & 6", name: "Legs", ex: "Knebøy · Beinpress · RDL · Lår/legger" },
+          { label: "Dag 7", name: "Hvile", ex: "Aktiv restitusjon eller full hvile" },
+        ],
+        prog: "Progressivt overbelastningstprinsipp: øk vekt eller reps fra gang til gang. Loggfør alle løft og forsøk alltid å slå forrige økt.",
+        tip: "💡 PPL krever høy treningsfrekvens og restitusjonsdisiplin. Sørg for nok søvn og ernæring – 6 dager i uka er krevende."
+      },
+      {
+        id: "upper-lower",
+        name: "Upper / Lower Split",
+        subtitle: "4 dager i uken – balansert og effektivt",
+        level: "intermediate", levelLabel: "Middels",
+        tags: ["4 dager/uke","Styrke","Hypertrofi","Balansert"],
+        desc: "Upper/Lower er et av de beste programmene for de som vil trene 4 dager i uken. Overkropp og underkropp trenes to ganger i uken, noe som gir høy frekvens og god restitusjon.",
+        days: [
+          { label: "Dag 1", name: "Upper A (styrke)", ex: "Benkpress 4×5 · Roing 4×6 · Militærpress 3×8" },
+          { label: "Dag 2", name: "Lower A (styrke)", ex: "Knebøy 4×5 · RDL 3×8 · Beinpress 3×10" },
+          { label: "Dag 3", name: "Upper B (hypertrofi)", ex: "Incline press · Pull-ups · Lateral raise · Curl" },
+          { label: "Dag 4", name: "Lower B (hypertrofi)", ex: "Front squat · Leg curl · Utfall · Legger" },
+        ],
+        prog: "Styrke-dager: tung og eksplosiv. Hypertrofi-dager: moderat vekt, høyere reps (8–15). Øk vekten 2,5 kg når du klarer alle sett og reps.",
+        tip: "💡 Upper/Lower er ideelt for de med en travel hverdag. 4 dager gir god balanse mellom stimulering og restitusjon."
+      },
+      {
+        id: "hyrox-plan",
+        name: "HYROX 12-ukers plan",
+        subtitle: "Funksjonell fitness for konkurranse",
+        level: "all", levelLabel: "Alle nivåer",
+        tags: ["5 dager/uke","HYROX","Kondisjon","Styrke"],
+        desc: "En 12-ukers plan designet for å forberede deg til et HYROX-race. Kombinerer løpstrening, stasjonsteknikk og kondisjonsstyrke for å bygge all-round atletisk kapasitet.",
+        days: [
+          { label: "Dag 1", name: "Løping + SkiErg", ex: "4×1 km løp · 4×500m SkiErg" },
+          { label: "Dag 2", name: "Styrke + Sled", ex: "Knebøy · Markløft · Sled Push/Pull" },
+          { label: "Dag 3", name: "LISS Cardio", ex: "40 min rolig løping eller sykkel" },
+          { label: "Dag 4", name: "Stasjonstrening", ex: "Wall ball · Farmer's carry · Sandbag lunges · Roing" },
+          { label: "Dag 5", name: "Sim Race eller langtur", ex: "Fullstendig HYROX-simulering eller 60 min løp" },
+        ],
+        prog: "Øk løpsdistanse og stasjonsvolum med 5–10% per uke. Planlegg en lettere uke (deload) hver 4. uke for å la kroppen adaptere.",
+        tip: "💡 Book HYROX-klasser på Kraftverket via Wondr-appen og bruk Sim Race-events til å teste fremdriften din underveis i planen."
+      },
+    ];
+
+    function buildProgGrid() {
+      document.getElementById("progGrid").innerHTML = PROGRAMS.map(p => `
+        <div class="prog-card" onclick="openProg('${p.id}')">
+          <div class="prog-card-top">
+            <h3>${p.name}</h3>
+            <span class="prog-level level-${p.level}">${p.levelLabel}</span>
+          </div>
+          <p>${p.desc.substring(0, 100)}…</p>
+          <div class="prog-card-meta">
+            ${p.tags.slice(0,3).map(t => `<span class="chip">${t}</span>`).join("")}
+          </div>
+          <div class="prog-card-open"><span>${p.subtitle}</span><span>Les mer →</span></div>
+        </div>
+      `).join("");
+    }
+
+    buildProgGrid();
+
+    function openProg(id) {
+      const p = PROGRAMS.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("progTitle").textContent = p.name;
+      document.getElementById("progSubtitle").textContent = p.subtitle;
+      document.getElementById("progDesc").textContent = p.desc;
+      document.getElementById("progProg").textContent = p.prog;
+      document.getElementById("progTip").textContent = p.tip;
+      document.getElementById("progTags").innerHTML =
+        [{ label: p.levelLabel, cls: p.level }, ...p.tags.map(t => ({ label: t, cls: "" }))]
+          .map((t, i) => i === 0
+            ? `<span class="prog-level level-${t.cls}" style="margin-right:.35rem">${t.label}</span>`
+            : `<span class="chip">${t.label}</span>`)
+          .join("");
+      document.getElementById("progDays").innerHTML = p.days.map(d => `
+        <div class="prog-day-box">
+          <div class="d-label">${d.label}</div>
+          <div class="d-name">${d.name}</div>
+          <div class="d-ex">${d.ex}</div>
+        </div>`).join("");
+      document.getElementById("progBackdrop").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeProg() {
+      document.getElementById("progBackdrop").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") { closeStyle(); closeProg(); }
+    });
 
     const STYLES = {
       hyrox: {
