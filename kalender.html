@@ -15,10 +15,6 @@
       <p class="lead">Notater og treninger — bare du ser dette.</p>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" data-tab="log">Min logg</button>
-      <button class="tab" data-tab="programs">Program & ukeplaner</button>
-    </div>
 
     <!-- Personlig logg -->
     <div class="tab-panel active" id="panel-log">
@@ -75,16 +71,6 @@
       </div>
     </div>
 
-    <!-- Program & ukeplaner -->
-    <div class="tab-panel" id="panel-programs">
-      <div class="card">
-        <h2>Treningsprogram & ukeplaner</h2>
-        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Publisert av administratorer. Synlig for alle medlemmer.</p>
-        <div id="programsList">
-          <div class="empty-state">Laster...</div>
-        </div>
-      </div>
-    </div>
   </main>
 
   <div id="footer-slot"></div>
@@ -96,15 +82,6 @@
     let me = null;
 
     // Tab switching
-    document.querySelectorAll(".tabs .tab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-        document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
-      });
-    });
-
     function esc(s) { return (s ?? "").toString().replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
     async function loadLog() {
@@ -161,35 +138,11 @@
       loadLog();
     });
 
-    async function loadPrograms() {
-      const { data, error } = await sb
-        .from("programs")
-        .select("*, profiles(name)")
-        .order("created_at", { ascending: false });
-      if (error) { console.error(error); return; }
-      const list = document.getElementById("programsList");
-      if (!data || !data.length) {
-        list.innerHTML = `<div class="empty-state">Ingen program publisert ennå.</div>`;
-        return;
-      }
-      list.innerHTML = data.map(p => `
-        <div class="card" style="background:var(--surface2); margin-bottom:.85rem;">
-          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
-            <span class="chip orange">${esc(p.category || "program")}</span>
-            <h3 style="margin:0;">${esc(p.title)}</h3>
-          </div>
-          <p style="white-space:pre-wrap; color:var(--text-muted); font-size:.95rem; margin-bottom:.5rem;">${esc(p.body)}</p>
-          <small class="muted">${p.profiles?.name || "Admin"} · ${new Date(p.created_at).toLocaleDateString("no-NO")}</small>
-        </div>
-      `).join("");
-    }
-
     (async () => {
       me = await setupPage("kalender");
       if (!me) return;
       document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
       loadLog();
-      loadPrograms();
     })();
   </script>
 </body>
