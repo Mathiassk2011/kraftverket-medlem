@@ -248,6 +248,7 @@ create table if not exists public.schedule_items (
   type         text not null default 'functional' check (type in ('hyrox','functional','styrke','hiit','liss','loping','barn','annet')),
   location     text,
   trainer      text,
+  program      jsonb,
   created_by   uuid references public.profiles(id),
   created_at   timestamptz default now()
 );

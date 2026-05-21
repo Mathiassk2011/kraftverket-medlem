@@ -103,6 +103,67 @@
     .no-classes .icon { font-size: 2.5rem; margin-bottom: .75rem; }
 
     .legend { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.75rem; }
+
+    /* ── Treningsprogram-builder ── */
+    .program-section { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .program-section h4 {
+      font-size: .82rem; text-transform: uppercase; letter-spacing: .5px;
+      color: var(--orange); font-weight: 800; margin-bottom: .75rem;
+    }
+    .ex-search-row { display: flex; gap: .5rem; margin-bottom: .75rem; }
+    .ex-search-row input, .ex-search-row select {
+      flex: 1; padding: .55rem .8rem; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-size: .88rem;
+    }
+    .ex-search-row select { flex: 0 0 140px; }
+    .ex-picker-list {
+      max-height: 220px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface2); margin-bottom: 1rem;
+    }
+    .ex-picker-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .5rem; padding: .55rem .75rem;
+      border-bottom: 1px solid var(--border); cursor: pointer;
+      transition: background .12s;
+    }
+    .ex-picker-row:hover { background: var(--surface3); }
+    .ex-picker-row:last-child { border-bottom: none; }
+    .ex-picker-row .ex-name { font-weight: 700; font-size: .88rem; }
+    .ex-picker-row .ex-tag { font-size: .7rem; color: var(--text-muted); }
+    .ex-picker-row button {
+      background: var(--orange); color: #fff; border: none;
+      width: 28px; height: 28px; border-radius: 50%;
+      font-weight: 800; cursor: pointer; flex-shrink: 0;
+    }
+
+    .program-list { display: flex; flex-direction: column; gap: .4rem; }
+    .program-item {
+      display: grid; grid-template-columns: 1fr 110px 30px;
+      gap: .5rem; align-items: center;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .55rem .75rem;
+    }
+    .program-item .name { font-size: .88rem; font-weight: 700; }
+    .program-item input {
+      padding: .35rem .55rem; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-size: .82rem; width: 100%;
+    }
+    .program-item button {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: 0;
+    }
+    .program-item button:hover { color: #ef4444; }
+    .program-display {
+      margin-top: .5rem; padding-top: .5rem;
+      border-top: 1px dashed var(--border);
+      font-size: .82rem; color: var(--text-muted);
+    }
+    .program-display ul { list-style: none; padding: 0; margin: .25rem 0 0; }
+    .program-display li { padding: .15rem 0; }
+    .program-display li strong { color: var(--text); }
   </style>
 </head>
 <body>
@@ -175,7 +236,38 @@
             <input id="cTrainer" type="text" placeholder="Navn på trener" />
           </div>
           <input type="hidden" id="cDayOfWeek" />
-          <button class="btn btn-primary btn-full" type="submit">Legg til</button>
+
+          <div class="program-section">
+            <h4>💪 Treningsprogram (valgfritt)</h4>
+            <p class="muted" style="font-size:.82rem; margin-bottom:.75rem;">Søk og legg til øvelser fra biblioteket. Justér sett × reps for hver.</p>
+
+            <div class="ex-search-row">
+              <input id="exSearch" type="search" placeholder="Søk øvelse..." />
+              <select id="exGroupFilter">
+                <option value="alle">Alle</option>
+                <option value="bryst">Bryst</option>
+                <option value="rygg">Rygg</option>
+                <option value="skuldre">Skuldre</option>
+                <option value="bicep">Bicep</option>
+                <option value="tricep">Tricep</option>
+                <option value="quad">Lår fram</option>
+                <option value="ham">Lår bak</option>
+                <option value="glute">Seter</option>
+                <option value="legger">Legger</option>
+                <option value="mage">Mage</option>
+                <option value="helkropp">Helkropp</option>
+                <option value="underarm">Underarm</option>
+              </select>
+            </div>
+            <div class="ex-picker-list" id="exPickerList"></div>
+
+            <h4>Valgte øvelser</h4>
+            <div class="program-list" id="programList">
+              <div class="empty-state" style="padding:.75rem; font-size:.82rem;">Ingen øvelser valgt ennå.</div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full" type="submit" style="margin-top:1.25rem;">Legg til</button>
         </form>
       </div>
     </div>
@@ -185,12 +277,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="exercises.js"></script>
   <script src="app.js"></script>
   <script>
     let me = null;
     let isAdmin = false;
     let schedule = []; // alle klasser fra DB
     let currentDay = null;
+    let program = []; // valgte øvelser for nye klasser
 
     const DAGNAVN = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
     const DAGNAVN_KORT = ["Søn","Man","Tir","Ons","Tor","Fre","Lør"];
@@ -289,6 +383,14 @@
               </div>
               <span class="class-badge badge-${c.type}">${typeLabel(c.type)}</span>
               ${isAdmin ? `<button class="delete-btn" onclick="deleteClass('${c.id}')" title="Slett">✕</button>` : '<div></div>'}
+              ${(c.program && c.program.length) ? `
+                <div class="program-display" style="grid-column: 1 / -1;">
+                  <strong>📋 Program:</strong>
+                  <ul>
+                    ${c.program.map(p => `<li>• <strong>${esc(p.name)}</strong> — ${esc(p.sets)}</li>`).join("")}
+                  </ul>
+                </div>
+              ` : ''}
             </div>
           `;
         });
@@ -301,15 +403,81 @@
 
     // Admin: legg til klasse
     window.openAddModal = (dayNum) => {
-      document.getElementById("cDayOfWeek").value = dayNum;
       document.getElementById("newClassForm").reset();
       document.getElementById("cDayOfWeek").value = dayNum;
+      program = [];
+      renderProgramList();
+      renderExPicker();
       document.getElementById("newClassModal").classList.add("open");
     };
     window.closeAddModal = () => {
       document.getElementById("newClassModal").classList.remove("open");
     };
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAddModal(); });
+
+    // ── Exercise picker ──
+    function renderExPicker() {
+      const term = (document.getElementById("exSearch")?.value || "").toLowerCase().trim();
+      const grp  = document.getElementById("exGroupFilter")?.value || "alle";
+      const matches = (window.EXERCISES || []).filter(ex => {
+        if (grp !== "alle" && ex.group !== grp) return false;
+        if (term) {
+          const hay = (ex.name + " " + ex.eng).toLowerCase();
+          if (!hay.includes(term)) return false;
+        }
+        return true;
+      }).slice(0, 50);
+
+      const list = document.getElementById("exPickerList");
+      if (!matches.length) {
+        list.innerHTML = `<div class="empty-state" style="padding:1rem; font-size:.82rem;">Ingen treff.</div>`;
+        return;
+      }
+      list.innerHTML = matches.map(ex => `
+        <div class="ex-picker-row">
+          <div>
+            <div class="ex-name">${esc(ex.name)}</div>
+            <div class="ex-tag">${esc(ex.eng)} · ${esc(ex.sets)}</div>
+          </div>
+          <button type="button" title="Legg til" onclick="addExToProgram('${ex.id}')">+</button>
+        </div>
+      `).join("");
+    }
+
+    window.addExToProgram = (exId) => {
+      const ex = window.EXERCISES.find(e => e.id === exId);
+      if (!ex) return;
+      program.push({ id: ex.id, name: ex.name, sets: ex.sets });
+      renderProgramList();
+    };
+
+    window.removeFromProgram = (idx) => {
+      program.splice(idx, 1);
+      renderProgramList();
+    };
+
+    function renderProgramList() {
+      const box = document.getElementById("programList");
+      if (!program.length) {
+        box.innerHTML = `<div class="empty-state" style="padding:.75rem; font-size:.82rem;">Ingen øvelser valgt ennå.</div>`;
+        return;
+      }
+      box.innerHTML = program.map((p, i) => `
+        <div class="program-item">
+          <div class="name">${esc(p.name)}</div>
+          <input type="text" value="${esc(p.sets)}" onchange="program[${i}].sets = this.value" placeholder="3 x 10" />
+          <button type="button" onclick="removeFromProgram(${i})" title="Fjern">✕</button>
+        </div>
+      `).join("");
+    }
+
+    // Søk/filter input
+    document.addEventListener("input", (e) => {
+      if (e.target.id === "exSearch") renderExPicker();
+    });
+    document.addEventListener("change", (e) => {
+      if (e.target.id === "exGroupFilter") renderExPicker();
+    });
 
     document.getElementById("newClassForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -321,6 +489,7 @@
         type:        document.getElementById("cType").value,
         location:    document.getElementById("cLocation").value.trim() || null,
         trainer:     document.getElementById("cTrainer").value.trim() || null,
+        program:     program.length ? program : null,
         created_by:  me.id
       };
       const { error } = await sb.from("schedule_items").insert(item);
