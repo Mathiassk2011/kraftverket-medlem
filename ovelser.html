@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Øvelser – 3475 Kraftverket</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .filters {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      margin-bottom: 1.5rem;
+    }
+    .filter-chip {
+      padding: .4rem 1rem; border-radius: 100px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); font-size: .82rem; font-weight: 700;
+      cursor: pointer; transition: all .15s;
+    }
+    .filter-chip:hover { color: var(--text); border-color: var(--orange); }
+    .filter-chip.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+    .search-box {
+      width: 100%;
+      padding: .8rem 1.1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text); font-size: .95rem;
+      margin-bottom: 1.25rem;
+    }
+    .search-box:focus { outline: none; border-color: var(--orange); }
+
+    .ex-count {
+      text-align: center; color: var(--text-muted);
+      font-size: .88rem; margin-bottom: 1.5rem;
+    }
+
+    .ex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1rem;
+    }
+    .ex-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.25rem;
+      transition: transform .12s, border-color .12s;
+    }
+    .ex-card:hover { transform: translateY(-2px); border-left-color: #f59e0b; }
+    .ex-card h3 {
+      font-size: 1rem; font-weight: 800;
+      margin-bottom: .15rem;
+    }
+    .ex-card .eng {
+      font-size: .75rem; color: var(--text-muted);
+      font-style: italic; margin-bottom: .5rem;
+    }
+    .ex-card .meta {
+      display: flex; flex-wrap: wrap; gap: .3rem;
+      margin-bottom: .65rem;
+    }
+    .ex-card .chip-mini {
+      font-size: .65rem; font-weight: 700;
+      padding: .15rem .55rem; border-radius: 100px;
+      background: var(--surface2); color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .ex-card .chip-mini.orange { background: var(--orange-glow); color: var(--orange); border-color: var(--orange); }
+    .ex-card .desc {
+      font-size: .85rem; color: var(--text-muted);
+      line-height: 1.5; margin-bottom: .5rem;
+    }
+    .ex-card .sets {
+      font-size: .82rem; font-weight: 800;
+      color: var(--orange);
+    }
+    .group-header {
+      font-size: 1.1rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--orange);
+      margin: 2rem 0 1rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-header:first-child { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <main class="container">
+    <div class="section-hero">
+      <h1>300 <span class="accent">styrkeøvelser</span></h1>
+      <p class="lead">Søk og filtrer på muskelgruppe, utstyr eller nivå.</p>
+    </div>
+
+    <input class="search-box" id="searchBox" type="search" placeholder="Søk på navn (norsk eller engelsk)..." />
+
+    <div>
+      <div style="font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px;">Muskelgruppe</div>
+      <div class="filters" id="groupFilters"></div>
+    </div>
+
+    <div>
+      <div style="font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px;">Utstyr</div>
+      <div class="filters" id="equipFilters"></div>
+    </div>
+
+    <div>
+      <div style="font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px;">Nivå</div>
+      <div class="filters" id="levelFilters"></div>
+    </div>
+
+    <div class="ex-count" id="exCount"></div>
+    <div id="exContainer"></div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="exercises.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const GROUPS = {
+      bryst:    "Bryst",
+      rygg:     "Rygg",
+      skuldre:  "Skuldre",
+      bicep:    "Bicep",
+      tricep:   "Tricep",
+      underarm: "Underarm/Grep",
+      quad:     "Lår fremside",
+      ham:      "Lår bakside",
+      glute:    "Seter",
+      legger:   "Legger",
+      mage:     "Mage/Kjerne",
+      helkropp: "Helkropp"
+    };
+
+    const EQUIP = {
+      stang:      "Stang",
+      manual:     "Manualer",
+      maskin:     "Maskin",
+      kabel:      "Kabel",
+      smith:      "Smith",
+      kettlebell: "Kettlebell",
+      kroppsvekt: "Kroppsvekt",
+      benk:       "Benk",
+      hjul:       "Hjul",
+      bånd:       "Bånd"
+    };
+
+    const LEVELS = {
+      begynner: "Begynner",
+      middels:  "Middels",
+      erfaren:  "Erfaren"
+    };
+
+    let activeGroup = "alle";
+    let activeEquip = "alle";
+    let activeLevel = "alle";
+    let searchTerm = "";
+
+    function esc(s){return (s ?? "").toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+    function buildFilters() {
+      const gf = document.getElementById("groupFilters");
+      gf.innerHTML = `<button class="filter-chip active" data-g="alle">Alle</button>` +
+        Object.entries(GROUPS).map(([k,v]) => `<button class="filter-chip" data-g="${k}">${v}</button>`).join("");
+      gf.querySelectorAll(".filter-chip").forEach(b => b.onclick = () => {
+        gf.querySelectorAll(".filter-chip").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        activeGroup = b.dataset.g;
+        render();
+      });
+
+      const ef = document.getElementById("equipFilters");
+      ef.innerHTML = `<button class="filter-chip active" data-e="alle">Alle</button>` +
+        Object.entries(EQUIP).map(([k,v]) => `<button class="filter-chip" data-e="${k}">${v}</button>`).join("");
+      ef.querySelectorAll(".filter-chip").forEach(b => b.onclick = () => {
+        ef.querySelectorAll(".filter-chip").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        activeEquip = b.dataset.e;
+        render();
+      });
+
+      const lf = document.getElementById("levelFilters");
+      lf.innerHTML = `<button class="filter-chip active" data-l="alle">Alle</button>` +
+        Object.entries(LEVELS).map(([k,v]) => `<button class="filter-chip" data-l="${k}">${v}</button>`).join("");
+      lf.querySelectorAll(".filter-chip").forEach(b => b.onclick = () => {
+        lf.querySelectorAll(".filter-chip").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        activeLevel = b.dataset.l;
+        render();
+      });
+    }
+
+    function exCardHTML(ex) {
+      return `
+        <div class="ex-card">
+          <h3>${esc(ex.name)}</h3>
+          <div class="eng">${esc(ex.eng)}</div>
+          <div class="meta">
+            <span class="chip-mini orange">${GROUPS[ex.group] || ex.group}</span>
+            <span class="chip-mini">${EQUIP[ex.equipment] || ex.equipment}</span>
+            <span class="chip-mini">${LEVELS[ex.level] || ex.level}</span>
+          </div>
+          <div class="desc">${esc(ex.desc)}</div>
+          <div class="sets">${esc(ex.sets)}</div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const term = searchTerm.toLowerCase().trim();
+      const filtered = window.EXERCISES.filter(ex => {
+        if (activeGroup !== "alle" && ex.group !== activeGroup) return false;
+        if (activeEquip !== "alle" && ex.equipment !== activeEquip) return false;
+        if (activeLevel !== "alle" && ex.level !== activeLevel) return false;
+        if (term) {
+          const hay = (ex.name + " " + ex.eng + " " + ex.desc).toLowerCase();
+          if (!hay.includes(term)) return false;
+        }
+        return true;
+      });
+
+      document.getElementById("exCount").textContent =
+        `${filtered.length} av ${window.EXERCISES.length} øvelser`;
+
+      const container = document.getElementById("exContainer");
+      if (!filtered.length) {
+        container.innerHTML = `<div class="empty-state">Ingen øvelser matchet søket.</div>`;
+        return;
+      }
+
+      // Grupper etter muskelgruppe
+      const byGroup = {};
+      filtered.forEach(ex => {
+        if (!byGroup[ex.group]) byGroup[ex.group] = [];
+        byGroup[ex.group].push(ex);
+      });
+
+      let html = "";
+      Object.keys(GROUPS).forEach(g => {
+        if (!byGroup[g]) return;
+        html += `<div class="group-header">${GROUPS[g]} (${byGroup[g].length})</div>`;
+        html += `<div class="ex-grid">${byGroup[g].map(exCardHTML).join("")}</div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    document.getElementById("searchBox").addEventListener("input", (e) => {
+      searchTerm = e.target.value;
+      render();
+    });
+
+    buildFilters();
+
+    (async () => {
+      const me = await setupPage("ovelser");
+      if (!me) return;
+      render();
+    })();
+  </script>
+</body>
+</html>
