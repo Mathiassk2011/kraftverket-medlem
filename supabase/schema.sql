@@ -265,3 +265,27 @@ create policy "schedule_read_all" on public.schedule_items
 
 create policy "schedule_write_admin" on public.schedule_items
   for all using (public.is_admin()) with check (public.is_admin());
+
+-- ─────────────────────────────────────────────────────────────────
+--  PERSONAL_CALENDAR: planlagte treninger (privat for hver bruker)
+-- ─────────────────────────────────────────────────────────────────
+create table if not exists public.personal_calendar (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  date        date not null,
+  title       text not null,
+  type        text,
+  location    text,
+  trainer     text,
+  program     jsonb,
+  source      text default 'manual',
+  source_id   uuid,
+  created_at  timestamptz default now()
+);
+
+create index if not exists idx_pc_user_date on public.personal_calendar(user_id, date);
+
+alter table public.personal_calendar enable row level security;
+drop policy if exists "pc_owner" on public.personal_calendar;
+create policy "pc_owner" on public.personal_calendar
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

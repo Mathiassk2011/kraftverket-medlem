@@ -12,12 +12,55 @@
   <main class="container">
     <div class="section-hero">
       <h1>Min <span class="accent">kalender</span></h1>
-      <p class="lead">Notater og treninger — bare du ser dette.</p>
+      <p class="lead">Planlagte treninger og logg — bare du ser dette.</p>
     </div>
 
+    <div class="tabs">
+      <button class="tab active" data-tab="cal">Kalender (7 dager)</button>
+      <button class="tab" data-tab="log">Min logg</button>
+    </div>
+
+    <!-- Personlig 7-dagers kalender -->
+    <div class="tab-panel active" id="panel-cal">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Legg til trening</h2>
+        <form id="calForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="calDate">Dato</label>
+              <input id="calDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="calTitle">Tittel</label>
+              <input id="calTitle" type="text" required placeholder="F.eks. Styrke push-økt" />
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="calType">Type</label>
+              <select id="calType">
+                <option>Styrke</option>
+                <option>Kondisjon</option>
+                <option>HYROX</option>
+                <option>CrossFit</option>
+                <option>Mobilitet</option>
+                <option>Annet</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="calLocation">Sted (valgfritt)</label>
+              <input id="calLocation" type="text" placeholder="F.eks. Kraftverket" />
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Legg til i kalender</button>
+        </form>
+      </div>
+
+      <div id="weekView"><div class="empty-state">Laster...</div></div>
+    </div>
 
     <!-- Personlig logg -->
-    <div class="tab-panel active" id="panel-log">
+    <div class="tab-panel" id="panel-log">
       <div class="stat-grid">
         <div class="stat-box"><div class="num" id="statWeek">0</div><div class="lbl">Økter denne uka</div></div>
         <div class="stat-box"><div class="num" id="statMonth">0</div><div class="lbl">Økter denne mnd</div></div>
@@ -84,6 +127,102 @@
     // Tab switching
     function esc(s) { return (s ?? "").toString().replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+    // Tab switching
+    document.querySelectorAll(".tabs .tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ── 7-dagers kalender ──
+    const DAGNAVN = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
+
+    async function loadWeek() {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const startStr = today.toISOString().slice(0,10);
+      const endDate = new Date(today); endDate.setDate(today.getDate() + 6);
+      const endStr = endDate.toISOString().slice(0,10);
+
+      const { data, error } = await sb
+        .from("personal_calendar")
+        .select("*")
+        .gte("date", startStr).lte("date", endStr)
+        .order("date").order("created_at");
+      if (error) { console.error(error); return; }
+      renderWeek(data || [], today);
+    }
+
+    function renderWeek(entries, startDate) {
+      const view = document.getElementById("weekView");
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(startDate); d.setDate(startDate.getDate() + i);
+        const dStr = d.toISOString().slice(0,10);
+        const dayItems = entries.filter(e => e.date === dStr);
+        const isToday = i === 0;
+        const dayName = DAGNAVN[d.getDay()];
+        const dateLabel = d.toLocaleDateString("no-NO", { day:"numeric", month:"short" });
+
+        html += `
+          <div class="card" style="margin-bottom:.85rem; padding:1rem 1.25rem; ${isToday ? 'border-color:var(--orange);' : ''}">
+            <div style="display:flex; align-items:baseline; gap:.6rem; margin-bottom:${dayItems.length ? '.75rem' : '0'};">
+              <h3 style="margin:0; font-size:1rem; ${isToday ? 'color:var(--orange);' : ''}">${dayName}</h3>
+              <span class="muted" style="font-size:.82rem;">${dateLabel}</span>
+              ${isToday ? '<span class="chip orange" style="margin-left:auto;">I DAG</span>' : ''}
+            </div>
+            ${dayItems.length ? dayItems.map(item => `
+              <div style="background:var(--surface2); border:1px solid var(--border); border-left:3px solid var(--orange); border-radius:var(--radius-sm); padding:.7rem .9rem; margin-bottom:.4rem;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem;">
+                  <div style="flex:1;">
+                    <div style="font-weight:800; font-size:.95rem;">${esc(item.title)}</div>
+                    <div style="font-size:.78rem; color:var(--text-muted); margin-top:.2rem;">
+                      ${item.type ? `<span class="chip orange" style="margin-right:.35rem;">${esc(item.type)}</span>` : ''}
+                      ${item.location ? `📍 ${esc(item.location)}` : ''}
+                      ${item.trainer ? ` · 👤 ${esc(item.trainer)}` : ''}
+                    </div>
+                    ${(item.program && item.program.length) ? `
+                      <ul style="font-size:.82rem; color:var(--text-muted); margin:.4rem 0 0 1rem; padding:0;">
+                        ${item.program.map(p => `<li>${esc(p.name)} — <strong style="color:var(--text);">${esc(p.sets)}</strong></li>`).join("")}
+                      </ul>
+                    ` : ''}
+                  </div>
+                  <button class="btn btn-ghost" style="padding:.3rem .6rem; font-size:.72rem; color:#ef4444; border-color:#ef4444;" onclick="deleteCalEntry('${item.id}')">✕</button>
+                </div>
+              </div>
+            `).join("") : '<div style="font-size:.82rem; color:var(--text-muted); font-style:italic;">Ingen treninger planlagt.</div>'}
+          </div>
+        `;
+      }
+      view.innerHTML = html;
+    }
+
+    window.deleteCalEntry = async (id) => {
+      if (!confirm("Fjerne denne treningen fra kalenderen?")) return;
+      const { error } = await sb.from("personal_calendar").delete().eq("id", id);
+      if (error) { alert("Feil: " + error.message); return; }
+      loadWeek();
+    };
+
+    document.getElementById("calForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const entry = {
+        user_id: me.id,
+        date: document.getElementById("calDate").value,
+        title: document.getElementById("calTitle").value.trim(),
+        type: document.getElementById("calType").value,
+        location: document.getElementById("calLocation").value.trim() || null,
+        source: "manual"
+      };
+      const { error } = await sb.from("personal_calendar").insert(entry);
+      if (error) { alert("Feil: " + error.message); return; }
+      e.target.reset();
+      document.getElementById("calDate").value = new Date().toISOString().slice(0,10);
+      loadWeek();
+    });
+
     async function loadLog() {
       const { data, error } = await sb
         .from("calendar_entries")
@@ -142,7 +281,9 @@
       me = await setupPage("kalender");
       if (!me) return;
       document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+      document.getElementById("calDate").value = new Date().toISOString().slice(0,10);
       loadLog();
+      loadWeek();
     })();
   </script>
 </body>

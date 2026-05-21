@@ -391,6 +391,7 @@
                   </ul>
                 </div>
               ` : ''}
+              <button class="btn btn-ghost" style="grid-column: 1 / -1; margin-top:.5rem; font-size:.82rem; padding:.4rem .8rem;" onclick="addToCal('${c.id}', ${dayNum})">📅 Legg til i min kalender</button>
             </div>
           `;
         });
@@ -503,6 +504,33 @@
       const { error } = await sb.from("schedule_items").delete().eq("id", id);
       if (error) { alert("Feil: " + error.message); return; }
       loadSchedule();
+    };
+
+    // Legg klassen til medlemmets personlige kalender
+    window.addToCal = async (classId, dayOfWeek) => {
+      const c = schedule.find(s => s.id === classId);
+      if (!c) return;
+      // Finn neste dato med riktig ukedag (innen 7 dager fra i dag)
+      const today = new Date(); today.setHours(0,0,0,0);
+      const target = new Date(today);
+      const diff = (dayOfWeek - today.getDay() + 7) % 7;
+      target.setDate(today.getDate() + diff);
+      const dateStr = target.toISOString().slice(0,10);
+
+      const entry = {
+        user_id: me.id,
+        date: dateStr,
+        title: c.name + (c.start_time ? " (" + c.start_time.slice(0,5) + ")" : ""),
+        type: c.type,
+        location: c.location,
+        trainer: c.trainer,
+        program: c.program,
+        source: "ukeplan",
+        source_id: c.id
+      };
+      const { error } = await sb.from("personal_calendar").insert(entry);
+      if (error) { alert("Feil: " + error.message); return; }
+      alert("✓ Lagt til i din kalender (" + dateStr + ")");
     };
 
     // Realtime: oppdater når noen legger til/sletter
