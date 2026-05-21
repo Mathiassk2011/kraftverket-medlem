@@ -151,10 +151,11 @@ Dag 2 - Pull:
               <div class="when">${p.age ? p.age + " år" : ""}</div>
             </div>
           </div>
-          <div style="display:flex; gap:.4rem;">
+          <div style="display:flex; gap:.4rem; flex-wrap:wrap;">
             ${p.role === "admin"
               ? `<button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','member')" ${p.id===me.id?'disabled title="Du kan ikke degradere deg selv"':''}>Fjern admin</button>`
               : `<button class="btn btn-primary" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','admin')">Gjør til admin</button>`}
+            <button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem; color:#ef4444; border-color:#ef4444;" onclick="deleteMember('${p.id}','${esc(p.name).replace(/'/g,"\\'")}')" ${p.id===me.id?'disabled title="Du kan ikke slette deg selv"':''}>Slett</button>
           </div>
         </div>
       `).join("");
@@ -164,6 +165,28 @@ Dag 2 - Pull:
       const { error } = await sb.from("profiles").update({ role }).eq("id", userId);
       if (error) { alert("Feil: " + error.message); return; }
       loadMembers();
+    };
+
+    window.deleteMember = async (userId, name) => {
+      if (!confirm("Slette medlemmet \"" + name + "\"?\n\nDette fjerner kontoen for godt.")) return;
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        const res = await fetch(SUPABASE_URL + "/functions/v1/delete-member", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token,
+            "apikey": SUPABASE_KEY
+          },
+          body: JSON.stringify({ user_id: userId })
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error || "Feil");
+        loadMembers();
+      } catch (err) {
+        alert("Kunne ikke slette: " + err.message);
+      }
     };
 
     async function loadPrograms() {
