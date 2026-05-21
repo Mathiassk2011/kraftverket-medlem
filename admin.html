@@ -172,7 +172,7 @@ Dag 2 - Pull:
       try {
         const { data: sessionData } = await sb.auth.getSession();
         const token = sessionData?.session?.access_token;
-        const res = await fetch(SUPABASE_URL + "/functions/v1/delete-member", {
+        const res = await fetch(SUPABASE_URL + "/functions/v1/Delete-member", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
