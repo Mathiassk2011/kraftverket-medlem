@@ -24,10 +24,32 @@
     <!-- Medlemmer -->
     <div class="tab-panel active" id="panel-members">
       <div class="card" style="margin-bottom:1.5rem;">
-        <h2>Alle medlemmer</h2>
+        <h2>Registrer nytt medlem</h2>
         <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">
-          Promotér til admin eller fjern. For å registrere nye medlemmer: send invitasjon fra Supabase-dashboard → Authentication → Users → «Invite user».
+          Opprett konto direkte. Medlemmet kan logge inn med en gang og endre passord under Profil.
         </p>
+        <form id="newMemberForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="newName">Fullt navn</label>
+              <input id="newName" type="text" required placeholder="F.eks. Ola Nordmann" />
+            </div>
+            <div class="field">
+              <label for="newEmail">E-post</label>
+              <input id="newEmail" type="email" required placeholder="ola@eksempel.no" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="newPassword">Midlertidig passord (min. 6 tegn)</label>
+            <input id="newPassword" type="text" required minlength="6" placeholder="kraftverk2026" value="kraftverk2026" />
+          </div>
+          <button class="btn btn-primary" type="submit" id="createMemberBtn">Opprett medlem</button>
+          <span id="createMemberMsg" style="margin-left:1rem; font-size:.88rem;"></span>
+        </form>
+      </div>
+
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2>Alle medlemmer</h2>
         <div id="memberList"><div class="empty-state">Laster...</div></div>
       </div>
 
@@ -168,6 +190,49 @@ Dag 2 - Pull:
       if (error) { alert("Feil: " + error.message); return; }
       loadPrograms();
     };
+
+    // Opprett nytt medlem via Edge Function
+    document.getElementById("newMemberForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("createMemberBtn");
+      const msg = document.getElementById("createMemberMsg");
+      const name = document.getElementById("newName").value.trim();
+      const email = document.getElementById("newEmail").value.trim();
+      const password = document.getElementById("newPassword").value;
+
+      btn.disabled = true;
+      msg.textContent = "Oppretter...";
+      msg.style.color = "var(--text-muted)";
+
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData?.session?.access_token;
+
+        const res = await fetch(SUPABASE_URL + "/functions/v1/create-member", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token,
+            "apikey": SUPABASE_KEY
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+        const body = await res.json();
+
+        if (!res.ok) throw new Error(body.error || "Feil");
+
+        msg.textContent = "✓ " + email + " opprettet!";
+        msg.style.color = "#22c55e";
+        document.getElementById("newMemberForm").reset();
+        document.getElementById("newPassword").value = "kraftverk2026";
+        loadMembers();
+      } catch (err) {
+        msg.textContent = "✗ " + err.message;
+        msg.style.color = "#ef4444";
+      } finally {
+        btn.disabled = false;
+      }
+    });
 
     document.getElementById("programForm").addEventListener("submit", async (e) => {
       e.preventDefault();

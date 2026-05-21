@@ -4,6 +4,10 @@
 const SUPABASE_URL = "https://zongelfeyadntkawojpf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_WwIqu8qb7WQShAOTe_YhvQ_MNcmpUiA";
 
+// Eksponer som globale for andre scripts (admin.html bruker dem direkte)
+window.SUPABASE_URL = SUPABASE_URL;
+window.SUPABASE_KEY = SUPABASE_KEY;
+
 // Antar at supabase-js er lastet inn i HTML-en via <script src="...">
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.sb = sb;
