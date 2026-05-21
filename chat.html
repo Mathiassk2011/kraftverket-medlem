@@ -260,7 +260,7 @@
       }
       const pubDisp = convDisplay({ id: PUBLIC_CONV_ID, type: "public" });
       document.getElementById("publicConv").innerHTML = `
-        <div class="contact ${activeConvId === PUBLIC_CONV_ID ? 'active' : ''}" onclick="openConv('${PUBLIC_CONV_ID}','public')">
+        <div class="contact ${activeConvId === PUBLIC_CONV_ID ? 'active' : ''}" data-conv-id="${PUBLIC_CONV_ID}" onclick="openConv('${PUBLIC_CONV_ID}','public')">
           ${pubDisp.iconHTML}
           <div class="info"><div class="name">${pubDisp.name}</div><div class="preview">${esc(pubPreview)}</div></div>
         </div>
@@ -285,7 +285,7 @@
           preview = prefix + ": " + c._last.body;
         }
         return `
-          <div class="contact ${c.id === activeConvId ? 'active' : ''}" onclick="openConv('${c.id}','${c.type}')">
+          <div class="contact ${c.id === activeConvId ? 'active' : ''}" data-conv-id="${c.id}" onclick="openConv('${c.id}','${c.type}')">
             ${disp.iconHTML}
             <div class="info"><div class="name">${disp.name}</div><div class="preview">${esc(preview)}</div></div>
           </div>
@@ -294,17 +294,33 @@
     }
 
     async function openConv(convId, type) {
+      // Avbryt gammelt abonnement umiddelbart
+      if (realtimeSub) { sb.removeChannel(realtimeSub); realtimeSub = null; }
+
       activeConvId = convId;
+
       const conv = convId === PUBLIC_CONV_ID
         ? { id: convId, type: "public" }
         : myConvs.find(c => c.id === convId) || { id: convId, type };
       const disp = convDisplay(conv);
-      document.getElementById("chatHeader").style.display = "flex";
+
+      // Oppdater header
+      const headerEl = document.getElementById("chatHeader");
+      headerEl.style.display = "flex";
       document.getElementById("chatHeaderIcon").innerHTML = disp.iconHTML;
       document.getElementById("chatName").textContent = disp.name;
       document.getElementById("chatSub").textContent = disp.sub;
       document.getElementById("dmForm").style.display = "flex";
-      document.getElementById("emptyChat").style.display = "none";
+
+      // Tøm chat-området umiddelbart slik at gammel samtale forsvinner
+      const box = document.getElementById("dmMessages");
+      box.innerHTML = `<div class="empty-chat">Laster meldinger...</div>`;
+
+      // Marker aktiv i sidebar (uten å vente på renderConvList)
+      document.querySelectorAll(".dm-sidebar .contact").forEach(el => el.classList.remove("active"));
+      const activeEl = document.querySelector(`.dm-sidebar .contact[data-conv-id="${convId}"]`);
+      if (activeEl) activeEl.classList.add("active");
+
       await renderMessages();
       subscribeRealtime();
       renderConvList();
@@ -312,10 +328,13 @@
     window.openConv = openConv;
 
     async function renderMessages() {
+      const fetchingFor = activeConvId;
       const { data, error } = await sb.from("messages")
         .select("*")
-        .eq("conversation_id", activeConvId)
+        .eq("conversation_id", fetchingFor)
         .order("created_at", { ascending: true });
+      // Hvis bruker har byttet samtale i mellomtiden, hopp ut
+      if (fetchingFor !== activeConvId) return;
       if (error) { console.error(error); return; }
       const box = document.getElementById("dmMessages");
       if (!data?.length) {
