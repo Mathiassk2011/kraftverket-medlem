@@ -235,7 +235,9 @@
 
     async function loadMyConvs() {
       // Hent mine konversasjoner (DM/grupper) sammen med deres members
-      const { data: cm } = await sb.from("conversation_members").select("conversation_id");
+      const { data: cm } = await sb.from("conversation_members")
+        .select("conversation_id")
+        .eq("user_id", me.id);
       const ids = (cm || []).map(r => r.conversation_id);
       if (!ids.length) { myConvs = []; renderConvList(); return; }
       const { data: convs } = await sb.from("conversations")
