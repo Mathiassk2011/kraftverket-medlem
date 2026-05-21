@@ -6,76 +6,55 @@
   <title>Ukeplan – 3475 Kraftverket</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* ── Day tabs ── */
     .week-nav {
-      display: flex;
-      gap: .35rem;
-      overflow-x: auto;
-      padding-bottom: .25rem;
-      margin-bottom: 2rem;
+      display: flex; gap: .35rem; overflow-x: auto;
+      padding-bottom: .25rem; margin-bottom: 2rem;
       scrollbar-width: none;
     }
     .week-nav::-webkit-scrollbar { display: none; }
     .day-tab {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .2rem;
+      flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; gap: .2rem;
       padding: .6rem 1.1rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      cursor: pointer;
-      transition: all .15s;
-      min-width: 68px;
-      text-align: center;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); cursor: pointer;
+      transition: all .15s; min-width: 68px; text-align: center;
     }
     .day-tab:hover { border-color: var(--orange); background: var(--surface2); }
     .day-tab.active { background: var(--orange); border-color: var(--orange); }
     .day-tab.today { border-color: var(--orange); }
-    .day-tab .day-name {
-      font-size: .7rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .8px;
-      color: var(--text-muted);
-    }
+    .day-tab .day-name { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); }
     .day-tab.active .day-name { color: #fff; }
     .day-tab.today:not(.active) .day-name { color: var(--orange); }
-    .day-tab .day-num {
-      font-size: 1.25rem; font-weight: 900; line-height: 1;
-    }
+    .day-tab .day-num { font-size: 1.25rem; font-weight: 900; line-height: 1; }
     .day-tab.active .day-num { color: #fff; }
-    .day-tab .today-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--orange); margin-top: .1rem;
-    }
+    .day-tab .today-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); margin-top: .1rem; }
     .day-tab.active .today-dot { background: #fff; }
 
-    /* ── Day header ── */
     .day-header {
       display: flex; align-items: baseline; gap: .75rem;
       margin-bottom: 1.5rem;
     }
     .day-header h2 { font-size: 1.4rem; font-weight: 900; margin: 0; }
-    .day-header .date-label {
-      font-size: .82rem; color: var(--text-muted); font-weight: 600;
-    }
+    .day-header .date-label { font-size: .82rem; color: var(--text-muted); font-weight: 600; }
     .today-badge {
       background: var(--orange-glow); border: 1px solid var(--orange);
       color: var(--orange); font-size: .65rem; font-weight: 800;
       text-transform: uppercase; letter-spacing: 1px;
       padding: .15rem .55rem; border-radius: 100px;
     }
-
-    /* ── Class list ── */
-    .class-list {
-      display: flex; flex-direction: column; gap: .85rem;
+    .add-class-btn {
+      margin-left: auto;
+      background: var(--orange); color: #fff; border: none;
+      padding: .45rem .9rem; border-radius: var(--radius-sm);
+      font-size: .82rem; font-weight: 700; cursor: pointer;
     }
+    .add-class-btn:hover { background: var(--orange-dark); }
+
+    .class-list { display: flex; flex-direction: column; gap: .85rem; }
     .class-row {
-      display: grid;
-      grid-template-columns: 72px 1fr auto;
-      align-items: center;
-      gap: 1rem;
+      display: grid; grid-template-columns: 72px 1fr auto auto;
+      align-items: center; gap: 1rem;
       background: var(--surface);
       border: 1px solid var(--border);
       border-left: 3px solid var(--border);
@@ -84,54 +63,38 @@
       transition: border-color .15s, transform .15s;
     }
     .class-row:hover { border-left-color: var(--orange); transform: translateX(3px); }
-    .class-row.type-hyrox    { border-left-color: #e5681a; }
+    .class-row.type-hyrox      { border-left-color: #e5681a; }
     .class-row.type-functional { border-left-color: #3b82f6; }
-    .class-row.type-styrke   { border-left-color: #22c55e; }
-    .class-row.type-hiit     { border-left-color: #ef4444; }
-    .class-row.type-liss     { border-left-color: #a78bfa; }
-    .class-row.type-loping   { border-left-color: #f59e0b; }
-    .class-row.type-barn     { border-left-color: #ec4899; }
+    .class-row.type-styrke     { border-left-color: #22c55e; }
+    .class-row.type-hiit       { border-left-color: #ef4444; }
+    .class-row.type-liss       { border-left-color: #a78bfa; }
+    .class-row.type-loping     { border-left-color: #f59e0b; }
+    .class-row.type-barn       { border-left-color: #ec4899; }
 
-    .class-time {
-      font-size: 1rem; font-weight: 900;
-      color: var(--text);
-      white-space: nowrap;
-    }
-    .class-time .class-end {
-      font-size: .72rem; font-weight: 600;
-      color: var(--text-muted); display: block;
-      margin-top: .1rem;
-    }
-
+    .class-time { font-size: 1rem; font-weight: 900; color: var(--text); white-space: nowrap; }
+    .class-time .class-end { font-size: .72rem; font-weight: 600; color: var(--text-muted); display: block; margin-top: .1rem; }
     .class-info { min-width: 0; }
-    .class-name {
-      font-size: .98rem; font-weight: 800;
-      white-space: nowrap; overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .class-meta {
-      display: flex; gap: .5rem; flex-wrap: wrap;
-      margin-top: .3rem;
-    }
-    .class-tag {
-      font-size: .68rem; font-weight: 700;
-      color: var(--text-muted);
-      display: flex; align-items: center; gap: .25rem;
-    }
+    .class-name { font-size: .98rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .class-meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .3rem; }
+    .class-tag { font-size: .68rem; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: .25rem; }
 
-    .class-badge {
-      font-size: .65rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .8px;
-      padding: .2rem .55rem; border-radius: 100px;
-      white-space: nowrap;
+    .class-badge { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; padding: .2rem .55rem; border-radius: 100px; white-space: nowrap; }
+    .badge-hyrox      { background: rgba(229,104,26,.15);  color: #e5681a; border: 1px solid rgba(229,104,26,.3); }
+    .badge-functional { background: rgba(59,130,246,.15);  color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
+    .badge-styrke     { background: rgba(34,197,94,.15);   color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+    .badge-hiit       { background: rgba(239,68,68,.15);   color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+    .badge-liss       { background: rgba(167,139,250,.15); color: #a78bfa; border: 1px solid rgba(167,139,250,.3); }
+    .badge-loping     { background: rgba(245,158,11,.15);  color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
+    .badge-barn       { background: rgba(236,72,153,.15);  color: #f472b6; border: 1px solid rgba(236,72,153,.3); }
+    .badge-annet      { background: var(--surface3); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .delete-btn {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-muted); width: 30px; height: 30px;
+      border-radius: 50%; cursor: pointer; font-size: .8rem;
+      transition: all .15s;
     }
-    .badge-hyrox     { background: rgba(229,104,26,.15); color: #e5681a; border: 1px solid rgba(229,104,26,.3); }
-    .badge-functional { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
-    .badge-styrke    { background: rgba(34,197,94,.15);  color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
-    .badge-hiit      { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(239,68,68,.3); }
-    .badge-liss      { background: rgba(167,139,250,.15);color: #a78bfa; border: 1px solid rgba(167,139,250,.3); }
-    .badge-loping    { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
-    .badge-barn      { background: rgba(236,72,153,.15); color: #f472b6; border: 1px solid rgba(236,72,153,.3); }
+    .delete-btn:hover { color: #ef4444; border-color: #ef4444; }
 
     .no-classes {
       text-align: center; padding: 3rem 1rem;
@@ -139,11 +102,7 @@
     }
     .no-classes .icon { font-size: 2.5rem; margin-bottom: .75rem; }
 
-    /* ── Legend ── */
-    .legend {
-      display: flex; flex-wrap: wrap; gap: .5rem;
-      margin-bottom: 1.75rem;
-    }
+    .legend { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.75rem; }
   </style>
 </head>
 <body>
@@ -156,23 +115,73 @@
       <p class="lead">Oversikt over alle klasser og aktiviteter denne uken.</p>
     </div>
 
-    <!-- Fargekoder -->
     <div class="legend">
       <span class="class-badge badge-hyrox">HYROX</span>
       <span class="class-badge badge-functional">Functional Fitness</span>
       <span class="class-badge badge-styrke">Styrketrening</span>
       <span class="class-badge badge-hiit">HIIT</span>
-      <span class="class-badge badge-liss">LISS / Cardio</span>
+      <span class="class-badge badge-liss">LISS</span>
       <span class="class-badge badge-loping">Løping</span>
-      <span class="class-badge badge-barn">Barn &amp; Ungdom</span>
+      <span class="class-badge badge-barn">Barn/Ungdom</span>
+      <span class="class-badge badge-annet">Annet</span>
     </div>
 
-    <!-- Dagtabs -->
     <nav class="week-nav" id="weekNav"></nav>
 
-    <!-- Dag-innhold -->
-    <div id="dayContent"></div>
+    <div id="dayContent"><div class="empty-state">Laster...</div></div>
   </main>
+
+  <!-- Modal: ny klasse -->
+  <div class="modal-backdrop" id="newClassModal" onclick="if(event.target===this)closeAddModal()">
+    <div class="modal">
+      <div class="body">
+        <button class="close" onclick="closeAddModal()">✕</button>
+        <h2>Ny klasse</h2>
+        <p class="muted" style="font-size:.9rem; margin-bottom:1rem;">Klassen vil vises for alle medlemmer.</p>
+        <form id="newClassForm">
+          <div class="field">
+            <label for="cName">Klassenavn</label>
+            <input id="cName" type="text" placeholder="F.eks. HYROX Training" required />
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="cStart">Start-tid</label>
+              <input id="cStart" type="time" required />
+            </div>
+            <div class="field">
+              <label for="cEnd">Slutt-tid</label>
+              <input id="cEnd" type="time" required />
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="cType">Type</label>
+              <select id="cType">
+                <option value="functional">Functional Fitness</option>
+                <option value="hyrox">HYROX</option>
+                <option value="styrke">Styrketrening</option>
+                <option value="hiit">HIIT</option>
+                <option value="liss">LISS / Cardio</option>
+                <option value="loping">Løping</option>
+                <option value="barn">Barn / Ungdom</option>
+                <option value="annet">Annet</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cLocation">Sted</label>
+              <input id="cLocation" type="text" placeholder="F.eks. The Box" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="cTrainer">Trener (valgfritt)</label>
+            <input id="cTrainer" type="text" placeholder="Navn på trener" />
+          </div>
+          <input type="hidden" id="cDayOfWeek" />
+          <button class="btn btn-primary btn-full" type="submit">Legg til</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <div id="footer-slot"></div>
 
@@ -180,97 +189,70 @@
   <script src="supabase-client.js"></script>
   <script src="app.js"></script>
   <script>
-    setupPage("ukeplan");
-
-    // ── Placeholder-data (backend erstatter dette) ──
-    const SCHEDULE = {
-      0: [], // Søndag
-      1: [ // Mandag
-        { tid: "06:00", slutt: "07:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "09:00", slutt: "10:00", navn: "LISS Cardio", type: "liss", sted: "Kondisjonssone", trener: "" },
-        { tid: "12:00", slutt: "13:00", navn: "HYROX Training", type: "hyrox", sted: "The Box", trener: "Trener B" },
-        { tid: "17:00", slutt: "18:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "18:00", slutt: "19:00", navn: "Styrketrening", type: "styrke", sted: "Styrkestudio", trener: "" },
-      ],
-      2: [ // Tirsdag
-        { tid: "06:00", slutt: "07:00", navn: "HIIT Cardio", type: "hiit", sted: "The Box", trener: "Trener C" },
-        { tid: "09:00", slutt: "10:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "17:00", slutt: "18:00", navn: "HYROX Training", type: "hyrox", sted: "The Box", trener: "Trener B" },
-        { tid: "17:00", slutt: "18:00", navn: "HYROX Youngstars (8–14 år)", type: "barn", sted: "The Box", trener: "Trener D" },
-        { tid: "18:00", slutt: "19:00", navn: "Løpeøkt", type: "loping", sted: "Runner's Corner", trener: "" },
-      ],
-      3: [ // Onsdag
-        { tid: "06:00", slutt: "07:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "09:00", slutt: "10:00", navn: "Styrketrening", type: "styrke", sted: "Styrkestudio", trener: "" },
-        { tid: "12:00", slutt: "13:00", navn: "LISS Cardio", type: "liss", sted: "Kondisjonssone", trener: "" },
-        { tid: "17:00", slutt: "18:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener C" },
-        { tid: "18:15", slutt: "19:15", navn: "HIIT Cardio", type: "hiit", sted: "The Box", trener: "Trener B" },
-      ],
-      4: [ // Torsdag
-        { tid: "06:00", slutt: "07:00", navn: "HYROX Training", type: "hyrox", sted: "The Box", trener: "Trener B" },
-        { tid: "09:00", slutt: "10:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "17:00", slutt: "18:00", navn: "Styrketrening", type: "styrke", sted: "Styrkestudio", trener: "" },
-        { tid: "17:00", slutt: "18:00", navn: "HYROX Youngstars (8–14 år)", type: "barn", sted: "The Box", trener: "Trener D" },
-        { tid: "18:00", slutt: "19:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener C" },
-      ],
-      5: [ // Fredag
-        { tid: "06:00", slutt: "07:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "09:00", slutt: "10:00", navn: "HYROX Training", type: "hyrox", sted: "The Box", trener: "Trener B" },
-        { tid: "12:00", slutt: "13:00", navn: "HIIT Cardio", type: "hiit", sted: "The Box", trener: "Trener C" },
-        { tid: "17:00", slutt: "18:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-      ],
-      6: [ // Lørdag
-        { tid: "09:00", slutt: "10:00", navn: "Functional Fitness", type: "functional", sted: "The Black Box", trener: "Trener A" },
-        { tid: "10:00", slutt: "11:00", navn: "HYROX Sim Race", type: "hyrox", sted: "The Box", trener: "Trener B" },
-        { tid: "11:00", slutt: "12:00", navn: "Løpeøkt", type: "loping", sted: "Runner's Corner", trener: "" },
-      ],
-    };
+    let me = null;
+    let isAdmin = false;
+    let schedule = []; // alle klasser fra DB
+    let currentDay = null;
 
     const DAGNAVN = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
     const DAGNAVN_KORT = ["Søn","Man","Tir","Ons","Tor","Fre","Lør"];
-
     const today = new Date();
     const todayNum = today.getDay();
 
-    // Bygg dagtabs (mandag–søndag, starter på mandag)
-    const ORDER = [1,2,3,4,5,6,0]; // Mon first
-    const nav = document.getElementById("weekNav");
+    function esc(s){return (s ?? "").toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 
-    ORDER.forEach(d => {
-      const diff = d === 0 ? (7 - todayNum) % 7 || 7 : d - todayNum < -6 ? d - todayNum + 7 : d - todayNum;
-      const date = new Date(today);
-      date.setDate(today.getDate() + (d - todayNum + 7) % 7 - ((d !== 0 && d < todayNum) ? 7 : 0));
-      // Simpler: find the date for each weekday in the current week (Mon=start)
+    function fmtTime(t) {
+      // "09:00:00" → "09:00"
+      return (t || "").slice(0,5);
+    }
+
+    function typeLabel(t) {
+      const map = { functional: "Func. Fitness", hyrox: "HYROX", styrke: "Styrke", hiit: "HIIT", liss: "LISS", loping: "Løping", barn: "Barn/Ungdom", annet: "Annet" };
+      return map[t] || t;
+    }
+
+    async function loadSchedule() {
+      const { data, error } = await sb
+        .from("schedule_items")
+        .select("*")
+        .order("day_of_week")
+        .order("start_time");
+      if (error) { console.error(error); return; }
+      schedule = data || [];
+      showDay(currentDay ?? todayNum);
+    }
+
+    function buildWeekNav() {
+      const ORDER = [1,2,3,4,5,6,0]; // Mandag først
+      const nav = document.getElementById("weekNav");
       const monday = new Date(today);
       monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-      const dayDate = new Date(monday);
-      dayDate.setDate(monday.getDate() + (d === 0 ? 6 : d - 1));
 
-      const btn = document.createElement("button");
-      btn.className = "day-tab" + (d === todayNum ? " today" : "");
-      btn.dataset.day = d;
-      btn.innerHTML = `
-        <span class="day-name">${DAGNAVN_KORT[d]}</span>
-        <span class="day-num">${dayDate.getDate()}</span>
-        ${d === todayNum ? '<span class="today-dot"></span>' : ''}
-      `;
-      btn.addEventListener("click", () => showDay(d));
-      nav.appendChild(btn);
-    });
+      nav.innerHTML = ORDER.map(d => {
+        const dayDate = new Date(monday);
+        dayDate.setDate(monday.getDate() + (d === 0 ? 6 : d - 1));
+        return `
+          <button class="day-tab ${d === todayNum ? 'today' : ''}" data-day="${d}" onclick="showDay(${d})">
+            <span class="day-name">${DAGNAVN_KORT[d]}</span>
+            <span class="day-num">${dayDate.getDate()}</span>
+            ${d === todayNum ? '<span class="today-dot"></span>' : ''}
+          </button>
+        `;
+      }).join("");
+    }
 
     function showDay(dayNum) {
-      // Update tabs
+      currentDay = dayNum;
       document.querySelectorAll(".day-tab").forEach(b => b.classList.remove("active"));
       document.querySelector(`.day-tab[data-day="${dayNum}"]`)?.classList.add("active");
 
-      const classes = SCHEDULE[dayNum] || [];
+      const classes = schedule.filter(c => c.day_of_week === dayNum);
 
-      // Find date for this day
       const monday = new Date(today);
       monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
       const dayDate = new Date(monday);
       dayDate.setDate(monday.getDate() + (dayNum === 0 ? 6 : dayNum - 1));
-      const dateStr = dayDate.toLocaleDateString("no-NO", { day:"numeric", month:"long" });
+      const dateStr = dayDate.toLocaleDateString("no-NO", { day: "numeric", month: "long" });
 
       const isToday = dayNum === todayNum;
 
@@ -279,15 +261,16 @@
           <h2>${DAGNAVN[dayNum]}</h2>
           <span class="date-label">${dateStr}</span>
           ${isToday ? '<span class="today-badge">I dag</span>' : ''}
+          ${isAdmin ? `<button class="add-class-btn" onclick="openAddModal(${dayNum})">+ Legg til klasse</button>` : ''}
         </div>
       `;
 
-      if (classes.length === 0) {
+      if (!classes.length) {
         html += `
           <div class="no-classes">
             <div class="icon">🛌</div>
             <p>Ingen planlagte klasser denne dagen.</p>
-            <p style="font-size:.82rem; margin-top:.4rem;">Studioet er åpent 04:00–24:00 for egentrening.</p>
+            ${isAdmin ? '<p style="font-size:.82rem; margin-top:.4rem;">Klikk «+ Legg til klasse» for å legge til.</p>' : '<p style="font-size:.82rem; margin-top:.4rem;">Studioet er åpent for egentrening.</p>'}
           </div>
         `;
       } else {
@@ -296,29 +279,79 @@
           html += `
             <div class="class-row type-${c.type}">
               <div class="class-time">
-                ${c.tid}
-                <span class="class-end">– ${c.slutt}</span>
+                ${fmtTime(c.start_time)}
+                <span class="class-end">– ${fmtTime(c.end_time)}</span>
               </div>
               <div class="class-info">
-                <div class="class-name">${c.navn}</div>
+                <div class="class-name">${esc(c.name)}</div>
                 <div class="class-meta">
-                  <span class="class-tag">📍 ${c.sted}</span>
-                  ${c.trener ? `<span class="class-tag">👤 ${c.trener}</span>` : ''}
+                  ${c.location ? `<span class="class-tag">📍 ${esc(c.location)}</span>` : ''}
+                  ${c.trainer ? `<span class="class-tag">👤 ${esc(c.trainer)}</span>` : ''}
                 </div>
               </div>
-              <span class="class-badge badge-${c.type}">${c.type === 'functional' ? 'Func. Fitness' : c.type === 'barn' ? 'Barn/Ungdom' : c.type.toUpperCase()}</span>
+              <span class="class-badge badge-${c.type}">${typeLabel(c.type)}</span>
+              ${isAdmin ? `<button class="delete-btn" onclick="deleteClass('${c.id}')" title="Slett">✕</button>` : '<div></div>'}
             </div>
           `;
         });
         html += '</div>';
-        html += `<p style="font-size:.78rem; color:var(--text-muted); margin-top:1.25rem; text-align:center;">Book klasser i <strong style="color:var(--orange);">Wondr-appen</strong>. Studioet er åpent 04:00–24:00.</p>`;
       }
 
       document.getElementById("dayContent").innerHTML = html;
     }
+    window.showDay = showDay;
 
-    // Vis dagens dag ved innlasting
-    showDay(todayNum);
+    // Admin: legg til klasse
+    window.openAddModal = (dayNum) => {
+      document.getElementById("cDayOfWeek").value = dayNum;
+      document.getElementById("newClassForm").reset();
+      document.getElementById("cDayOfWeek").value = dayNum;
+      document.getElementById("newClassModal").classList.add("open");
+    };
+    window.closeAddModal = () => {
+      document.getElementById("newClassModal").classList.remove("open");
+    };
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAddModal(); });
+
+    document.getElementById("newClassForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const item = {
+        day_of_week: +document.getElementById("cDayOfWeek").value,
+        start_time:  document.getElementById("cStart").value,
+        end_time:    document.getElementById("cEnd").value,
+        name:        document.getElementById("cName").value.trim(),
+        type:        document.getElementById("cType").value,
+        location:    document.getElementById("cLocation").value.trim() || null,
+        trainer:     document.getElementById("cTrainer").value.trim() || null,
+        created_by:  me.id
+      };
+      const { error } = await sb.from("schedule_items").insert(item);
+      if (error) { alert("Feil: " + error.message); return; }
+      closeAddModal();
+      loadSchedule();
+    });
+
+    window.deleteClass = async (id) => {
+      if (!confirm("Slette denne klassen?")) return;
+      const { error } = await sb.from("schedule_items").delete().eq("id", id);
+      if (error) { alert("Feil: " + error.message); return; }
+      loadSchedule();
+    };
+
+    // Realtime: oppdater når noen legger til/sletter
+    sb.channel("schedule-updates")
+      .on("postgres_changes", { event: "*", schema: "public", table: "schedule_items" }, () => {
+        loadSchedule();
+      })
+      .subscribe();
+
+    (async () => {
+      me = await setupPage("ukeplan");
+      if (!me) return;
+      isAdmin = me.role === "admin";
+      buildWeekNav();
+      await loadSchedule();
+    })();
   </script>
 </body>
 </html>

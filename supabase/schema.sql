@@ -235,3 +235,32 @@ alter publication supabase_realtime add table public.programs;
 insert into public.conversations (id, type, name)
 values ('00000000-0000-0000-0000-000000000001', 'public', 'Felles chat')
 on conflict do nothing;
+
+-- ─────────────────────────────────────────────────────────────────
+--  SCHEDULE_ITEMS: ukeplan-klasser (admins skriver, alle leser)
+-- ─────────────────────────────────────────────────────────────────
+create table if not exists public.schedule_items (
+  id           uuid primary key default gen_random_uuid(),
+  day_of_week  int not null check (day_of_week between 0 and 6),
+  start_time   time not null,
+  end_time     time not null,
+  name         text not null,
+  type         text not null default 'functional' check (type in ('hyrox','functional','styrke','hiit','liss','loping','barn','annet')),
+  location     text,
+  trainer      text,
+  created_by   uuid references public.profiles(id),
+  created_at   timestamptz default now()
+);
+
+create index if not exists idx_schedule_day on public.schedule_items(day_of_week, start_time);
+
+alter table public.schedule_items enable row level security;
+
+drop policy if exists "schedule_read_all"   on public.schedule_items;
+drop policy if exists "schedule_write_admin" on public.schedule_items;
+
+create policy "schedule_read_all" on public.schedule_items
+  for select using (auth.uid() is not null);
+
+create policy "schedule_write_admin" on public.schedule_items
+  for all using (public.is_admin()) with check (public.is_admin());
