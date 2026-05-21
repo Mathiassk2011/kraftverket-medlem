@@ -353,7 +353,7 @@
           <h2>${DAGNAVN[dayNum]}</h2>
           <span class="date-label">${dateStr}</span>
           ${isToday ? '<span class="today-badge">I dag</span>' : ''}
-          ${isAdmin ? `<button class="add-class-btn" onclick="openAddModal(${dayNum})">+ Legg til klasse</button>` : ''}
+          ${isAdmin ? `<button class="add-class-btn" onclick="openAddModal(${dayNum})">+ Legg til økt</button>` : ''}
         </div>
       `;
 
@@ -362,7 +362,7 @@
           <div class="no-classes">
             <div class="icon">🛌</div>
             <p>Ingen planlagte klasser denne dagen.</p>
-            ${isAdmin ? '<p style="font-size:.82rem; margin-top:.4rem;">Klikk «+ Legg til klasse» for å legge til.</p>' : '<p style="font-size:.82rem; margin-top:.4rem;">Studioet er åpent for egentrening.</p>'}
+            ${isAdmin ? '<p style="font-size:.82rem; margin-top:.4rem;">Klikk «+ Legg til økt» for å legge til.</p>' : '<p style="font-size:.82rem; margin-top:.4rem;">Studioet er åpent for egentrening.</p>'}
           </div>
         `;
       } else {

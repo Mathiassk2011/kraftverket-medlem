@@ -203,76 +203,6 @@
       letter-spacing: 1px; color: var(--text-muted); margin-bottom: .75rem;
     }
 
-    /* ── Treningsprogrammer ── */
-    .prog-section { margin-top: 3.5rem; }
-    .prog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1.25rem;
-      margin-top: 1.5rem;
-    }
-    .prog-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: all .2s;
-      display: flex; flex-direction: column; gap: .6rem;
-    }
-    .prog-card:hover { border-color: var(--orange); transform: translateY(-3px); }
-    .prog-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
-    .prog-card h3 { font-size: 1.05rem; font-weight: 900; margin: 0; }
-    .prog-level {
-      font-size: .6rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 1px; padding: .2rem .55rem; border-radius: 100px;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .level-beginner { background: rgba(34,197,94,.15); color:#4ade80; border:1px solid rgba(34,197,94,.3); }
-    .level-intermediate { background: rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
-    .level-advanced { background: rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); }
-    .level-all { background: var(--orange-glow); color:var(--orange); border:1px solid rgba(229,104,26,.3); }
-    .prog-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
-    .prog-card-meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .25rem; }
-    .prog-card-open {
-      margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--border);
-      font-size: .8rem; font-weight: 700; color: var(--orange);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-
-    /* Program modal */
-    .prog-modal-header { padding: 1.75rem 1.75rem 0; }
-    .prog-modal-header h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: .5rem; }
-    .prog-modal-body { padding: 1.25rem 1.75rem 1.75rem; }
-    .prog-section-lbl {
-      font-size: .68rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 1.2px; color: var(--orange);
-      margin: 1.25rem 0 .5rem;
-    }
-    .prog-day-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
-      gap: .75rem; margin-bottom: .75rem;
-    }
-    .prog-day-box {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: .85rem 1rem;
-    }
-    .prog-day-box .d-label { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing:.8px; color: var(--orange); }
-    .prog-day-box .d-name { font-size: .95rem; font-weight: 800; margin-top: .15rem; margin-bottom: .6rem; }
-    .prog-ex-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .3rem; }
-    .prog-ex-list li {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: .82rem; padding: .3rem .55rem;
-      border-radius: 4px; background: var(--surface);
-      border: 1px solid var(--border);
-    }
-    .prog-ex-list .ex-name { color: var(--text); font-weight: 500; }
-    .prog-ex-list .ex-sets { color: var(--orange); font-weight: 800; font-size: .78rem; white-space: nowrap; margin-left: .5rem; }
-    .prog-tip {
-      background: var(--orange-glow); border: 1px solid rgba(229,104,26,.3);
-      border-radius: var(--radius-sm); padding: .85rem 1rem;
-      font-size: .88rem; line-height: 1.65; margin-top: 1rem;
-    }
   </style>
 </head>
 <body>
@@ -371,55 +301,37 @@
 
     </div>
 
-    <!-- ── Hva kan du trene i dag? ── -->
-    <div class="today-card" id="todayCard" style="margin-top:2.5rem;">
+    <!-- ── Ukeplan ── -->
+    <div class="today-card" id="ukeplanCard" style="margin-top:2.5rem; grid-template-columns:1fr;">
       <div class="today-card-left">
         <div>
-          <div class="today-day-label" id="todayDayLabel"></div>
-          <div class="today-title" id="todayTitle"></div>
+          <div class="today-day-label" id="ukeplanWeekLabel"></div>
+          <div class="today-title" id="ukeplanTitle">Ingen ukeplan denne uken</div>
         </div>
-        <p class="today-desc" id="todayDesc"></p>
-        <div class="today-meta" id="todayMeta"></div>
-      </div>
-      <div class="today-card-right">
-        <div class="today-ex-label">Foreslåtte øvelser</div>
-        <ul class="today-exercises" id="todayExercises"></ul>
+        <p class="today-desc" id="ukeplanDesc" style="white-space:pre-wrap;"></p>
+        <div id="ukeplanAdminBtns" style="display:none; margin-top:.25rem;">
+          <button class="btn btn-primary" style="font-size:.82rem; padding:.4rem .9rem;" onclick="showUkeplanForm()">Rediger ukeplan</button>
+        </div>
       </div>
     </div>
 
-    <!-- ── Treningsprogrammer ── -->
-    <div class="prog-section">
-      <div class="section-title" style="margin-bottom:1.5rem;">
-        <div class="badge">Progresjon</div>
-        <h2>Trenings<span class="accent">programmer</span></h2>
-        <p>Kjente og velprøvde programmer som gir strukturert progresjon. Trykk for full beskrivelse.</p>
+    <div id="ukeplanFormWrap" style="display:none; margin-top:1rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.75rem;">
+      <h3 style="margin-bottom:1.25rem; font-size:1.05rem; font-weight:900;">Rediger ukeplan</h3>
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--orange); margin-bottom:.4rem;">Tittel</div>
+        <input id="upTitle" type="text" placeholder="F.eks. Uke 21 – Push/Pull fokus" style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:.65rem .9rem; color:var(--text); font-size:.95rem; box-sizing:border-box;" />
       </div>
-      <div class="prog-grid" id="progGrid"></div>
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--orange); margin-bottom:.4rem;">Innhold</div>
+        <textarea id="upBody" rows="8" placeholder="Beskriv ukens treningsopplegg..." style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:.65rem .9rem; color:var(--text); font-size:.95rem; resize:vertical; box-sizing:border-box;"></textarea>
+      </div>
+      <div style="display:flex; gap:.75rem;">
+        <button class="btn btn-primary" onclick="saveUkeplan()">Lagre</button>
+        <button class="btn btn-ghost" onclick="hideUkeplanForm()">Avbryt</button>
+      </div>
     </div>
 
   </main>
-
-  <!-- Training style modal -->
-  <!-- Program modal -->
-  <div class="ts-backdrop" id="progBackdrop" onclick="if(event.target===this)closeProg()">
-    <div class="ts-modal" id="progModal">
-      <div class="prog-modal-header" style="position:relative;">
-        <button class="ts-close" style="position:absolute;top:1rem;right:1rem;" onclick="closeProg()">✕</button>
-        <div class="ts-tags" id="progTags"></div>
-        <h2 id="progTitle"></h2>
-        <p style="color:var(--text-muted);font-size:.9rem;margin-top:.4rem;" id="progSubtitle"></p>
-      </div>
-      <div class="prog-modal-body">
-        <div class="prog-section-lbl">Om programmet</div>
-        <p id="progDesc" style="font-size:.92rem;color:var(--text-muted);line-height:1.7;"></p>
-        <div class="prog-section-lbl">Ukesstruktur</div>
-        <div class="prog-day-grid" id="progDays"></div>
-        <div class="prog-section-lbl">Progresjon</div>
-        <p id="progProg" style="font-size:.92rem;color:var(--text-muted);line-height:1.7;"></p>
-        <div class="prog-tip" id="progTip"></div>
-      </div>
-    </div>
-  </div>
 
   <!-- Training style modal -->
   <div class="ts-backdrop" id="tsBackdrop" onclick="if(event.target===this)closeStyle()">
@@ -453,399 +365,67 @@
   <script src="supabase-client.js"></script>
   <script src="app.js"></script>
   <script>
-    setupPage("treningsstiler");
+    // ── Ukeplan ──
+    let _me = null;
+    let currentUkeplan = null;
 
-    // ── Dagens treningsforslag ──
-    const TODAY_PLAN = [
-      { // Søndag
-        title: "Aktiv hvile", color: "#a78bfa",
-        desc: "La kroppen restituere etter en hard uke. Lett aktivitet øker blodsirkulasjonen og fremskynder restitusjon uten å belaste muskler og ledd.",
-        tags: ["Restitusjon","Lav intensitet","LISS"],
-        exercises: [
-          { name: "Rolig gange / turgåing", sets: "30–60 min" },
-          { name: "Sykling i rolig tempo", sets: "20–40 min" },
-          { name: "Lett tøying og stretching", sets: "15 min" },
-          { name: "Skum-rulling (foam rolling)", sets: "10 min" },
-        ]
-      },
-      { // Mandag
-        title: "Push – Bryst, skuldre & triceps", color: "#e5681a",
-        desc: "Start uken sterkt med en solid push-økt. Fokuser på pressøvelser og bygg overkroppsstyrke i bryst, skuldre og triceps.",
-        tags: ["Styrke","Hypertrofi","Overkropp"],
-        exercises: [
-          { name: "Benkpress (flat)", sets: "4×6–8" },
-          { name: "Incline hantelpress", sets: "3×10–12" },
-          { name: "Skulderpress (militærpress)", sets: "4×8–10" },
-          { name: "Lateral raises", sets: "3×15" },
-          { name: "Triceps pushdown", sets: "3×12–15" },
-        ]
-      },
-      { // Tirsdag
-        title: "Pull – Rygg & biceps", color: "#3b82f6",
-        desc: "Tren ryggen bredt og tykk med trekkøvelser. En sterk rygg er grunnlaget for god holdning og forebygging av skader.",
-        tags: ["Styrke","Hypertrofi","Rygg"],
-        exercises: [
-          { name: "Markløft (konvensjonell)", sets: "4×5" },
-          { name: "Brede nedtrekk / pull-ups", sets: "4×8–10" },
-          { name: "Sittende roing med kabel", sets: "3×10–12" },
-          { name: "Enarms hantelroing", sets: "3×12" },
-          { name: "Biceps curl (stang)", sets: "3×12–15" },
-        ]
-      },
-      { // Onsdag
-        title: "Ben – Knebøy, press & utfall", color: "#22c55e",
-        desc: "Ben-dag er den viktigste dagen! De store muskelgruppene i beina frigir mest testosteron og veksthormoner, noe som gagner hele kroppen.",
-        tags: ["Styrke","Hypertrofi","Underkropp"],
-        exercises: [
-          { name: "Knebøy (back squat)", sets: "4×6–8" },
-          { name: "Beinpress (leg press)", sets: "3×12" },
-          { name: "Romanian deadlift", sets: "3×10" },
-          { name: "Utfall med hantler", sets: "3×12 (per ben)" },
-          { name: "Leggpress (calf raises)", sets: "4×20" },
-        ]
-      },
-      { // Torsdag
-        title: "Push + Core – Skuldre & mage", color: "#e5681a",
-        desc: "Andre push-økt i uka med fokus på skuldre og en solid core-trening. Et sterkt senter forbedrer alle løft og forebygger ryggskader.",
-        tags: ["Styrke","Core","Skuldre"],
-        exercises: [
-          { name: "Overhead press (stang)", sets: "4×6–8" },
-          { name: "Arnold press (hantler)", sets: "3×10–12" },
-          { name: "Kabel lateral raises", sets: "3×15" },
-          { name: "Planke", sets: "3×45–60 sek" },
-          { name: "Hanging leg raises", sets: "3×15" },
-        ]
-      },
-      { // Fredag
-        title: "Pull + HIIT – Rygg, biceps & kondisjon", color: "#ef4444",
-        desc: "Avslutt uken med en intensiv kombinasjon av styrke og kondisjon. HIIT-finisher etter styrkeøkten gir maksimalt utbytte og forbereder deg til helgen.",
-        tags: ["Styrke","HIIT","Kondisjon"],
-        exercises: [
-          { name: "Kroppshevinger (pull-ups)", sets: "4×maks" },
-          { name: "T-bar roing", sets: "3×10" },
-          { name: "Face pulls", sets: "3×15" },
-          { name: "HIIT – romaskin intervaller", sets: "8×20 sek på / 40 sek av" },
-          { name: "Battle ropes", sets: "3×30 sek" },
-        ]
-      },
-      { // Lørdag
-        title: "Helkropp / HYROX-prep", color: "#fbbf24",
-        desc: "Lørdagen er perfekt for en funksjonstrent helkroppsøkt eller HYROX-forberedelse. Tren kondisjon og styrke i ett og bli klar for konkurranse.",
-        tags: ["HYROX","Helkropp","Kondisjon"],
-        exercises: [
-          { name: "Løping / SkiErg", sets: "2×500 m" },
-          { name: "Sled push + pull", sets: "4×25 m" },
-          { name: "Wall ball shots", sets: "3×20" },
-          { name: "Farmer's carry", sets: "3×50 m" },
-          { name: "Sandbag lunges", sets: "2×25 m" },
-        ]
-      },
-    ];
-
-    function buildTodayCard() {
-      const day = new Date().getDay();
-      const plan = TODAY_PLAN[day];
-      const dagNavn = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
-      document.getElementById("todayDayLabel").textContent = `I dag – ${dagNavn[day]}`;
-      document.getElementById("todayTitle").textContent = plan.title;
-      document.getElementById("todayDesc").textContent = plan.desc;
-      document.getElementById("todayCard").style.borderColor = plan.color;
-      document.getElementById("todayMeta").innerHTML =
-        plan.tags.map(t => `<span class="chip">${t}</span>`).join("");
-      document.getElementById("todayExercises").innerHTML =
-        plan.exercises.map(e => `
-          <li>
-            <strong>${e.name}</strong>
-            <span class="sets">${e.sets}</span>
-          </li>`).join("");
+    function getWeekLabel() {
+      const now = new Date();
+      const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return `Uke ${week}`;
     }
 
-    buildTodayCard();
-
-    // ── Treningsprogrammer ──
-    const PROGRAMS = [
-      {
-        id: "starting-strength",
-        name: "Starting Strength",
-        subtitle: "Mark Rippetoe",
-        level: "beginner", levelLabel: "Nybegynner",
-        tags: ["3 dager/uke","Styrke","Lineær progresjon","Barbell"],
-        desc: "Starting Strength er det mest anbefalte programmet for absolutte nybegynnere. Fokuset er utelukkende på de store grunnløftene og lineær vektøkning for hver økt. Enkelt, effektivt og vitenskapelig begrunnet.",
-        days: [
-          { label: "Økt A", name: "Mandag / Onsdag / Fredag (annenhver)", exercises: [
-            { ex: "Knebøy (back squat)", sets: "3×5" },
-            { ex: "Benkpress (flat)", sets: "3×5" },
-            { ex: "Markløft (konvensjonell)", sets: "1×5" },
-          ]},
-          { label: "Økt B", name: "Mandag / Onsdag / Fredag (annenhver)", exercises: [
-            { ex: "Knebøy (back squat)", sets: "3×5" },
-            { ex: "Militærpress (overhead press)", sets: "3×5" },
-            { ex: "Markløft (konvensjonell)", sets: "1×5" },
-          ]},
-        ],
-        prog: "Legg 2,5 kg på øvre kropp (benkpress/militærpress) og 5 kg på underkropp (knebøy/markløft) etter HVER økt. Kjør dette til du stopper å progrediere, deretter justeres programmet.",
-        tip: "💡 Perfekt for deg som aldri har trent med vekter. Alternér Økt A og Økt B: A–B–A én uke, B–A–B neste. Teknikk er viktigere enn vekten de første ukene."
-      },
-      {
-        id: "gzclp",
-        name: "GZCLP",
-        subtitle: "Generalised Intermediate Program",
-        level: "beginner", levelLabel: "Nybegynner / Middels",
-        tags: ["4 dager/uke","Styrke","Hypertrofi","Lineær progresjon"],
-        desc: "GZCLP kombinerer tung styrketrening (T1) med supporting-løft (T2) og isolasjonsøvelser (T3). Mer volum enn Starting Strength og ideelt for de som raskt har passert nybegynnerstadiet.",
-        days: [
-          { label: "Dag 1", name: "Knebøy + Militærpress", exercises: [
-            { ex: "Knebøy – T1", sets: "5×3+ (AMRAP siste)" },
-            { ex: "Militærpress – T2", sets: "3×10" },
-            { ex: "Lat pulldown / pull-up – T3", sets: "2×15+" },
-          ]},
-          { label: "Dag 2", name: "Militærpress + Markløft", exercises: [
-            { ex: "Militærpress – T1", sets: "5×3+ (AMRAP siste)" },
-            { ex: "Knebøy – T2", sets: "3×10" },
-            { ex: "Triceps pushdown – T3", sets: "2×15+" },
-          ]},
-          { label: "Dag 3", name: "Benkpress + Knebøy", exercises: [
-            { ex: "Benkpress – T1", sets: "5×3+ (AMRAP siste)" },
-            { ex: "Markløft – T2", sets: "3×8" },
-            { ex: "Biceps curl – T3", sets: "2×15+" },
-          ]},
-          { label: "Dag 4", name: "Markløft + Benkpress", exercises: [
-            { ex: "Markløft – T1", sets: "5×3+ (AMRAP siste)" },
-            { ex: "Benkpress – T2", sets: "3×10" },
-            { ex: "Core (planke / hanging leg raise) – T3", sets: "2×15+" },
-          ]},
-        ],
-        prog: "T1: Øk vekten etter fullførte sett (2,5–5 kg). T2: Øk etter 3×10 på alle sett. T3: Øk etter 2×15+. Siste sett T1 er alltid AMRAP.",
-        tip: "💡 GZCLP gir mer volum enn Starting Strength og er ideelt for de som vil bygge muskelmasse i tillegg til styrke. 4 dager gir god frekvens."
-      },
-      {
-        id: "531",
-        name: "5/3/1 (Wendler)",
-        subtitle: "Jim Wendler",
-        level: "intermediate", levelLabel: "Viderekommen",
-        tags: ["4 dager/uke","Styrke","Langsiktig progresjon","Barbell"],
-        desc: "5/3/1 er et av tidenes mest populære styrkeprogrammer med langsiktig og bærekraftig progresjon på de fire store løftene. Kombinert med tilbehørsøvelser gir det fullstendig muskeltilvekst.",
-        days: [
-          { label: "Dag 1 – Militærpress", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
-            { ex: "Militærpress – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
-            { ex: "Militærpress – Joker-sett", sets: "AMRAP siste arbeidsett" },
-            { ex: "Hantelpress / push-up – tilbehør", sets: "5×10" },
-            { ex: "Lat pulldown / chin-ups – tilbehør", sets: "5×10" },
-            { ex: "Lateral raises", sets: "3×15–20" },
-          ]},
-          { label: "Dag 2 – Markløft", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
-            { ex: "Markløft – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
-            { ex: "Markløft – Joker-sett", sets: "AMRAP siste arbeidsett" },
-            { ex: "Romanian deadlift – tilbehør", sets: "5×10" },
-            { ex: "Leg press – tilbehør", sets: "5×10" },
-            { ex: "Hanging leg raises", sets: "3×15" },
-          ]},
-          { label: "Dag 3 – Benkpress", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
-            { ex: "Benkpress – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
-            { ex: "Benkpress – Joker-sett", sets: "AMRAP siste arbeidsett" },
-            { ex: "Hantel benkpress / dips – tilbehør", sets: "5×10" },
-            { ex: "Kabel roing / sittende roing – tilbehør", sets: "5×10" },
-            { ex: "Face pulls", sets: "3×15–20" },
-          ]},
-          { label: "Dag 4 – Knebøy", name: "Uke 1: 3×5 / Uke 2: 3×3 / Uke 3: 5-3-1", exercises: [
-            { ex: "Knebøy – Hovedløft", sets: "3 sett (65/75/85% → 70/80/90% → 75/85/95%)" },
-            { ex: "Knebøy – Joker-sett", sets: "AMRAP siste arbeidsett" },
-            { ex: "Knebøy (høy reps) – tilbehør", sets: "5×10" },
-            { ex: "Leg curl – tilbehør", sets: "5×10" },
-            { ex: "Calf raises", sets: "5×20" },
-          ]},
-        ],
-        prog: "Uke 4 er alltid deload (40–60% av 1RM). Etter 4-ukerssyklus: øk Training Max med 2,5 kg (overkropp) eller 5 kg (underkropp). Aldri rush – langsiktig tålmodighet er nøkkelen.",
-        tip: "💡 Basér deg på 90% av faktisk 1RM som Training Max. 5/3/1 fungerer best for de med 6–12 måneder erfaring. Programmet er designet for år, ikke uker."
-      },
-      {
-        id: "ppl",
-        name: "Push / Pull / Legs",
-        subtitle: "PPL – klassisk splitprogram",
-        level: "intermediate", levelLabel: "Middels / Avansert",
-        tags: ["6 dager/uke","Hypertrofi","Styrke","Splitprogram"],
-        desc: "PPL er et av de mest effektive splittene for muskelbygging. Tre muskelgrupper trenes to ganger i uken for seks treningsdager totalt – høy frekvens og høyt volum gir maksimal muskeltilvekst.",
-        days: [
-          { label: "Dag 1 & 4 – Push", name: "Bryst, skuldre & triceps", exercises: [
-            { ex: "Flat benkpress", sets: "4×4–6" },
-            { ex: "Incline hantelpress", sets: "4×8–12" },
-            { ex: "Kabel flyes / pec deck", sets: "3×12–15" },
-            { ex: "Skulderpress (hantel)", sets: "3×10–12" },
-            { ex: "Lateral raises (kabel/hantel)", sets: "4×12–15" },
-            { ex: "Triceps pushdown (kabel)", sets: "3×12–15" },
-            { ex: "Overhead triceps extension", sets: "3×10–12" },
-          ]},
-          { label: "Dag 2 & 5 – Pull", name: "Rygg & biceps", exercises: [
-            { ex: "Markløft / kroppshevinger", sets: "4×4–6" },
-            { ex: "Brede nedtrekk (lat pulldown)", sets: "4×8–12" },
-            { ex: "T-bar roing / sittende kabelroing", sets: "4×10–12" },
-            { ex: "Enarms hantelroing", sets: "3×12 (per side)" },
-            { ex: "Face pulls", sets: "3×15–20" },
-            { ex: "Biceps curl (stang)", sets: "3×10–12" },
-            { ex: "Hammer curl (hantel)", sets: "3×12–15" },
-          ]},
-          { label: "Dag 3 & 6 – Legs", name: "Lår, hamstrings & legger", exercises: [
-            { ex: "Knebøy (back squat)", sets: "4×4–6" },
-            { ex: "Leg press", sets: "4×10–12" },
-            { ex: "Leg extension", sets: "3×12–15" },
-            { ex: "Romanian deadlift", sets: "3×8–12" },
-            { ex: "Lying leg curl", sets: "3×12–15" },
-            { ex: "Stående calf raise", sets: "5×15–20" },
-            { ex: "Sittende calf raise", sets: "3×20–25" },
-          ]},
-          { label: "Dag 7", name: "Hvile / aktiv restitusjon", exercises: [
-            { ex: "Rolig gange / lett sykkel", sets: "20–40 min" },
-            { ex: "Foam rolling + tøying", sets: "15–20 min" },
-          ]},
-        ],
-        prog: "Legg til vekt eller reps fra gang til gang – loggfør alltid. Dag 1 (tung) og Dag 4 (samme øvelser, litt lettere og mer volum) gir dobbel frekvens per muskelgruppe.",
-        tip: "💡 PPL krever god restitusjon. Prioriter 7–9 timers søvn, nok protein (1,6–2,2 g/kg kroppsvekt) og kalorier tilpasset målet ditt."
-      },
-      {
-        id: "upper-lower",
-        name: "Upper / Lower Split",
-        subtitle: "4 dager i uken – balansert og effektivt",
-        level: "intermediate", levelLabel: "Middels",
-        tags: ["4 dager/uke","Styrke","Hypertrofi","Balansert"],
-        desc: "Upper/Lower trener overkropp og underkropp to ganger i uken. Styrkedagene bruker tunge compound-løft, hypertrofidagene fokuserer på volum og isolasjonsøvelser for maksimal muskeltilvekst.",
-        days: [
-          { label: "Dag 1 – Upper A", name: "Overkropp, styrke", exercises: [
-            { ex: "Benkpress (flat)", sets: "4×4–6" },
-            { ex: "Barbell roing (bøyd foroverbøyd)", sets: "4×4–6" },
-            { ex: "Militærpress (stang)", sets: "3×6–8" },
-            { ex: "Kroppshevinger / lat pulldown", sets: "3×6–8" },
-            { ex: "Face pulls", sets: "3×15" },
-            { ex: "Triceps dips / pushdown", sets: "2×10–12" },
-          ]},
-          { label: "Dag 2 – Lower A", name: "Underkropp, styrke", exercises: [
-            { ex: "Knebøy (back squat)", sets: "4×4–6" },
-            { ex: "Romanian deadlift", sets: "3×6–8" },
-            { ex: "Leg press", sets: "3×10" },
-            { ex: "Leg curl", sets: "3×10–12" },
-            { ex: "Calf raises (stående)", sets: "4×15–20" },
-            { ex: "Planke", sets: "3×45–60 sek" },
-          ]},
-          { label: "Dag 3 – Upper B", name: "Overkropp, hypertrofi", exercises: [
-            { ex: "Incline hantelpress", sets: "4×8–12" },
-            { ex: "Kabel roing / sittende roing", sets: "4×10–12" },
-            { ex: "Skulderpress (hantel)", sets: "3×10–12" },
-            { ex: "Enarms hantelroing", sets: "3×12 (per side)" },
-            { ex: "Lateral raises", sets: "4×12–15" },
-            { ex: "Biceps curl", sets: "3×12–15" },
-            { ex: "Overhead triceps extension", sets: "3×12–15" },
-          ]},
-          { label: "Dag 4 – Lower B", name: "Underkropp, hypertrofi", exercises: [
-            { ex: "Hack squat / front squat", sets: "4×8–12" },
-            { ex: "Leg curl (liggende)", sets: "4×10–15" },
-            { ex: "Utfall med hantler", sets: "3×12 (per ben)" },
-            { ex: "Leg extension", sets: "3×12–15" },
-            { ex: "Hip thrust (glute bridge)", sets: "3×15" },
-            { ex: "Sittende calf raise", sets: "4×20–25" },
-          ]},
-        ],
-        prog: "Styrkedager: tung vekt, eksplosive reps, 2–4 min pause. Hypertrofidager: moderat vekt, kontrollerte reps, 60–90 sek pause. Øk vekten 2,5 kg når du klarer alle sett og reps komfortabelt.",
-        tip: "💡 Upper/Lower er ideelt for de med en travel hverdag. 4 dager gir god balanse mellom muskelstimulering og restitusjon – og det er enkelt å planlegge."
-      },
-      {
-        id: "hyrox-plan",
-        name: "HYROX 12-ukers plan",
-        subtitle: "Funksjonell fitness for konkurranse",
-        level: "all", levelLabel: "Alle nivåer",
-        tags: ["5 dager/uke","HYROX","Kondisjon","Styrke"],
-        desc: "En 12-ukers plan designet for å forberede deg til et HYROX-race. Kombinerer løpstrening, stasjonsteknikk og kondisjonsstyrke for å bygge all-round atletisk kapasitet og bli klar til race-day.",
-        days: [
-          { label: "Dag 1", name: "Løping + SkiErg", exercises: [
-            { ex: "Oppvarming – rolig jogg", sets: "1 km" },
-            { ex: "Tempoøkt løping", sets: "4×1 km (2 min pause)" },
-            { ex: "SkiErg intervaller", sets: "4×500 m (90 sek pause)" },
-            { ex: "SkiErg sprint-finisher", sets: "2×250 m (maks)" },
-          ]},
-          { label: "Dag 2", name: "Styrke + Sled", exercises: [
-            { ex: "Knebøy (back squat)", sets: "4×6" },
-            { ex: "Markløft (konvensjonell)", sets: "3×5" },
-            { ex: "Sled push", sets: "6×25 m (60 sek pause)" },
-            { ex: "Sled pull (tau)", sets: "6×25 m (60 sek pause)" },
-            { ex: "Farmer's carry", sets: "4×50 m" },
-          ]},
-          { label: "Dag 3", name: "LISS Cardio + mobilitet", exercises: [
-            { ex: "Rolig løping / sykkel", sets: "40–50 min (60–65% maks puls)" },
-            { ex: "Foam rolling (rygg, hofter, legger)", sets: "10–15 min" },
-            { ex: "Hip flexor stretch + hamstring", sets: "3×45 sek per side" },
-          ]},
-          { label: "Dag 4", name: "Stasjonsteknikk", exercises: [
-            { ex: "Wall ball shots (9/6 kg)", sets: "4×20" },
-            { ex: "Sandbag lunges (10/15 kg)", sets: "4×25 m" },
-            { ex: "Romaskin", sets: "4×500 m (2 min pause)" },
-            { ex: "Burpee broad jumps", sets: "4×15" },
-            { ex: "Box jumps / step-ups", sets: "3×15" },
-          ]},
-          { label: "Dag 5", name: "Sim Race eller langtur", exercises: [
-            { ex: "Alternativ A: Fullstendig HYROX-simulering", sets: "8 km løp + 8 stasjoner" },
-            { ex: "Alternativ B: Lang løpetur", sets: "60–75 min rolig/moderat" },
-            { ex: "Cool-down og tøying", sets: "10–15 min" },
-          ]},
-        ],
-        prog: "Øk løpsdistanse og stasjonsvolum med 5–10% per uke. Hver 4. uke er deload (60–70% volum). Ukene 9–11 er race-specific trening; uke 12 er taper-uke (50% volum) frem til race.",
-        tip: "💡 Book HYROX-klasser på Kraftverket via Wondr-appen og bruk Sim Race-events til å teste fremdriften. Fokusér på stasjonene du er svakest på de første 4 ukene."
-      },
-    ];
-
-    function buildProgGrid() {
-      document.getElementById("progGrid").innerHTML = PROGRAMS.map(p => `
-        <div class="prog-card" onclick="openProg('${p.id}')">
-          <div class="prog-card-top">
-            <h3>${p.name}</h3>
-            <span class="prog-level level-${p.level}">${p.levelLabel}</span>
-          </div>
-          <p>${p.desc.substring(0, 100)}…</p>
-          <div class="prog-card-meta">
-            ${p.tags.slice(0,3).map(t => `<span class="chip">${t}</span>`).join("")}
-          </div>
-          <div class="prog-card-open"><span>${p.subtitle}</span><span>Les mer →</span></div>
-        </div>
-      `).join("");
+    async function loadUkeplan() {
+      document.getElementById("ukeplanWeekLabel").textContent = getWeekLabel();
+      const { data, error } = await sb
+        .from("programs")
+        .select("*")
+        .eq("category", "ukeplan")
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (error) { console.error(error); return; }
+      currentUkeplan = data?.[0] || null;
+      if (currentUkeplan) {
+        document.getElementById("ukeplanTitle").textContent = currentUkeplan.title;
+        document.getElementById("ukeplanDesc").textContent = currentUkeplan.body;
+      } else {
+        document.getElementById("ukeplanTitle").textContent = "Ingen ukeplan denne uken";
+        document.getElementById("ukeplanDesc").textContent = "";
+      }
     }
 
-    buildProgGrid();
-
-    function openProg(id) {
-      const p = PROGRAMS.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById("progTitle").textContent = p.name;
-      document.getElementById("progSubtitle").textContent = p.subtitle;
-      document.getElementById("progDesc").textContent = p.desc;
-      document.getElementById("progProg").textContent = p.prog;
-      document.getElementById("progTip").textContent = p.tip;
-      document.getElementById("progTags").innerHTML =
-        [{ label: p.levelLabel, cls: p.level }, ...p.tags.map(t => ({ label: t, cls: "" }))]
-          .map((t, i) => i === 0
-            ? `<span class="prog-level level-${t.cls}" style="margin-right:.35rem">${t.label}</span>`
-            : `<span class="chip">${t.label}</span>`)
-          .join("");
-      document.getElementById("progDays").innerHTML = p.days.map(d => `
-        <div class="prog-day-box">
-          <div class="d-label">${d.label}</div>
-          <div class="d-name">${d.name}</div>
-          <ul class="prog-ex-list">
-            ${d.exercises.map(e => `
-              <li>
-                <span class="ex-name">${e.ex}</span>
-                <span class="ex-sets">${e.sets}</span>
-              </li>`).join("")}
-          </ul>
-        </div>`).join("");
-      document.getElementById("progBackdrop").classList.add("open");
-      document.body.style.overflow = "hidden";
+    function showUkeplanForm() {
+      document.getElementById("upTitle").value = currentUkeplan ? currentUkeplan.title : "";
+      document.getElementById("upBody").value  = currentUkeplan ? currentUkeplan.body  : "";
+      document.getElementById("ukeplanFormWrap").style.display = "block";
     }
 
-    function closeProg() {
-      document.getElementById("progBackdrop").classList.remove("open");
-      document.body.style.overflow = "";
+    function hideUkeplanForm() {
+      document.getElementById("ukeplanFormWrap").style.display = "none";
     }
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") { closeStyle(); closeProg(); }
-    });
+    async function saveUkeplan() {
+      const title = document.getElementById("upTitle").value.trim();
+      const body  = document.getElementById("upBody").value.trim();
+      if (!title) { alert("Tittel mangler."); return; }
+      let error;
+      if (currentUkeplan) {
+        ({ error } = await sb.from("programs").update({ title, body }).eq("id", currentUkeplan.id));
+      } else {
+        ({ error } = await sb.from("programs").insert({ category: "ukeplan", title, body, created_by: _me.id }));
+      }
+      if (error) { alert("Feil: " + error.message); return; }
+      hideUkeplanForm();
+      await loadUkeplan();
+    }
+
+    window.showUkeplanForm = showUkeplanForm;
+    window.hideUkeplanForm = hideUkeplanForm;
+    window.saveUkeplan     = saveUkeplan;
+
 
     const STYLES = {
       hyrox: {
@@ -855,8 +435,7 @@
         tags: ["8 stasjoner", "8 km løping", "Alle nivåer", "Sim Race"],
         what: "HYROX er et globalt fitness-race-format der du løper totalt 8 km og gjennomfører 8 funksjonelle stasjoner – én etter hver kilometer. Stasjonene inkluderer SkiErg, Sled Push, Sled Pull, Burpee Broad Jump, romaskin, Farmer's Carry, Sandbag Lunges og Wall Ball. Formatet er enkelt å forstå, men krevende å mestre. Du konkurrerer mot deg selv og din egen tid.",
         us: "Vi tilbyr faste HYROX-klasser der du trener alle stasjonene og bygger kapasiteten din. Vi arrangerer også egne HYROX Sim Race-events der du gjennomfører et fullstendig løp under reelle konkurranseforhold – rett her på huset. For yngre utøvere har vi HYROX Youngstars (8–14 år). Book via Wondr-appen.",
-        link: "hyrox.html",
-        linkText: "Les mer om HYROX"
+        link: null
       },
       crossfit: {
         title: "Functional Fitness",
@@ -865,8 +444,7 @@
         tags: ["CrossFit", "WOD", "Gruppetime", "Alle nivåer", "Skalerbart"],
         what: "Funksjonell trening bruker naturlige bevegelser – løfte, dra, presse, hoppe – og kombinerer dem i varierte, høyintensive økter basert på CrossFit-metodikken. Treningen treffer alle muskelgrupper og energisystemer, og er alltid forskjellig fra dag til dag. Ingen to WODer er like.",
         us: "Vi kjører daglige gruppetimer i The Box og The Black Box (270 m²). Hver time er 60 minutter med oppvarming, styrkedel og kondisjonsdel (WOD). Sertifiserte trenere skalerer alle øvelser til ditt nivå – enten du er nybegynner eller erfaren utøver.",
-        link: "crossfit.html",
-        linkText: "Les mer om CrossFit"
+        link: null
       },
       styrke: {
         title: "Styrketrening",
@@ -875,8 +453,7 @@
         tags: ["600 m²", "Frivekter", "Maskiner", "Powerlifting", "Bodybuilding"],
         what: "Styrketrening handler om progressiv overbelastning – du løfter gradvis tyngre over tid for å bygge muskler og styrke. Det kan gjøres med frivekter, maskiner eller kroppsvekt, og tilpasses alt fra nybegynner til konkurranseløfter. Regelmessig styrketrening forbedrer kroppssammensetning, metabolisme, beinhelse og mental styrke.",
         us: "Styrkestudioet er på 600 m² med plate-loaded og selectorized maskiner, olympiske stenger og dumbbells 2–50 kg. Vi har dedikerte vektløftingsplattformer, 20-meter kunstgressmatte med sled og tractor tires, og en 5-meter CrossFit-rigg. Åpent 04:00–24:00 for alle medlemmer.",
-        link: "styrke.html",
-        linkText: "Les mer om styrkestudioet"
+        link: null
       },
       hiit: {
         title: "HIIT Cardio",
@@ -929,7 +506,14 @@
       document.body.style.overflow = "";
     }
 
-    document.addEventListener("keydown", e => { if (e.key === "Escape") closeStyle(); });
-  </script>
+    (async () => {
+      _me = await setupPage("treningsstiler");
+      if (!_me) return;
+      await loadUkeplan();
+      if (_me.role === "admin") {
+        document.getElementById("ukeplanAdminBtns").style.display = "block";
+      }
+    })();
+</script>
 </body>
 </html>

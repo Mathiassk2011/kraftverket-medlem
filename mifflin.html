@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kosthold & Makrokalk – 3475 Kraftverket</title>
+  <title>Kosthold & Makrokalkulator – 3475 Kraftverket</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,7 +11,7 @@
 
   <main class="container">
     <div class="section-hero">
-      <h1>Kosthold & <span class="accent">makrokalk</span></h1>
+      <h1>Kosthold & <span class="accent">makrokalkulator</span></h1>
       <p class="lead">Regn ut dagsbehovet ditt for kalorier, proteiner, karbohydrater og fett.</p>
     </div>
 
@@ -77,8 +77,9 @@
       </div>
     </div>
 
-    <div class="section-hero mt-2">
+    <div class="section-hero mt-2" style="margin-bottom:1rem;">
       <h2 style="font-size:1.7rem;">Oppskrifter <span class="muted" style="font-weight:500; font-size:1rem;">30–50 g protein per porsjon</span></h2>
+      <p id="recipeHint" class="lead" style="font-size:.9rem; margin-top:.5rem;">Beregn dagsbehovet ditt over for å se oppskrifter tilpasset ditt mål.</p>
     </div>
 
     <div class="recipe-grid" id="recipeGrid"></div>
@@ -113,53 +114,119 @@
   <script>
     setupPage("mifflin");
 
-    // Mifflin-St Jeor BMR
+    // ── Tilstand ──
+    let calcResult = null; // { tdee, protein, carbs, fat, goalVal }
+
+    // ── Mifflin-St Jeor BMR ──
     function calcBMR(gender, w, h, age) {
       return gender === "male"
         ? 10*w + 6.25*h - 5*age + 5
         : 10*w + 6.25*h - 5*age - 161;
     }
 
+    // ── Score: hvor godt passer oppskriften til brukerens mål? ──
+    // Returner 0–1 (høyere = bedre match)
+    function recipeScore(r, targetKcal, targetProtein, goalVal) {
+      // Normalisert avstand for kalorier (±250 kcal toleranse)
+      const kcalDiff  = Math.abs(r.kcal - targetKcal) / 250;
+      // Normalisert avstand for protein (±15 g toleranse)
+      const protDiff  = Math.abs(r.protein - targetProtein) / 15;
+
+      // Grunnscore: protein vektes tyngst (60%), kcal (40%)
+      let score = Math.max(0, 1 - protDiff * 0.6 - kcalDiff * 0.4);
+
+      // Bonus for cutting: foretrekk oppskrifter ≤ 530 kcal
+      if (goalVal < 0 && r.kcal <= 530) score += 0.15;
+      // Bonus for bulking: foretrekk oppskrifter ≥ 580 kcal
+      if (goalVal > 0 && r.kcal >= 580) score += 0.15;
+
+      return score;
+    }
+
+    // ── Render oppskriftsgrid ──
+    const grid = document.getElementById("recipeGrid");
+
+    function renderRecipes() {
+      let recipes = [...window.RECIPES];
+
+      if (calcResult) {
+        const { tdee, protein, goalVal } = calcResult;
+        // Anta 4 måltider per dag – beregn mål per måltid
+        const targetKcal    = tdee / 4;
+        const targetProtein = protein / 4;
+
+        // Sorter etter match-score (høyest score øverst)
+        recipes.sort((a, b) =>
+          recipeScore(b, targetKcal, targetProtein, goalVal) -
+          recipeScore(a, targetKcal, targetProtein, goalVal)
+        );
+
+        // Oppdater hint-tekst
+        const goalTekst = goalVal < 0 ? "gå ned i vekt"
+                        : goalVal > 0 ? "bygge muskler"
+                        : "vedlikehold";
+        document.getElementById("recipeHint").textContent =
+          `Sortert etter hva som passer best til ditt mål: ${goalTekst} (${tdee} kcal/dag, ${protein} g protein).`;
+      }
+
+      grid.innerHTML = recipes.map((r, i) => {
+        // "Anbefalt"-badge på topp 12 når beregning er utført
+        const badge = calcResult && i < 12
+          ? `<span class="chip" style="background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);font-size:.62rem;">Anbefalt</span>`
+          : "";
+        return `
+          <div class="recipe-card" onclick="openRecipe('${r.id}')">
+            <div class="img-wrap"><img src="${r.image}" alt="${r.name}" loading="lazy" /></div>
+            <div class="body">
+              <h3>${r.name}</h3>
+              <div class="meta">
+                ${badge}
+                <span class="chip orange">${r.protein} g protein</span>
+                <span class="chip">${r.kcal} kcal</span>
+                <span class="chip">${r.time}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    // Initial render (ingen beregning ennå)
+    renderRecipes();
+
+    // ── Kalkulator ──
     document.getElementById("calc").addEventListener("submit", (e) => {
       e.preventDefault();
       const gender = document.getElementById("gender").value;
-      const age = +document.getElementById("age").value;
-      const w = +document.getElementById("weight").value;
-      const h = +document.getElementById("height").value;
-      const act = +document.getElementById("activity").value;
-      const goal = +document.getElementById("goal").value;
+      const age    = +document.getElementById("age").value;
+      const w      = +document.getElementById("weight").value;
+      const h      = +document.getElementById("height").value;
+      const act    = +document.getElementById("activity").value;
+      const goalVal = +document.getElementById("goal").value;
 
-      const bmr = calcBMR(gender, w, h, age);
-      const tdee = Math.round(bmr * act + goal);
+      const bmr  = calcBMR(gender, w, h, age);
+      const tdee = Math.round(bmr * act + goalVal);
 
       // Makrofordeling: 30% protein, 40% karbo, 30% fett
       const protein = Math.round(tdee * 0.30 / 4);
       const carbs   = Math.round(tdee * 0.40 / 4);
       const fat     = Math.round(tdee * 0.30 / 9);
 
-      document.getElementById("kcal").textContent = tdee;
-      document.getElementById("protein").textContent = protein + " g";
-      document.getElementById("carbs").textContent   = carbs + " g";
-      document.getElementById("fat").textContent     = fat + " g";
+      document.getElementById("kcal").textContent     = tdee;
+      document.getElementById("protein").textContent  = protein + " g";
+      document.getElementById("carbs").textContent    = carbs + " g";
+      document.getElementById("fat").textContent      = fat + " g";
       document.getElementById("results").style.display = "block";
       document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "center" });
-    });
 
-    // Render oppskrifter
-    const grid = document.getElementById("recipeGrid");
-    grid.innerHTML = window.RECIPES.map(r => `
-      <div class="recipe-card" onclick="openRecipe('${r.id}')">
-        <div class="img-wrap"><img src="${r.image}" alt="${r.name}" loading="lazy" /></div>
-        <div class="body">
-          <h3>${r.name}</h3>
-          <div class="meta">
-            <span class="chip orange">${r.protein} g protein</span>
-            <span class="chip">${r.kcal} kcal</span>
-            <span class="chip">${r.time}</span>
-          </div>
-        </div>
-      </div>
-    `).join("");
+      // Lagre resultat og re-render oppskrifter
+      calcResult = { tdee, protein, carbs, fat, goalVal };
+      renderRecipes();
+
+      // Rull ned til oppskriftene etter litt delay
+      setTimeout(() => {
+        document.getElementById("recipeGrid").scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 600);
+    });
 
     function openRecipe(id) {
       const r = window.RECIPES.find(x => x.id === id);
@@ -170,12 +237,12 @@
       document.getElementById("mProtein").textContent = r.protein + " g protein";
       document.getElementById("mKcal").textContent = r.kcal + " kcal";
       document.getElementById("mTime").textContent = r.time;
-      document.getElementById("mIng").innerHTML = r.ingredients.map(i => `<li>${i}</li>`).join("");
-      document.getElementById("mSteps").innerHTML = r.steps.map(s => `<li>${s}</li>`).join("");
+      document.getElementById("mIng").innerHTML    = r.ingredients.map(i => `<li>${i}</li>`).join("");
+      document.getElementById("mSteps").innerHTML  = r.steps.map(s => `<li>${s}</li>`).join("");
       document.getElementById("modal").classList.add("open");
     }
     function closeModal() { document.getElementById("modal").classList.remove("open"); }
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
   </script>
 </body>
 </html>

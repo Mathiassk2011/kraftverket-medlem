@@ -210,10 +210,10 @@ h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .35rem; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.75rem;
+  padding: 1.25rem;
   text-decoration: none;
   color: var(--text);
-  display: flex; flex-direction: column; gap: .5rem;
+  display: flex; flex-direction: column; gap: .4rem;
   transition: all .2s;
   position: relative;
   overflow: hidden;
@@ -224,12 +224,12 @@ h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .35rem; }
   text-decoration: none;
 }
 .tile .icon {
-  font-size: 2rem;
-  margin-bottom: .35rem;
+  font-size: 1.6rem;
+  margin-bottom: .25rem;
 }
 .tile-img {
-  margin: -1.75rem -1.75rem .9rem;
-  height: 155px;
+  margin: -1.25rem -1.25rem .75rem;
+  height: 115px;
   overflow: hidden;
   border-radius: var(--radius) var(--radius) 0 0;
   flex-shrink: 0;
@@ -256,10 +256,10 @@ h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .35rem; }
   transform: scale(1.06);
   filter: brightness(.85) saturate(.85);
 }
-.tile h3 { font-size: 1.15rem; font-weight: 800; }
-.tile p { color: var(--text-muted); font-size: .9rem; }
+.tile h3 { font-size: 1rem; font-weight: 800; }
+.tile p { color: var(--text-muted); font-size: .82rem; line-height: 1.55; }
 .tile .arrow {
-  position: absolute; right: 1.25rem; top: 1.25rem;
+  position: absolute; right: 1rem; top: 1rem;
   color: var(--text-muted); transition: color .15s;
 }
 .tile:hover .arrow { color: var(--orange); }
