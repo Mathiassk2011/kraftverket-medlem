@@ -90,6 +90,15 @@
       transition: all .15s;
     }
     .conv-menu-btn:hover { color: #ef4444; border-color: #ef4444; }
+
+    .msg-del-btn {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: .75rem;
+      padding: 0 .3rem; margin-left: auto; opacity: 0;
+      transition: opacity .15s, color .15s;
+    }
+    .chat-msg:hover .msg-del-btn { opacity: .7; }
+    .msg-del-btn:hover { color: #ef4444; opacity: 1 !important; }
     .empty-chat {
       display: flex; align-items: center; justify-content: center;
       color: var(--text-muted); font-size: .92rem; padding: 3rem 1rem;
@@ -330,8 +339,7 @@
         actionsEl.innerHTML = "";
       } else if (conv.type === "dm") {
         actionsEl.innerHTML = `
-          <button class="conv-menu-btn" onclick="handleConvAction('clear_dm')" title="Tøm meldinger">🧹 Tøm</button>
-          <button class="conv-menu-btn" onclick="handleConvAction('delete_dm')" title="Slett samtalen helt">🗑 Slett</button>
+          <button class="conv-menu-btn" onclick="handleConvAction('delete_dm')" title="Slett samtalen helt">🗑 Slett samtale</button>
         `;
       } else if (conv.type === "group") {
         actionsEl.innerHTML = `
@@ -378,19 +386,30 @@
       const name = sender?.name || "Ukjent";
       const ageStr = sender?.age ? sender.age + " år" : "";
       return `
-        <div class="chat-msg ${own ? "own" : ""}">
+        <div class="chat-msg ${own ? "own" : ""}" data-msg-id="${m.id}">
           <img class="avatar" src="${photoOf(sender)}" alt="${esc(name)}" />
-          <div>
+          <div style="position:relative;">
             <div class="meta">
               <span class="name">${esc(name)}</span>
               ${ageStr ? `<span class="age">${ageStr}</span>` : ""}
               <span class="time">${fmtTime(m.created_at)}</span>
+              ${own ? `<button class="msg-del-btn" onclick="deleteMsg('${m.id}')" title="Slett denne meldingen">✕</button>` : ""}
             </div>
             <div class="bubble">${esc(m.body)}</div>
           </div>
         </div>
       `;
     }
+
+    window.deleteMsg = async (msgId) => {
+      if (!confirm("Slette denne meldingen?")) return;
+      const { error } = await sb.from("messages").delete().eq("id", msgId);
+      if (error) { alert("Feil: " + error.message); return; }
+      // Fjern fra DOM umiddelbart
+      const el = document.querySelector(`.chat-msg[data-msg-id="${msgId}"]`);
+      if (el) el.remove();
+      renderConvList();
+    };
 
     function subscribeRealtime() {
       if (realtimeSub) sb.removeChannel(realtimeSub);
@@ -415,7 +434,6 @@
       if (!conv) return;
 
       const msgs = {
-        clear_dm:    "Tømme alle meldinger i denne samtalen?",
         delete_dm:   "Slette hele samtalen for begge?",
         leave_group: `Forlate gruppen "${conv.name}"?`,
       };
@@ -425,14 +443,6 @@
       if (action === "leave_group") {
         ({ error } = await sb.from("conversation_members")
           .delete().eq("conversation_id", activeConvId).eq("user_id", me.id));
-      } else if (action === "clear_dm") {
-        // Slett kun meldingene, behold samtalen
-        ({ error } = await sb.from("messages").delete().eq("conversation_id", activeConvId));
-        if (!error) {
-          document.getElementById("dmMessages").innerHTML = `<div class="empty-chat">Ingen meldinger ennå. Send den første!</div>`;
-          renderConvList();
-          return;
-        }
       } else if (action === "delete_dm") {
         ({ error } = await sb.from("conversations").delete().eq("id", activeConvId));
       }
