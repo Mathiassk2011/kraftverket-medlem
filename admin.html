@@ -158,6 +158,7 @@ Dag 2 - Pull:
             ${p.role === "admin"
               ? `<button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','member')" ${p.id===me.id?'disabled title="Du kan ikke degradere deg selv"':''}>Fjern admin</button>`
               : `<button class="btn btn-primary" style="padding:.4rem .8rem; font-size:.8rem;" onclick="setRole('${p.id}','admin')">Gjør til admin</button>`}
+            <button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem;" onclick="resetPassword('${p.id}','${esc(p.name).replace(/'/g,"\\'")}')">🔑 Nytt passord</button>
             <button class="btn btn-ghost" style="padding:.4rem .8rem; font-size:.8rem; color:#ef4444; border-color:#ef4444;" onclick="deleteMember('${p.id}','${esc(p.name).replace(/'/g,"\\'")}')" ${p.id===me.id?'disabled title="Du kan ikke slette deg selv"':''}>Slett</button>
           </div>
         </div>
@@ -168,6 +169,30 @@ Dag 2 - Pull:
       const { error } = await sb.from("profiles").update({ role }).eq("id", userId);
       if (error) { alert("Feil: " + error.message); return; }
       loadMembers();
+    };
+
+    window.resetPassword = async (userId, name) => {
+      const newPw = prompt(`Sett nytt passord for "${name}":\n\n(minst 6 tegn)`, "kraftverk2026");
+      if (!newPw) return;
+      if (newPw.length < 6) { alert("Passordet må være minst 6 tegn"); return; }
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        const res = await fetch(SUPABASE_URL + "/functions/v1/reset-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token,
+            "apikey": SUPABASE_KEY
+          },
+          body: JSON.stringify({ user_id: userId, password: newPw })
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error || "Feil");
+        alert(`✓ Nytt passord satt for ${name}.\n\nSi fra til medlemmet:\n${newPw}`);
+      } catch (err) {
+        alert("Feil: " + err.message);
+      }
     };
 
     window.deleteMember = async (userId, name) => {
