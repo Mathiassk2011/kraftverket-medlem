@@ -23,8 +23,8 @@ async function renderHeader(activeKey) {
       <a class="logo" href="dashboard.html">
         <img src="https://3475kraftverket.no/wp-content/uploads/2021/04/3d-png-1.png" alt="Kraftverket" />
         <span class="logo-label">
-          <span class="main">3475 Kraftverket</span>
-          <span class="sub">Medlemsportal</span>
+          <span class="main">16 ukers trening</span>
+          <span class="sub">3475 Kraftverket</span>
         </span>
       </a>
       <div class="header-divider"></div>
@@ -42,7 +42,7 @@ async function renderHeader(activeKey) {
 }
 
 function renderFooter() {
-  return `<footer class="site-footer">3475 Kraftverket Medlemsportal · Åsveien 3, 3475 Sætre</footer>`;
+  return `<footer class="site-footer">16 ukers trening · 3475 Kraftverket · Åsveien 3, 3475 Sætre</footer>`;
 }
 
 // Hjelper: sett opp header + footer på en innlogget side
