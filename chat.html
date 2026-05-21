@@ -82,6 +82,14 @@
     .dm-header img, .dm-header .group-avatar { width: 40px; height: 40px; }
     .dm-header .name { font-weight: 800; }
     .dm-header .sub { font-size: .78rem; color: var(--text-muted); }
+    .conv-menu-btn {
+      margin-left: auto;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-muted); padding: .35rem .7rem;
+      font-size: .82rem; cursor: pointer; border-radius: var(--radius-sm);
+      transition: all .15s;
+    }
+    .conv-menu-btn:hover { color: #ef4444; border-color: #ef4444; }
     .empty-chat {
       display: flex; align-items: center; justify-content: center;
       color: var(--text-muted); font-size: .92rem; padding: 3rem 1rem;
@@ -140,6 +148,7 @@
             <div class="name" id="chatName"></div>
             <div class="sub" id="chatSub"></div>
           </div>
+          <button class="conv-menu-btn" id="convMenuBtn" style="display:none;" onclick="handleConvAction()"></button>
         </div>
 
         <div class="dm-messages" id="dmMessages">
@@ -315,6 +324,25 @@
       document.getElementById("chatSub").textContent = disp.sub;
       document.getElementById("dmForm").style.display = "flex";
 
+      // Slett/forlat-knapp basert på type
+      const menuBtn = document.getElementById("convMenuBtn");
+      if (conv.type === "public" || conv.id === PUBLIC_CONV_ID) {
+        menuBtn.style.display = "none";
+      } else if (conv.type === "dm") {
+        menuBtn.textContent = "🗑 Slett samtale";
+        menuBtn.dataset.action = "delete_dm";
+        menuBtn.style.display = "inline-block";
+      } else if (conv.type === "group") {
+        if (conv.created_by === me.id) {
+          menuBtn.textContent = "🗑 Slett gruppe";
+          menuBtn.dataset.action = "delete_group";
+        } else {
+          menuBtn.textContent = "🚪 Forlat gruppe";
+          menuBtn.dataset.action = "leave_group";
+        }
+        menuBtn.style.display = "inline-block";
+      }
+
       // Tøm chat-området umiddelbart slik at gammel samtale forsvinner
       const box = document.getElementById("dmMessages");
       box.innerHTML = `<div class="empty-chat">Laster meldinger...</div>`;
@@ -383,6 +411,39 @@
         })
         .subscribe();
     }
+
+    window.handleConvAction = async () => {
+      const action = document.getElementById("convMenuBtn").dataset.action;
+      if (!activeConvId || !action) return;
+
+      const conv = myConvs.find(c => c.id === activeConvId);
+      if (!conv) return;
+
+      let confirmMsg = "Er du sikker?";
+      if (action === "delete_dm")    confirmMsg = "Slette denne samtalen for begge?";
+      if (action === "leave_group")  confirmMsg = `Forlate gruppen "${conv.name}"?`;
+      if (action === "delete_group") confirmMsg = `Slette gruppen "${conv.name}" for alle medlemmer?`;
+      if (!confirm(confirmMsg)) return;
+
+      let error;
+      if (action === "leave_group") {
+        // Fjern meg selv fra members
+        ({ error } = await sb.from("conversation_members")
+          .delete().eq("conversation_id", activeConvId).eq("user_id", me.id));
+      } else {
+        // Slett hele samtalen (cascade fjerner members + meldinger)
+        ({ error } = await sb.from("conversations").delete().eq("id", activeConvId));
+      }
+      if (error) { alert("Feil: " + error.message); return; }
+
+      // Reset UI
+      activeConvId = null;
+      document.getElementById("chatHeader").style.display = "none";
+      document.getElementById("dmForm").style.display = "none";
+      document.getElementById("dmMessages").innerHTML = `<div class="empty-chat">Samtalen er fjernet.</div>`;
+      if (realtimeSub) { sb.removeChannel(realtimeSub); realtimeSub = null; }
+      await loadMyConvs();
+    };
 
     document.getElementById("dmForm").addEventListener("submit", async (e) => {
       e.preventDefault();
