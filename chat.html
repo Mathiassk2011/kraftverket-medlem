@@ -148,7 +148,7 @@
             <div class="name" id="chatName"></div>
             <div class="sub" id="chatSub"></div>
           </div>
-          <button class="conv-menu-btn" id="convMenuBtn" style="display:none;" onclick="handleConvAction()"></button>
+          <div style="margin-left:auto; display:flex; gap:.4rem;" id="convActions"></div>
         </div>
 
         <div class="dm-messages" id="dmMessages">
@@ -324,23 +324,19 @@
       document.getElementById("chatSub").textContent = disp.sub;
       document.getElementById("dmForm").style.display = "flex";
 
-      // Slett/forlat-knapp basert på type
-      const menuBtn = document.getElementById("convMenuBtn");
+      // Slett/forlat-knapper basert på type
+      const actionsEl = document.getElementById("convActions");
       if (conv.type === "public" || conv.id === PUBLIC_CONV_ID) {
-        menuBtn.style.display = "none";
+        actionsEl.innerHTML = "";
       } else if (conv.type === "dm") {
-        menuBtn.textContent = "🗑 Slett samtale";
-        menuBtn.dataset.action = "delete_dm";
-        menuBtn.style.display = "inline-block";
+        actionsEl.innerHTML = `
+          <button class="conv-menu-btn" onclick="handleConvAction('clear_dm')" title="Tøm meldinger">🧹 Tøm</button>
+          <button class="conv-menu-btn" onclick="handleConvAction('delete_dm')" title="Slett samtalen helt">🗑 Slett</button>
+        `;
       } else if (conv.type === "group") {
-        if (conv.created_by === me.id) {
-          menuBtn.textContent = "🗑 Slett gruppe";
-          menuBtn.dataset.action = "delete_group";
-        } else {
-          menuBtn.textContent = "🚪 Forlat gruppe";
-          menuBtn.dataset.action = "leave_group";
-        }
-        menuBtn.style.display = "inline-block";
+        actionsEl.innerHTML = `
+          <button class="conv-menu-btn" onclick="handleConvAction('leave_group')">🚪 Forlat gruppe</button>
+        `;
       }
 
       // Tøm chat-området umiddelbart slik at gammel samtale forsvinner
@@ -412,31 +408,37 @@
         .subscribe();
     }
 
-    window.handleConvAction = async () => {
-      const action = document.getElementById("convMenuBtn").dataset.action;
+    window.handleConvAction = async (action) => {
       if (!activeConvId || !action) return;
 
       const conv = myConvs.find(c => c.id === activeConvId);
       if (!conv) return;
 
-      let confirmMsg = "Er du sikker?";
-      if (action === "delete_dm")    confirmMsg = "Slette denne samtalen for begge?";
-      if (action === "leave_group")  confirmMsg = `Forlate gruppen "${conv.name}"?`;
-      if (action === "delete_group") confirmMsg = `Slette gruppen "${conv.name}" for alle medlemmer?`;
-      if (!confirm(confirmMsg)) return;
+      const msgs = {
+        clear_dm:    "Tømme alle meldinger i denne samtalen?",
+        delete_dm:   "Slette hele samtalen for begge?",
+        leave_group: `Forlate gruppen "${conv.name}"?`,
+      };
+      if (!confirm(msgs[action] || "Er du sikker?")) return;
 
       let error;
       if (action === "leave_group") {
-        // Fjern meg selv fra members
         ({ error } = await sb.from("conversation_members")
           .delete().eq("conversation_id", activeConvId).eq("user_id", me.id));
-      } else {
-        // Slett hele samtalen (cascade fjerner members + meldinger)
+      } else if (action === "clear_dm") {
+        // Slett kun meldingene, behold samtalen
+        ({ error } = await sb.from("messages").delete().eq("conversation_id", activeConvId));
+        if (!error) {
+          document.getElementById("dmMessages").innerHTML = `<div class="empty-chat">Ingen meldinger ennå. Send den første!</div>`;
+          renderConvList();
+          return;
+        }
+      } else if (action === "delete_dm") {
         ({ error } = await sb.from("conversations").delete().eq("id", activeConvId));
       }
       if (error) { alert("Feil: " + error.message); return; }
 
-      // Reset UI
+      // Etter delete eller leave: reset UI
       activeConvId = null;
       document.getElementById("chatHeader").style.display = "none";
       document.getElementById("dmForm").style.display = "none";
