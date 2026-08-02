@@ -1,32 +1,46 @@
-# 3475 Kraftverket – Medlemsportal
+# 16 ukers trening
 
-Frontend-skall for medlemmer av 3475 Kraftverket treningssenter.
+Privat treningsplattform for medlemmer av 3475 Kraftverket treningssenter.
+
+**Live:** https://16ukerstrening.no
+
+## Teknisk
+
+Statisk HTML/CSS/JS uten byggeprosess, hostet på GitHub Pages. Supabase som backend
+(auth, database, realtime, edge functions).
 
 ## Sider
 
 - `index.html` – Logg inn
-- `dashboard.html` – Landingsside med kort til alle seksjoner
-- `mifflin.html` – Makrokalkulator (Mifflin-St Jeor) + 10 oppskrifter (30–50 g protein)
-- `kalender.html` – Ukens gruppetimer + personlig treningslogg
-- `chat.html` – Medlemschat (demo, lokal lagring)
+- `dashboard.html` – Landingsside med ukesmål og kort til alle seksjoner
+- `ukeplan.html` – Klasser per dag + treningsprogram-builder
+- `kalender.html` – Personlig kalender (7 dager, kun eier ser)
+- `chat.html` – Felleschat, private meldinger og grupper (sanntid)
+- `profil.html` – Egen profil og treningslogg
+- `admin.html` – Medlemsadministrasjon (kun admin)
+- `ovelser.html` – Øvelsesbibliotek (`exercises.js`, 300 styrkeøvelser)
+- `mifflin.html` / `kosthold` – Makrokalkulator + oppskrifter (`recipes.js`)
+- `styrke.html`, `crossfit.html`, `hyrox.html`, `treningsstiler.html` – Treningsstiler
 
-## Demo-innlogging
+## Innlogging
 
-| Brukernavn | Passord     | Rolle  |
-|------------|-------------|--------|
-| `mathias`  | `kraftverk` | Eier   |
-| `ole`      | `demo`      | Medlem |
-| `kari`     | `demo`      | Medlem |
-| `erik`     | `demo`      | Medlem |
-| `ingrid`   | `demo`      | Medlem |
-| `lars`     | `demo`      | Medlem |
+Kontoer opprettes av administrator i `admin.html`. Selvregistrering er slått av
+i Supabase Auth.
 
-Legg til/fjern medlemmer i `members.js`.
+## Supabase
+
+Skjemaet ligger i `supabase/schema.sql` – kjør hele filen i SQL Editor for å sette
+opp en ny instans.
+
+Edge functions i `supabase/functions/`:
+
+- `create-member` – opprett medlem (deployet som `super-processor`)
+- `delete-member` – slett medlem (deployet som `Delete-member`, stor D)
+- `reset-password` – reset passord for medlem
+
+Alle tre krever `SUPABASE_SERVICE_ROLE_KEY` som miljøvariabel.
 
 ## Kjør lokalt
 
-Åpne `index.html` i nettleseren – ingen byggeprosess.
-
-## Status
-
-Dette er et **frontend-skall**. Innlogging og chat er ikke ekte multi-bruker – alt lagres i nettleseren (sessionStorage / localStorage). For ekte funksjonalitet må vi koble på en backend (f.eks. Firebase eller Supabase) senere.
+Åpne `index.html` i nettleseren – ingen byggeprosess. Konfigurasjonen ligger i
+`supabase-client.js`.

@@ -1,4 +1,4 @@
-// Supabase-konfigurasjon for 3475 Kraftverket medlemsportal
+// Supabase-konfigurasjon for 16 ukers trening – 3475 Kraftverket
 // Bruker Supabase JS v2 fra CDN (lastes inn i hver html-fil)
 
 const SUPABASE_URL = "https://zongelfeyadntkawojpf.supabase.co";

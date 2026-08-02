@@ -1,5 +1,5 @@
 -- ─────────────────────────────────────────────────────────────────
---  3475 Kraftverket – Medlemsportal · Supabase-skjema
+--  16 ukers trening – 3475 Kraftverket · Supabase-skjema
 --  Kjør hele filen i Supabase SQL Editor (Run)
 -- ─────────────────────────────────────────────────────────────────
 
