@@ -21,7 +21,7 @@ async function renderHeader(activeKey) {
   return `
     <header class="site-header">
       <a class="logo" href="dashboard.html">
-        <img src="https://3475kraftverket.no/wp-content/uploads/2021/04/3d-png-1.png" alt="Kraftverket" />
+        <img src="assets/logo.png" alt="Kraftverket" />
         <span class="logo-label">
           <span class="main">16 ukers trening</span>
           <span class="sub">3475 Kraftverket</span>
